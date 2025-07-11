@@ -1,0 +1,12 @@
+^\.github$
+^\.git$
+^\.gitignore$
+^\.DS_Store$
+^README\.Rmd$
+^\.vscode$
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.Rhistory$
+^\.RData$
+^stablepopulations\.Rcheck$
+^.*\.xlsx$

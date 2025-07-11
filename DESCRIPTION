@@ -1,0 +1,10 @@
+Package: StablePopulation
+Title: Calculates Alpha for a Stable Population
+Version: 1.0.1
+Authors@R: person(given = "David", family = "Palacios Morales", role = c("aut", "cre"), email = "dpmorales@ubu.es", comment = c(ORCID = "0009-0008-5412-8997"))
+Description: Provides tools to calculate the alpha parameter of the Weibull distribution, given beta and the age-specific fertility of a species, so that the population remains stable and stationary.
+License: GPL-3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: readxl, openxlsx, stats
