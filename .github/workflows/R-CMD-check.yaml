@@ -1,0 +1,90 @@
+name: R-CMD-check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      matrix:
+        config:
+          - { os: windows-latest, r: 'release' }
+          - { os: macos-latest, r: 'release' }
+          - { os: ubuntu-22.04, r: 'release' }
+    steps:
+      - uses: actions/checkout@v3
+
+      # Configurar Homebrew para minimizar warnings en macOS
+      - name: Configure Homebrew environment
+        if: matrix.config.os == 'macos-latest'
+        run: |
+          echo "Disabling Homebrew auto-update and dependency checks..."
+          export HOMEBREW_NO_AUTO_UPDATE=1
+          export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1
+
+      # Eliminar referencias a pkg-config@0.29.2 en macOS
+      - name: Handle pkg-config@0.29.2
+        if: matrix.config.os == 'macos-latest'
+        run: |
+          echo "Handling pkg-config@0.29.2..."
+          if brew list --formula | grep -q "^pkg-config@0.29.2\$"; then
+            echo "Unlinking and uninstalling pkg-config@0.29.2..."
+            brew unlink pkg-config@0.29.2 || true
+            brew uninstall pkg-config@0.29.2 || true
+          else
+            echo "pkg-config@0.29.2 not found. Skipping."
+          fi
+
+      # Configurar R automáticamente con r-lib/actions/setup-r
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+
+      # Instalar dependencias del sistema en Ubuntu
+      - name: Install system dependencies on Ubuntu
+        if: matrix.config.os == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update || true
+          sudo apt-get install -y \
+            libcurl4-openssl-dev \
+            libssl-dev \
+            libxml2-dev \
+            libharfbuzz-dev \
+            libfribidi-dev \
+            libfreetype6-dev
+
+      # Instalar dependencias del sistema en macOS
+      - name: Install macOS dependencies
+        if: matrix.config.os == 'macos-latest'
+        run: |
+          echo "Installing macOS dependencies..."
+          for pkg in qpdf pkgconf ghostscript checkbashisms; do
+            if ! brew list --formula | grep -q "^$pkg\$"; then
+              echo "Installing $pkg..."
+              brew install $pkg || true
+            else
+              echo "$pkg is already installed and up-to-date. Skipping."
+            fi
+          done
+
+      # Instalar devtools y otras dependencias en todos los sistemas
+      - name: Install devtools and dependencies
+        run: |
+          Rscript -e 'install.packages("remotes", repos = "https://cloud.r-project.org")'
+          Rscript -e 'remotes::install_cran(c("pkgdown", "devtools", "readxl", "openxlsx"), repos = "https://cloud.r-project.org", dependencies = TRUE)'
+
+      # Verificar instalación de devtools
+      - name: Verify devtools installation
+        run: |
+          Rscript -e 'if (!requireNamespace("devtools", quietly = TRUE)) stop("devtools not installed")'
+
+      # Verificar el paquete
+      - name: Check package
+        run: |
+          Rscript -e 'library(devtools); devtools::check()'
