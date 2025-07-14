@@ -17,7 +17,9 @@ find_alphas(beta, fertility_rates, tol = 1e-22)
 The value of alpha found by \code{uniroot}, or the closest endpoint to 0 if opposite signs are not found.
 }
 \description{
-This function finds the value of alpha using the \code{uniroot} method for a given beta and a vector of fertility rates. If the function values at the interval ends do not have opposite signs, it returns the closest value to 0.
+This function finds the value of alpha using the \code{uniroot} method for a given beta and a vector
+of fertility rates. If the function values at the interval ends do not have opposite signs,
+it returns the closest value to 0.
 }
 \examples{
 find_alphas(1.2, c(0.2, 0.3, 0.5, 0.4))

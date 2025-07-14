@@ -51,7 +51,28 @@ find_stablepopulations_root <- function() {
 #' Run Analysis on Excel Data and Export Results
 #'
 #' This function reads fertility rate data and Beta value from an Excel file, processes it, and exports
-#' the results to a new Excel file for the specie, including population matrices and calculated alpha/beta values.
+#' the results to a new Excel file for the species, including population matrices and calculated alpha/beta values.
+#'
+#' The function relies on functions from the \pkg{readxl} and \pkg{openxlsx} packages to handle Excel files.
+#'
+#' @details
+#' The following external functions are used:
+#' - [excel_sheets][readxl::excel_sheets]: List all sheet names in an Excel file.
+#' - [read_excel][readxl::read_excel]: Read data from an Excel file.
+#' - [createWorkbook][openxlsx::createWorkbook]: Create a new Excel workbook.
+#' - [addWorksheet][openxlsx::addWorksheet]: Add a worksheet to a workbook.
+#' - [writeData][openxlsx::writeData]: Write data to a worksheet.
+#' - [saveWorkbook][openxlsx::saveWorkbook]: Save the workbook to a file.
+#'
+#' Please refer to the documentation of those packages for more details.
+#'
+#' @seealso
+#'  \code{\link[readxl]{excel_sheets}},
+#'  \code{\link[readxl]{read_excel}},
+#'  \code{\link[openxlsx]{createWorkbook}},
+#'  \code{\link[openxlsx]{addWorksheet}},
+#'  \code{\link[openxlsx]{writeData}},
+#'  \code{\link[openxlsx]{saveWorkbook}}
 #'
 #' @importFrom readxl excel_sheets read_excel
 #' @importFrom openxlsx createWorkbook addWorksheet writeData saveWorkbook

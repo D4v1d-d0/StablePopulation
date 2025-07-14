@@ -2,7 +2,7 @@
 % Please edit documentation in R/find_alpha.R
 \name{alpha_objective}
 \alias{alpha_objective}
-\title{Objective function for \code{uniroot}: finds the difference between births and 1}
+\title{Objective Function for \code{uniroot}: Finds the Difference Between Births and 1}
 \usage{
 alpha_objective(alpha, beta, fertility_rates)
 }
@@ -14,11 +14,33 @@ alpha_objective(alpha, beta, fertility_rates)
 \item{fertility_rates}{A numeric vector containing the fertility rates.}
 }
 \value{
-The difference between the number of births and 1.
+A numeric value: the difference between the number of births and 1.
 }
 \description{
-This function calculates the difference between the number of births calculated with the given values of alpha, beta, and fertility rates, and the target value of 1.
+This function calculates the difference between the number of births, as calculated with the given values
+of \code{alpha}, \code{beta}, and \code{fertility_rates}, and the target value of 1.
+}
+\details{
+Typically used as the objective function in root-finding algorithms such as \link[stats:uniroot]{uniroot}, to determine
+the value of alpha that results in exactly one birth.
+
+This function depends on \link{calculate_population}, which must be available in your package namespace.
 }
 \examples{
+# Basic usage
 alpha_objective(0.5, 1.2, c(0.2, 0.3, 0.5, 0.4))
+
+# Example with uniroot:
+fertility_rates <- c(0.2, 0.3, 0.5, 0.4)
+beta <- 1.2
+res <- uniroot(
+  alpha_objective,
+  interval = c(0.000001, 100),
+  beta = beta,
+  fertility_rates = fertility_rates
+)
+res$root
+}
+\seealso{
+\code{\link[stats]{uniroot}}
 }
