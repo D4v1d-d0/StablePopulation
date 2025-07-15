@@ -85,6 +85,6 @@ jobs:
           Rscript -e 'if (!requireNamespace("devtools", quietly = TRUE)) stop("devtools not installed")'
 
       # Verificar el paquete
-      - name: Check package
-        run: |
-          Rscript -e 'library(devtools); devtools::check()'
+- name: Check (as-cran)
+  run: |
+    Rscript -e 'devtools::check(args = "--as-cran")'
