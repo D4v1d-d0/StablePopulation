@@ -7,14 +7,18 @@
 calculate_population(alpha, beta, fertility_rates)
 }
 \arguments{
-\item{alpha}{A numeric value representing the population growth rate.}
+\item{alpha}{A numeric value representing the scale parameter (\eqn{\alpha}) of the Weibull distribution. Note: In this context, alpha controls the horizontal scaling of the survival curve.}
 
-\item{beta}{A numeric value affecting the birth rate.}
+\item{beta}{A numeric value representing the shape parameter (\eqn{\beta}) of the Weibull distribution. Note: Beta controls the shape of the survival curve (e.g., aging or failure rate).}
 
 \item{fertility_rates}{A vector of fertility rates for each age group.}
 }
 \value{
-A list containing the calculated population and births.
+A list with the following elements:
+\describe{
+\item{population}{A numeric vector giving the population size for each age group.}
+\item{births}{A numeric value giving the total number of births.}
+}
 }
 \description{
 This function calculates the population for each age group and the number of births.

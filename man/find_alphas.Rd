@@ -7,14 +7,14 @@
 find_alphas(beta, fertility_rates, tol = 1e-22)
 }
 \arguments{
-\item{beta}{A numeric value representing the beta parameter.}
+\item{beta}{A numeric value representing the beta parameter of Weibull distribution.}
 
 \item{fertility_rates}{A numeric vector containing the fertility rates.}
 
-\item{tol}{Tolerance for the \code{uniroot} method. Default is \code{1e-22}.}
+\item{tol}{A numeric value representing the tolerance for the \code{uniroot} method. Default is \code{1e-22}.}
 }
 \value{
-The value of alpha found by \code{uniroot}, or the closest endpoint to 0 if opposite signs are not found.
+A numeric value giving the estimated value of alpha, either found by \code{uniroot} or selected as the endpoint closest to zero if the root is not bracketed.
 }
 \description{
 This function finds the value of alpha using the \code{uniroot} method for a given beta and a vector

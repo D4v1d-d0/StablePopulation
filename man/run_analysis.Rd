@@ -6,6 +6,9 @@
 \usage{
 run_analysis()
 }
+\value{
+No return value. Called for side effects (reading data, writing Excel files, and printing messages).
+}
 \description{
 This function reads fertility rate data and Beta value from an Excel file, processes it, and exports
 the results to a new Excel file for the species, including population matrices and calculated alpha/beta values.

@@ -7,7 +7,7 @@
 find_stablepopulations_root()
 }
 \value{
-The full path to the \code{StablePopulation} directory if found.
+A character string with the full path to the \code{StablePopulation} directory if found. If not found, an error is raised.
 }
 \description{
 This internal function searches for the root directory of the \code{StablePopulation}

@@ -14,7 +14,7 @@ weibull_survival(alpha, beta, age)
 \item{age}{A numeric value representing the age.}
 }
 \value{
-The survival rate for reaching the given age.
+A numeric value giving the survival rate (probability) for reaching the given age.
 }
 \description{
 This function calculates the survival rate to reach a specific age using the Weibull function.

@@ -1,10 +1,10 @@
 #' Find Root Directory of StablePopulation
 #'
-#' This internal function searches for the root directory of the `StablePopulation`
-#' project by looking for a folder named `StablePopulation` in the current
+#' This internal function searches for the root directory of the \code{StablePopulation}
+#' project by looking for a folder named \code{StablePopulation} in the current
 #' or parent directories. It is used internally to locate project-specific files.
 #'
-#' @return The full path to the `StablePopulation` directory if found.
+#' @return A character string with the full path to the \code{StablePopulation} directory if found. If not found, an error is raised.
 #' @keywords internal
 find_stablepopulations_root <- function() {
   # Name of the directory to search for
@@ -73,6 +73,8 @@ find_stablepopulations_root <- function() {
 #'  \code{\link[openxlsx]{addWorksheet}},
 #'  \code{\link[openxlsx]{writeData}},
 #'  \code{\link[openxlsx]{saveWorkbook}}
+#'
+#' @return No return value. Called for side effects (reading data, writing Excel files, and printing messages).
 #'
 #' @importFrom readxl excel_sheets read_excel
 #' @importFrom openxlsx createWorkbook addWorksheet writeData saveWorkbook
@@ -154,8 +156,9 @@ run_analysis <- function() {
     # Save the Excel file for this species
     openxlsx::saveWorkbook(wb, output_file, overwrite = TRUE)
 
-    cat("Results for", sheet, "saved to", output_file, "\n")
+    message(paste0("Results for ", sheet, " saved to ", output_file, "."))
+
   }
 
-  cat("Analysis complete for all species.\n")
+  message("Analysis complete for all species.")
 }

@@ -14,7 +14,7 @@ alpha_objective(alpha, beta, fertility_rates)
 \item{fertility_rates}{A numeric vector containing the fertility rates.}
 }
 \value{
-A numeric value: the difference between the number of births and 1.
+A numeric value giving the difference between the number of births (as calculated) and 1.
 }
 \description{
 This function calculates the difference between the number of births, as calculated with the given values
