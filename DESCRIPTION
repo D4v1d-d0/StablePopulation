@@ -1,6 +1,6 @@
 Package: StablePopulation
 Title: Calculates Alpha for a Stable Population
-Version: Version: 1.0.3.9000
+Version: 1.0.3.9000
 Date: 2026-04-22
 Authors@R: c(
   person(given = "David", family = "Palacios-Morales", role = c("aut", "cre"), email = "dpmorales@ubu.es", comment = c(ORCID = "0009-0008-5412-8997")),
@@ -17,6 +17,6 @@ Description: Provides tools to calculate the alpha parameter of the Weibull dist
 License: GPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Depends: R (>= 3.5.0)
 Imports: readxl, openxlsx, stats
