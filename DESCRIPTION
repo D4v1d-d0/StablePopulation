@@ -1,7 +1,7 @@
 Package: StablePopulation
 Title: Calculates Alpha for a Stable Population
-Version: 1.0.3
-Date: 2025-07-24
+Version: Version: 1.0.3.9000
+Date: 2026-04-22
 Authors@R: c(
   person(given = "David", family = "Palacios-Morales", role = c("aut", "cre"), email = "dpmorales@ubu.es", comment = c(ORCID = "0009-0008-5412-8997")),
   person(given = "Guillermo", family = "Rodríguez-Gómez", role = "aut", email = "grodriguezgomez@ucm.es", comment = c(ORCID = "0000-0003-0722-4560")),
