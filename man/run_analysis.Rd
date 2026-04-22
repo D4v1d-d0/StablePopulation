@@ -2,37 +2,56 @@
 % Please edit documentation in R/main.R
 \name{run_analysis}
 \alias{run_analysis}
-\title{Run Analysis on Excel Data and Export Results}
+\title{Run a beta sweep on Excel fertility data and export the predicted profiles}
 \usage{
-run_analysis()
+run_analysis(
+  input_file = NULL,
+  output_file = NULL,
+  beta_values = seq(0.05, 3, by = 0.05),
+  tol = 1e-12
+)
+}
+\arguments{
+\item{input_file}{Optional path to the input Excel workbook. The workbook must
+contain one or more sheets, with ages in the first column and fertility
+rates in the second column. The first row is treated as a header row.}
+
+\item{output_file}{Optional path to the output Excel workbook. If omitted, the
+file \code{Output_Profiles.xlsx} is written in the same directory as
+\code{input_file}.}
+
+\item{beta_values}{Numeric vector of \eqn{\beta} values to evaluate. By
+default the function uses \code{seq(0.05, 3.00, by = 0.05)}.}
+
+\item{tol}{Numeric tolerance passed to \code{\link[=find_alphas]{find_alphas()}}. Default:
+\code{1e-12}.}
 }
 \value{
-No return value. Called for side effects (reading data, writing Excel files, and printing messages).
+Invisibly returns the full path to the output workbook.
 }
 \description{
-This function reads fertility rate data and Beta value from an Excel file, processes it, and exports
-the results to a new Excel file for the species, including population matrices and calculated alpha/beta values.
+This function reads fertility-rate data (\eqn{m_x}) from a multi-sheet Excel
+file, performs a sweep of \eqn{\beta} values, computes for each \eqn{\beta}
+the corresponding \eqn{\alpha} that satisfies \eqn{R_0 = \sum l_x m_x = 1},
+and exports all predicted Weibull survival profiles (\eqn{l_x}) to a single
+Excel workbook with one worksheet per input sheet.
 }
 \details{
-The function relies on functions from the \pkg{readxl} and \pkg{openxlsx} packages to handle Excel files.
+If \code{input_file} is not supplied, the function first looks for the bundled
+example file via \code{system.file("extdata", "Input_Data.xlsx", package =
+"StablePopulation")}. If that is not available, it falls back to the package
+source tree and looks for \code{inst/extdata/Input_Data.xlsx}.
 
-The following external functions are used:
+The output workbook contains one sheet per input sheet. In each output sheet:
 \itemize{
-\item \link[readxl:excel_sheets]{excel_sheets}: List all sheet names in an Excel file.
-\item \link[readxl:read_excel]{read_excel}: Read data from an Excel file.
-\item \link[openxlsx:createWorkbook]{createWorkbook}: Create a new Excel workbook.
-\item \link[openxlsx:addWorksheet]{addWorksheet}: Add a worksheet to a workbook.
-\item \link[openxlsx:writeData]{writeData}: Write data to a worksheet.
-\item \link[openxlsx:saveWorkbook]{saveWorkbook}: Save the workbook to a file.
+\item the first row contains the evaluated \eqn{\beta} values,
+\item the second row contains the corresponding \eqn{\alpha} values,
+\item the third row contains the numerical check of \eqn{R_0},
+\item the remaining rows contain the predicted Weibull survival profiles
+(\eqn{l_x}) for each age.
 }
-
-Please refer to the documentation of those packages for more details.
 }
 \seealso{
-\code{\link[readxl]{excel_sheets}},
-\code{\link[readxl]{read_excel}},
-\code{\link[openxlsx]{createWorkbook}},
-\code{\link[openxlsx]{addWorksheet}},
-\code{\link[openxlsx]{writeData}},
-\code{\link[openxlsx]{saveWorkbook}}
+\code{\link[=find_alphas]{find_alphas()}}, \code{\link[=calculate_population]{calculate_population()}}, \code{\link[readxl:read_excel]{readxl::read_excel()}},
+\code{\link[openxlsx:writeData]{openxlsx::writeData()}}
 }

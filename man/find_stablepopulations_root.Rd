@@ -7,11 +7,13 @@
 find_stablepopulations_root()
 }
 \value{
-A character string with the full path to the \code{StablePopulation} directory if found. If not found, an error is raised.
+A character string with the full path to the package root directory.
 }
 \description{
-This internal function searches for the root directory of the \code{StablePopulation}
-project by looking for a folder named \code{StablePopulation} in the current
-or parent directories. It is used internally to locate project-specific files.
+This internal function walks upwards from the current working directory until
+it finds the source root of the \code{StablePopulation} package (identified by
+a \code{DESCRIPTION} file with \code{Package: StablePopulation}). It is only
+used as a fallback when the package is being run from source and the example
+Excel file is not available through \code{system.file()}.
 }
 \keyword{internal}
