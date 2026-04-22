@@ -24,19 +24,17 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: actions/checkout@v5
 
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: true
 
-      # Dependencias del sistema en Ubuntu
+      - uses: r-lib/actions/setup-pandoc@v2
+
       - name: Install system dependencies on Ubuntu
         if: matrix.config.os == 'ubuntu-22.04'
         run: |
@@ -45,19 +43,8 @@ jobs:
             pkg-config \
             libcurl4-openssl-dev \
             libssl-dev \
-            libxml2-dev \
-            libharfbuzz-dev \
-            libfribidi-dev \
-            libfreetype6-dev \
-            libpng-dev \
-            libtiff5-dev \
-            libjpeg-dev \
-            libwebp-dev \
-            libmagick++-dev \
-            qpdf \
-            ghostscript
+            libxml2-dev
 
-      # Dependencias del sistema en macOS
       - name: Install macOS dependencies
         if: matrix.config.os == 'macos-latest'
         run: |
@@ -68,9 +55,11 @@ jobs:
           dependencies: '"check"'
           extra-packages: |
             any::rcmdcheck
+            any::devtools
+            any::pkgdown
+            any::readxl
+            any::openxlsx
 
-      - uses: r-lib/actions/check-r-package@v2
-        with:
-          args: 'c("--as-cran")'
-          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
-          upload-snapshots: true
+      - name: Check package
+        run: |
+          Rscript -e 'rcmdcheck::rcmdcheck(args = c("--as-cran", "--no-manual"), error_on = "warning", check_dir = "check")'
