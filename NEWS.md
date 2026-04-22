@@ -1,5 +1,9 @@
 # NEWS for StablePopulation
 
+## 1.0.3.9000 - 2026-04-22
+
+- The CRAN release corresponds to tag v1.0.3. The GitHub main branch contains the development version 1.0.3.9000.
+
 ## 1.0.3 - 2025-07-24
 
 - Added reference to a relevant scientific article in the Description field.
