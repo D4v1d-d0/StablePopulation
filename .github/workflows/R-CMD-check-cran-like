@@ -18,15 +18,11 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { os: ubuntu-22.04, r: 'devel',   http-user-agent: 'release' }
-          - { os: ubuntu-22.04, r: 'release' }
-          - { os: ubuntu-22.04, r: 'oldrel-1' }
-          - { os: windows-latest, r: 'devel' }
-          - { os: windows-latest, r: 'release' }
-          - { os: windows-latest, r: 'oldrel-1' }
-          - { os: macos-latest,   r: 'devel' }
-          - { os: macos-latest,   r: 'release' }
-          - { os: macos-latest,   r: 'oldrel-1' }
+          - { os: ubuntu-22.04, r: "devel", http-user-agent: "release" }
+          - { os: ubuntu-22.04, r: "release" }
+          - { os: ubuntu-22.04, r: "oldrel-1" }
+          - { os: windows-latest, r: "release" }
+          - { os: macos-latest, r: "release" }
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -52,13 +48,21 @@ jobs:
             libcurl4-openssl-dev \
             libssl-dev \
             libxml2-dev \
+            libharfbuzz-dev \
+            libfribidi-dev \
+            libfreetype6-dev \
+            libpng-dev \
+            libtiff5-dev \
+            libjpeg-dev \
+            libwebp-dev \
+            libmagick++-dev \
             qpdf \
             ghostscript
 
       - name: Install macOS dependencies
         if: matrix.config.os == 'macos-latest'
         run: |
-          brew install qpdf ghostscript pkgconf || true
+          brew install qpdf pkgconf ghostscript checkbashisms || true
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -67,4 +71,6 @@ jobs:
 
       - uses: r-lib/actions/check-r-package@v2
         with:
+          args: 'c("--no-manual", "--as-cran")'
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
           upload-snapshots: true
