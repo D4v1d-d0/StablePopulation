@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+title: "StablePopulation: Reconstructs Stable and Stationary Survivorship Profiles"
+version: 1.1.0.9000
+date-released: 2026-06-25
+license: GPL-3.0-only
+repository-code: "https://github.com/D4v1d-d0/StablePopulation"
+authors:
+  - family-names: "Palacios-Morales"
+    given-names: "David"
+    orcid: "https://orcid.org/0009-0008-5412-8997"
+    affiliation: "Universidad Complutense de Madrid (UCM); University of Burgos (UBU)"
+  - family-names: "Rodríguez-Gómez"
+    given-names: "Guillermo"
+    orcid: "https://orcid.org/0000-0003-0722-4560"
+    affiliation: "Universidad Complutense de Madrid (UCM); Universidad de Sevilla; UCM-ISCIII Center for Evolution and Human Behavior"
+  - family-names: "Martín-González"
+    given-names: "Jesús A."
+    orcid: "https://orcid.org/0000-0003-1854-2986"
+    affiliation: "University of Burgos (UBU)"

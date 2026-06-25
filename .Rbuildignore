@@ -10,3 +10,4 @@
 ^\.RData$
 ^stablepopulations\.Rcheck$
 ^.*\.xlsx$
+^CITATION\.cff$

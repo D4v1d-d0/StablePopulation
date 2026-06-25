@@ -1,22 +1,54 @@
 Package: StablePopulation
-Title: Calculates Alpha for a Stable Population
-Version: 1.0.3.9000
-Date: 2026-04-22
+Title: Reconstructs Stable and Stationary Survivorship Profiles
+Version: 1.1.0.9000
+Date: 2026-06-25
 Authors@R: c(
-  person(given = "David", family = "Palacios-Morales", role = c("aut", "cre"), email = "dpmorales@ubu.es", comment = c(ORCID = "0009-0008-5412-8997")),
-  person(given = "Guillermo", family = "Rodríguez-Gómez", role = "aut", email = "grodriguezgomez@ucm.es", comment = c(ORCID = "0000-0003-0722-4560")),
-  person(given = "Jesús A.", family = "Martín-González", role = "aut", email = "jamartin@ubu.es", comment = c(ORCID = "0000-0003-1854-2986"))
+  person(
+    given = "David", family = "Palacios-Morales",
+    role = c("aut", "cre"), email = "davipala@ucm.es",
+    comment = c(
+      ORCID = "0009-0008-5412-8997",
+      affiliation = "Universidad Complutense de Madrid (UCM), Doctoral Programme in Geology and Geological Engineering; University of Burgos (UBU), Department of Mathematics and Computing"
+    )
+  ),
+  person(
+    given = "Guillermo", family = "Rodríguez-Gómez", role = "aut",
+    email = "grodriguezgomez@ucm.es",
+    comment = c(
+      ORCID = "0000-0003-0722-4560",
+      affiliation = "Universidad Complutense de Madrid (UCM); Universidad de Sevilla; UCM-ISCIII Center for Evolution and Human Behavior"
+    )
+  ),
+  person(
+    given = "Jesús A.", family = "Martín-González", role = "aut",
+    email = "jamartin@ubu.es",
+    comment = c(
+      ORCID = "0000-0003-1854-2986",
+      affiliation = "University of Burgos (UBU), Department of Mathematics and Computing"
+    )
+  )
  )
 Author: David Palacios-Morales [aut, cre] (<https://orcid.org/0009-0008-5412-8997>), Guillermo Rodríguez-Gómez [aut] (<https://orcid.org/0000-0003-0722-4560>), Jesús A. Martín-González [aut] (<https://orcid.org/0000-0003-1854-2986>)
-Maintainer: David Palacios-Morales <dpmorales@ubu.es>
-Description: Provides tools to calculate the alpha parameter of the Weibull distribution, given beta
- and the age-specific fertility of a species, so that the population remains stable and stationary.
- Methods are inspired by "Survival profiles from linear models versus Weibull models: Estimating stable
- and stationary population structures for Pleistocene large mammals" (Martín-González et al. 2019)
+Maintainer: David Palacios-Morales <davipala@ucm.es>
+Description: Reconstructs age-specific survivorship profiles under a stable and
+ stationary population assumption using a Weibull survival model. Given an
+ age-specific fertility schedule, the package generates Weibull profiles that
+ satisfy the demographic constraint R0 = sum(lx * mx) = 1, scans candidate beta
+ values, optionally selects the constrained profile that best reproduces an
+ observed survivorship schedule, and derives stable age structures and mortality
+ profiles. It also provides a free two-parameter Weibull fit as a descriptive
+ reference and separate Excel workflows for the historical and extended routes.
+ Methods are based on Martín-González et al. (2019)
  <doi:10.1016/j.jasrep.2019.03.031>.
 License: GPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Depends: R (>= 3.5.0)
-Imports: readxl, openxlsx, stats
+Imports:
+    readxl,
+    openxlsx,
+    stats
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

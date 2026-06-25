@@ -3,206 +3,213 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/StablePopulation)](https://CRAN.R-project.org/package=StablePopulation)
 [![License: GPL-3](https://img.shields.io/badge/License-GPL--3-blue.svg)](https://www.r-project.org/licenses/gpl-3.0.en.html)
 
-`StablePopulation` is an R package for reconstructing **age-specific survivorship profiles** under a **stable and stationary population** assumption using a **Weibull survival model**.
-
-For a chosen value of **beta** and a vector of **age-specific fertility rates**, the package computes the corresponding **alpha** value that satisfies the demographic constraint:
-
-```text
-sum(lx * mx) = 1
-```
-
-where the survivorship profile is defined by the Weibull model:
+`StablePopulation` reconstructs discrete Weibull survivorship profiles under a
+stable and stationary population assumption. Its central demographic constraint
+is:
 
 ```text
-lx = exp(- (x / alpha)^beta )
+sum(lx * mx) = R0 = 1
 ```
 
-In other words, the package helps you go from a fertility schedule and a fixed `beta` to a consistent survivorship profile.
+where `lx` is survivorship to age `x` and `mx` is age-specific fertility. Age
+classes are represented internally as consecutive indices:
 
----
+```text
+0, 1, 2, ..., n - 1
+```
 
-## What the package does
+## Version 1.1.0.9000: development scope
 
-`StablePopulation` provides the core tools needed to:
+This development version extends the package while preserving the historical
+Excel route documented for the CRAN release 1.0.3.
 
-- evaluate Weibull survival at a given age,
-- calculate the survivorship / normalized population profile by age,
-- solve for `alpha` from a fertility schedule and a chosen `beta`,
-- process multiple cases from an Excel file and export results automatically.
+- `run_analysis()` keeps its original no-argument interface and fixed-`beta`
+  Excel layout.
+- `run_reconstruction_excel()` is the separate, new Excel interface for beta
+  scanning, optional comparison with observed survivorship, and terminal-window
+  scenarios.
 
-This makes it useful for demographic and paleoecological workflows in which a stable and stationary population profile must be reconstructed from fertility data.
+The present development is linked primarily to the doctoral work of David
+Palacios-Morales at the Universidad Complutense de Madrid (UCM), while retaining
+his University of Burgos (UBU) affiliation. Historical CRAN releases remain part
+of the earlier UBU stage and are not retroactively altered.
 
----
+## Core functions retained from earlier versions
+
+| Function | Purpose |
+|---|---|
+| `weibull_survival(alpha, beta, age)` | Evaluates the Weibull survivorship function. |
+| `calculate_population(alpha, beta, fertility_rates)` | Returns the discrete survivorship vector and its implied births. |
+| `alpha_objective(alpha, beta, fertility_rates)` | Computes `births - 1`. |
+| `find_alphas(beta, fertility_rates, tol)` | Historical alpha solver. |
+| `run_analysis()` | Historical Excel workflow with one beta value per worksheet. |
+
+## Historical Excel workflow: `run_analysis()`
+
+`run_analysis()` is retained for compatibility with the workflow described for
+StablePopulation 1.0.3. It takes no arguments and reads:
+
+```text
+inst/extdata/Input_Data.xlsx
+```
+
+Each worksheet is treated as one case/species. The expected layout is:
+
+| Location | Meaning |
+|---|---|
+| Column B | Fertility rates (`mx`) |
+| Cell C2 | Fixed `beta` value |
+| First row | Header row |
+
+For each worksheet, the function solves for `alpha`, reconstructs the profile,
+and writes a separate file named:
+
+```text
+<sheet_name>_results.xlsx
+```
+
+inside `inst/extdata/`.
+
+## New functions in 1.1.0.9000
+
+| Function | Purpose |
+|---|---|
+| `reconstruct_population()` | Reconstructs one Weibull profile for a fixed `beta` under `R0 = 1`. |
+| `scan_beta()` | Generates a family of constrained profiles across candidate `beta` values. |
+| `select_beta()` | Selects the constrained profile with minimum RMSE against observed `lx`. |
+| `derive_demographic_profile()` | Derives stable structure `R`, exit-by-death profile `D`, relative `D`, and conditional survival `B`. |
+| `fit_weibull_free()` | Fits an unconstrained two-parameter Weibull reference model. |
+| `normalize_fertility()` | Rescales fertility relative to a reference `lx` so its `R0` equals 1. |
+| `run_reconstruction_excel()` | New Excel interface for scan and observed-survivorship routes. |
+
+## Two reconstruction routes
+
+### A. Observed survivorship is available
+
+```r
+mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
+lx_observed <- c(1, 0.93, 0.82, 0.67, 0.41, 0.15)
+
+selection <- select_beta(
+  fertility_rates = mx,
+  lx_observed = lx_observed
+)
+
+selection$best_beta
+selection$best_alpha
+selection$best_RMSE
+```
+
+`select_beta()` scans candidate `beta` values, determines the corresponding
+`alpha` under `R0 = 1`, and selects the smallest RMSE. It is a constrained
+one-parameter selection, not a free Weibull fit.
+
+### B. No observed survivorship is available
+
+```r
+scan <- scan_beta(
+  fertility_rates = mx,
+  terminal_window = c(0.0001, 0.05)
+)
+
+scan$admissible_summary
+scan$terminal_extremes
+```
+
+The terminal window retains profiles whose survivorship in the last available
+age class lies within the specified interval. It does not identify an empirical
+optimum; it defines a range of admissible scenarios.
+
+## From survivorship to demographic outputs
+
+```r
+profile <- derive_demographic_profile(
+  lx = selection$best_lx,
+  fertility_rates = mx
+)
+
+profile$table
+```
+
+This derives:
+
+```text
+lx -> R -> D -> B
+```
+
+where `R` is the normalized stable structure, `D` is the raw exit-by-death
+profile, and `B` is conditional survival between consecutive classes.
+
+## Extended Excel workflow
+
+`run_reconstruction_excel()` uses explicit input and output paths. It does not
+search for a package root or write results inside the installed package.
+
+Input sheets need a fertility column named one of:
+
+```text
+mx | fertility_rates | fertility
+```
+
+They can additionally include observed survivorship under one of:
+
+```text
+lx_observed | lx | survivorship
+```
+
+Example:
+
+```r
+run_reconstruction_excel(
+  input_file = "demography.xlsx",
+  output_file = "reconstruction_results.xlsx",
+  mode = "auto"
+)
+```
 
 ## Installation
 
-### Install from CRAN
+### CRAN release
 
 ```r
 install.packages("StablePopulation")
 ```
 
-### Install the development version from GitHub
+### Development version
 
 ```r
 install.packages("remotes")
 remotes::install_github("D4v1d-d0/StablePopulation")
 ```
 
----
-
-## Quick start
+## Development checks
 
 ```r
-library(StablePopulation)
-
-fertility_rates <- c(0, 0, 0.315, 0.400, 0.895, 1.244, 1.440,
-                     1.581, 1.545, 1.365, 1.131, 0.953,
-                     0.622, 0.437, 0.368)
-
-beta <- 0.5
-
-# Solve for alpha
-alpha <- find_alphas(beta, fertility_rates)
-alpha
-
-# Compute the corresponding profile
-result <- calculate_population(alpha, beta, fertility_rates)
-
-# Survivorship / normalized population profile
-result$population
-
-# Total births implied by the profile
-result$births
+devtools::document()
+devtools::test()
+devtools::check()
 ```
-
-A typical workflow is:
-
-1. choose a value of `beta`,
-2. estimate `alpha` with `find_alphas()`,
-3. compute the age profile with `calculate_population()`,
-4. verify that births are effectively equal to 1.
-
----
-
-## Main functions
-
-| Function | Purpose |
-|---|---|
-| `weibull_survival(alpha, beta, age)` | Computes survival to a given age under the Weibull model. |
-| `calculate_population(alpha, beta, fertility_rates)` | Returns the age-specific population profile and the total number of births. |
-| `alpha_objective(alpha, beta, fertility_rates)` | Objective function used for root finding (`births - 1`). |
-| `find_alphas(beta, fertility_rates, tol = 1e-22)` | Solves for `alpha` given `beta` and fertility rates. |
-| `run_analysis()` | Reads an Excel file, processes all sheets, and writes one output workbook per case/species. |
-
----
-
-## Excel workflow
-
-The package includes a simple Excel-based workflow through `run_analysis()`.
-
-### Expected input file
-
-The function looks for this file inside the package project structure:
-
-```text
-inst/extdata/Input_Data.xlsx
-```
-
-Each worksheet is treated as one case/species.
-
-### Expected worksheet layout
-
-In the current implementation, `run_analysis()` expects:
-
-| Location | Meaning |
-|---|---|
-| Column B | Fertility rates (`mx`) |
-| Cell C2 | `beta` value |
-| First row | Header row |
-
-### What `run_analysis()` does
-
-For each sheet in `Input_Data.xlsx`, the function:
-
-1. reads the fertility schedule,
-2. reads the corresponding `beta`,
-3. solves for `alpha`,
-4. computes the population profile,
-5. writes an output file named:
-
-```text
-<sheet_name>_results.xlsx
-```
-
-in:
-
-```text
-inst/extdata/
-```
-
-### Important note
-
-`run_analysis()` is designed around the current source-project structure of the repository, where the package root folder is named `StablePopulation`.
-
----
-
-## Returned objects
-
-### `calculate_population()`
-Returns a list with two elements:
-
-- `population`: numeric vector with the population size / survivorship profile by age,
-- `births`: numeric value with the total births implied by that profile.
-
-### `find_alphas()`
-Returns a single numeric value: the estimated `alpha` associated with the supplied `beta` and fertility schedule.
-
----
-
-## Documentation
-
-Official CRAN documentation:
-
-- CRAN page: <https://CRAN.R-project.org/package=StablePopulation>
-- Reference manual (HTML): <https://cran.r-project.org/web/packages/StablePopulation/refman/StablePopulation.html>
-- Reference manual (PDF): <https://cran.r-project.org/web/packages/StablePopulation/StablePopulation.pdf>
-
----
 
 ## Methodological background
 
-The package description states that its methods are inspired by:
-
-> Martín-González et al. (2019). *Survival profiles from linear models versus Weibull models: Estimating stable and stationary population structures for Pleistocene large mammals*.
-
----
+The package follows the Weibull stable/stationary-population framework developed
+for paleodemographic applications by Martin-Gonzalez et al. (2019). The current
+development extends the reproducible R implementation toward constrained profile
+selection and derived demographic quantities.
 
 ## Citation
 
-To obtain the package citation from R:
+Use:
 
 ```r
 citation("StablePopulation")
 ```
 
-CRAN DOI:
+The published CRAN release is version 1.0.3:
 
 ```text
 10.32614/CRAN.package.StablePopulation
 ```
-
----
-
-## Authors
-
-- **David Palacios-Morales**
-- **Guillermo Rodríguez-Gómez**
-- **Jesús A. Martín-González**
-
-Maintainer: **David Palacios-Morales** (<dpmorales@ubu.es>)
-
----
 
 ## License
 
