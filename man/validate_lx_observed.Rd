@@ -12,34 +12,21 @@ validate_lx_observed(
 )
 }
 \arguments{
-\item{lx_observed}{Numeric vector of survivorship values. / Vector numerico
-de valores de supervivencia.}
+\item{lx_observed}{Numeric vector of survivorship values.}
 
-\item{expected_length}{Optional expected length. / Longitud esperada
-opcional.}
+\item{expected_length}{Optional expected length.}
 
-\item{tolerance}{Positive numeric tolerance for validation. / Tolerancia
-numerica positiva para la validacion.}
+\item{tolerance}{Positive numeric tolerance for validation.}
 
-\item{min_length}{Minimum permitted number of age classes. / Numero minimo
-permitido de clases de edad.}
+\item{min_length}{Minimum permitted number of age classes.}
 }
 \value{
-A validated numeric survivorship vector. / Un vector numerico de
-supervivencia validado.
+A validated numeric survivorship vector.
 }
 \description{
-English: Checks that a survivorship vector \eqn{l_x} is finite,
-one-dimensional, bounded between zero and one, starts at one, and is
-non-increasing with age. Tiny rounding deviations within \code{tolerance}
-are accepted and then clipped to the interval \code{[0, 1]}.
-
-Espanol: Comprueba que un vector de supervivencia \eqn{l_x} sea finito,
-unidimensional, este acotado entre cero y uno, comience en uno y sea no
-creciente con la edad. Se aceptan pequenas desviaciones de redondeo dentro
-de \code{tolerance}, que despues se recortan al intervalo \code{[0, 1]}.
-}
-\details{
-Valida un perfil observado o reconstruido de supervivencia
+Checks that a survivorship vector \eqn{l_x} is finite, one-dimensional,
+bounded between zero and one, starts at one, and is non-increasing with age.
+Tiny rounding deviations within \code{tolerance} are accepted and then
+clipped to the interval \code{[0, 1]}.
 }
 \keyword{internal}

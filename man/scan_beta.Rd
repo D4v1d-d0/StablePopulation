@@ -14,67 +14,43 @@ scan_beta(
 }
 \arguments{
 \item{fertility_rates}{Numeric vector of non-negative age-specific fertility
-rates. / Vector numerico de tasas de fecundidad especificas por edad no
-negativas.}
+rates.}
 
-\item{beta_values}{Positive Weibull shape values to scan. / Valores positivos
-del parametro de forma Weibull que se exploraran.}
+\item{beta_values}{Positive Weibull shape values to scan.}
 
-\item{tol}{Positive numerical tolerance for root finding. / Tolerancia
-numerica positiva para la busqueda de la raiz.}
+\item{tol}{Positive numerical tolerance for root finding.}
 
-\item{r0_tolerance}{Positive tolerance for the numerical \eqn{R_0} check.
-/ Tolerancia positiva para la comprobacion numerica de \eqn{R_0}.}
+\item{r0_tolerance}{Positive tolerance for the numerical \eqn{R_0} check.}
 
 \item{terminal_window}{Optional numeric vector \code{c(lower, upper)} in
 \code{[0, 1]}. A stable profile is terminally admissible when its final
-\eqn{l_x} lies in this inclusive interval. Default: \code{NULL}. /
-Vector numerico opcional \code{c(inferior, superior)} en \code{[0, 1]}.
-Un perfil estable es terminalmente admisible cuando su \eqn{l_x} final
-pertenece a este intervalo inclusivo. Por defecto: \code{NULL}.}
+\eqn{l_x} lies in this inclusive interval. Default: \code{NULL}.}
 }
 \value{
 A list of class \code{"stable_population_scan"}. Its main elements
 are \code{summary}, \code{profiles}, \code{admissible_summary},
 \code{profiles_admissible}, and, when a terminal window is active,
-\code{terminal_extremes}. / Una lista de clase
-\code{"stable_population_scan"}. Sus elementos principales son
-\code{summary}, \code{profiles}, \code{admissible_summary},
-\code{profiles_admissible} y, cuando la ventana terminal esta activa,
 \code{terminal_extremes}.
 }
 \description{
-English: For every candidate \eqn{\beta}, calculates the corresponding
-\eqn{\alpha}, reconstructs a Weibull survivorship profile \eqn{l_x}, and
-checks whether the numerical result satisfies \eqn{R_0 = \sum_x l_xm_x = 1}.
-
-Espanol: Para cada \eqn{\beta} candidato, calcula el \eqn{\alpha}
-correspondiente, reconstruye un perfil Weibull de supervivencia \eqn{l_x}
-y comprueba si el resultado numerico satisface
-\eqn{R_0 = \sum_x l_xm_x = 1}.
+For every candidate \eqn{\beta}, calculates the corresponding \eqn{\alpha},
+reconstructs a Weibull survivorship profile \eqn{l_x}, and checks whether the
+numerical result satisfies \eqn{R_0 = \sum_x l_xm_x = 1}.
 }
 \details{
-Explora valores beta Weibull bajo la restriccion de poblacion estable
-
 Age classes are always assigned internally as \code{0, 1, 2, ..., n - 1}.
 When \code{terminal_window} is supplied, the function marks the profiles
-whose final survivorship lies inside that inclusive window. This is the
-scenario route used when an observed \eqn{l_x} is not available; it does not
+whose final survivorship lies inside that inclusive window. This scenario
+route is useful when an observed \eqn{l_x} is not available; it does not
 select a single empirical optimum.
-
-Las clases de edad se asignan siempre internamente como
-\code{0, 1, 2, ..., n - 1}. Cuando se proporciona \code{terminal_window},
-la funcion marca los perfiles cuya supervivencia final pertenece a esa ventana
-inclusiva. Esta es la via de escenarios usada cuando no se dispone de un
-\eqn{l_x} observado; no selecciona un unico optimo empirico.
 }
 \examples{
 mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
 
-# All stable candidate profiles / Todos los perfiles candidatos estables
+# All stable candidate profiles
 scan <- scan_beta(mx, beta_values = seq(0.05, 1.50, by = 0.05))
 
-# Scenario route without observed lx / Via de escenarios sin lx observado
+# Scenario route without observed lx
 terminal_scan <- scan_beta(
   mx,
   beta_values = seq(0.05, 1.50, by = 0.05),

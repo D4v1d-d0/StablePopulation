@@ -8,50 +8,30 @@ derive_demographic_profile(lx, fertility_rates = NULL, tolerance = 1e-08)
 }
 \arguments{
 \item{lx}{Numeric survivorship profile. It must start at one and be
-non-increasing. / Perfil numerico de supervivencia. Debe comenzar en uno y
-ser no creciente.}
+non-increasing.}
 
 \item{fertility_rates}{Optional fertility schedule with the same length as
 \code{lx}. When supplied, the result also includes \eqn{l_xm_x} and
-\eqn{R_0}. / Calendario de fecundidad opcional con la misma longitud que
-\code{lx}. Cuando se proporciona, el resultado incluye \eqn{l_xm_x} y
 \eqn{R_0}.}
 
 \item{tolerance}{Positive tolerance used to validate \code{lx} and assess
-\eqn{R_0 = 1} when fertility is provided. / Tolerancia positiva usada para
-validar \code{lx} y evaluar \eqn{R_0 = 1} cuando se proporciona
-fecundidad.}
+\eqn{R_0 = 1} when fertility is provided.}
 }
 \value{
 A list of class \code{"stable_population_demographic_profile"}.
-/ Una lista de clase \code{"stable_population_demographic_profile"}.
 }
 \description{
-English: Converts a survivorship profile \eqn{l_x} into the quantities used
-by the demographic-to-ecological bridge in Model-V2022: the normalised stable
-structure \eqn{R_x}, the exit-by-death profile \eqn{D_x}, its explicitly
-relativised version, and conditional survival between consecutive classes.
-
-Espanol: Convierte un perfil de supervivencia \eqn{l_x} en las cantidades
-utilizadas por el puente demografico-ecologico de Model-V2022: la estructura
-estable normalizada \eqn{R_x}, el perfil de salida por muerte \eqn{D_x}, su
-version relativizada explicitamente y la supervivencia condicional entre
-clases consecutivas.
+Converts a survivorship profile \eqn{l_x} into the quantities used by the
+demographic-to-ecological bridge in Model-V2022: the normalized stable
+structure \eqn{R_x}, the exit-by-death profile \eqn{D_x}, its relative
+version, and conditional survival between consecutive classes.
 }
 \details{
-Deriva estructura estable y perfiles de mortalidad a partir de la supervivencia
-
 The stable structure is \eqn{R_x = l_x / \sum_x l_x}. The mortality profile
 is \eqn{D_x = R_x - R_{x+1}} for all but the last class, and
 \eqn{D_n = R_n}. Its total is \eqn{R_{x=0}} of the stable structure, not
-necessarily one. The relativised profile is \eqn{D_x / \sum_x D_x}; it is
+necessarily one. The relative profile is \eqn{D_x / \sum_x D_x}; it is
 therefore a distinct quantity that sums to one.
-
-La estructura estable es \eqn{R_x = l_x / \sum_x l_x}. El perfil de
-mortalidad es \eqn{D_x = R_x - R_{x+1}} para todas las clases salvo la
-ultima, y \eqn{D_n = R_n}. Su suma es \eqn{R_{x=0}} de la estructura
-estable, no necesariamente uno. El perfil relativizado es
-\eqn{D_x / \sum_x D_x}; por tanto es una cantidad distinta que suma uno.
 }
 \examples{
 mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)

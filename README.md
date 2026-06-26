@@ -142,30 +142,68 @@ profile, and `B` is conditional survival between consecutive classes.
 
 ## Extended Excel workflow
 
-`run_reconstruction_excel()` uses explicit input and output paths. It does not
-search for a package root or write results inside the installed package.
+`run_reconstruction_excel()` is the extended interface for ordinary data
+workbooks. It reads one or more sheets, preserves an age column as an output
+label, and writes a separate results workbook. By default, the output is created
+beside the input file:
 
-Input sheets need a fertility column named one of:
-
-```text
-mx | fertility_rates | fertility
+```r
+run_reconstruction_excel("demography.xlsx")
 ```
 
-They can additionally include observed survivorship under one of:
+This creates:
 
 ```text
-lx_observed | lx | survivorship
+demography_StablePopulation.xlsx
 ```
 
-Example:
+With `mode = "auto"`, a sheet with observed survivorship uses the `select`
+route; a sheet without it uses the `scan` route. Fully blank rows are ignored,
+but missing or non-numeric fertility values inside a data table stop the run and
+report the affected Excel rows.
+
+Recognized headers are case-insensitive and tolerate spaces, hyphens, accents,
+and underscores. Fertility aliases include:
+
+```text
+mx | m_x | fertility_rates | fertility | fecundity | fecundidad
+```
+
+Observed-survivorship aliases include:
+
+```text
+lx_observed | l_x_observed | lx | l_x | survivorship | survival | supervivencia
+```
+
+Age aliases include:
+
+```text
+age | edad | age_class | clase_edad
+```
+
+For custom headings, specify the columns explicitly:
 
 ```r
 run_reconstruction_excel(
   input_file = "demography.xlsx",
-  output_file = "reconstruction_results.xlsx",
-  mode = "auto"
+  output_file = "results.xlsx",
+  sheets = "Ovis_dalli",
+  age_column = "Age class",
+  fertility_column = "Female fertility",
+  survivorship_column = "Observed survivorship"
 )
 ```
+
+The output workbook includes a `README` sheet, `metadata_run`, and one or more
+sheets per processed input sheet:
+
+| Pattern | Contents |
+|---|---|
+| `summary_<input sheet>` | Candidate beta values and numerical diagnostics. |
+| `profiles_<input sheet>` | All reconstructed survivorship candidates for a scan route. |
+| `selected_<input sheet>` | The selected profile, observed and reconstructed survivorship, and derived `R`, `D`, `D_relative`, and `B`. |
+| `admissible_<input sheet>` | Candidates retained by an optional terminal-survivorship window. |
+| `scenarios_<input sheet>` | First and last terminal-admissible profiles. |
 
 ## Installation
 

@@ -15,49 +15,30 @@ select_beta(
 }
 \arguments{
 \item{fertility_rates}{Numeric vector of non-negative age-specific fertility
-rates. / Vector numerico de tasas de fecundidad especificas por edad no
-negativas.}
+rates.}
 
 \item{lx_observed}{Numeric observed survivorship profile. It must have the
-same length as \code{fertility_rates}, start at one, and be non-increasing.
-/ Perfil numerico observado de supervivencia. Debe tener la misma longitud
-que \code{fertility_rates}, comenzar en uno y ser no creciente.}
+same length as \code{fertility_rates}, start at one, and be non-increasing.}
 
-\item{beta_values}{Positive Weibull shape values to scan. / Valores positivos
-del parametro de forma Weibull que se exploraran.}
+\item{beta_values}{Positive Weibull shape values to scan.}
 
-\item{tol}{Positive numerical tolerance for root finding. / Tolerancia
-numerica positiva para la busqueda de la raiz.}
+\item{tol}{Positive numerical tolerance for root finding.}
 
-\item{r0_tolerance}{Positive tolerance for the numerical \eqn{R_0} check.
-/ Tolerancia positiva para la comprobacion numerica de \eqn{R_0}.}
+\item{r0_tolerance}{Positive tolerance for the numerical \eqn{R_0} check.}
 
-\item{lx_tolerance}{Positive tolerance used to validate \code{lx_observed}.
-/ Tolerancia positiva utilizada para validar \code{lx_observed}.}
+\item{lx_tolerance}{Positive tolerance used to validate \code{lx_observed}.}
 }
 \value{
 A list of class \code{"stable_population_selection"} containing the
 selected parameters, the selected profile, the full candidate table, and
-the underlying \code{\link[=scan_beta]{scan_beta()}} result. / Una lista de clase
-\code{"stable_population_selection"} con los parametros seleccionados, el
-perfil seleccionado, la tabla completa de candidatos y el resultado de
-\code{\link[=scan_beta]{scan_beta()}} subyacente.
+the underlying \code{\link[=scan_beta]{scan_beta()}} result.
 }
 \description{
-English: Generates Weibull survivorship candidates under \eqn{R_0 = 1} and
-selects the candidate with the smallest RMSE against an observed
-survivorship profile \eqn{l_x}. It is not a free two-parameter Weibull fit:
-\eqn{\alpha} remains determined by the fertility schedule and the stability
-constraint for every candidate \eqn{\beta}.
-
-Espanol: Genera candidatos Weibull de supervivencia bajo \eqn{R_0 = 1} y
-selecciona el candidato con menor RMSE frente a un perfil observado de
-supervivencia \eqn{l_x}. No es un ajuste Weibull libre de dos parametros:
-\eqn{\alpha} sigue estando determinado por el calendario de fecundidad y la
-restriccion de estabilidad para cada \eqn{\beta} candidato.
-}
-\details{
-Selecciona un beta Weibull restringido usando supervivencia observada
+Generates Weibull survivorship candidates under \eqn{R_0 = 1} and selects
+the candidate with the smallest RMSE against an observed survivorship profile
+\eqn{l_x}. It is not a free two-parameter Weibull fit: \eqn{\alpha} remains
+determined by the fertility schedule and the stability constraint for every
+candidate \eqn{\beta}.
 }
 \examples{
 mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)

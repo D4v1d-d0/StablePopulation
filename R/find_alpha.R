@@ -64,9 +64,9 @@ find_alphas <- function(beta, fertility_rates, tol = 1e-22) {
   # Check if the signs are opposite
   if (f_lower * f_upper < 0) {
     # If the signs are opposite, use uniroot
-    resulta <- uniroot(alpha_objective, interval = c(lower, upper), beta = beta,
+    root_result <- uniroot(alpha_objective, interval = c(lower, upper), beta = beta,
                        fertility_rates = fertility_rates, tol = tol)
-    return(resulta$root)  # Return the alpha value found
+    return(root_result$root)  # Return the alpha value found
   } else {
     # If the signs are the same, return the value closest to 0
     if (abs(f_lower) < abs(f_upper)) {

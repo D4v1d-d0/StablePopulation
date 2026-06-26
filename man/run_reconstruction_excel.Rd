@@ -6,86 +6,99 @@
 \usage{
 run_reconstruction_excel(
   input_file,
-  output_file,
+  output_file = NULL,
   mode = c("auto", "scan", "select"),
   beta_values = seq(0.05, 3, by = 0.05),
   terminal_window = NULL,
   sheets = NULL,
+  skip_non_data = TRUE,
+  age_column = NULL,
+  fertility_column = NULL,
+  survivorship_column = NULL,
   tol = 1e-12,
   r0_tolerance = 1e-08
 )
 }
 \arguments{
-\item{input_file}{Path to an existing \code{.xlsx} workbook. / Ruta a un libro
-\code{.xlsx} existente.}
+\item{input_file}{Path to an existing Excel workbook.}
 
-\item{output_file}{Path for the results \code{.xlsx} workbook. / Ruta del libro
-\code{.xlsx} de resultados.}
+\item{output_file}{Optional path for the results workbook. When omitted,
+creates \code{<input name>_StablePopulation.xlsx} beside the input file.}
 
-\item{mode}{One of \code{"auto"}, \code{"scan"}, or \code{"select"}.
-With \code{"auto"}, the function selects \code{"select"} when an observed
-survivorship column is present and otherwise uses \code{"scan"}. / Uno de
-\code{"auto"}, \code{"scan"} o \code{"select"}. Con \code{"auto"}, la
-funcion selecciona \code{"select"} cuando existe una columna de
-supervivencia observada y, en caso contrario, usa \code{"scan"}.}
+\item{mode}{One of \code{"auto"}, \code{"scan"}, or \code{"select"}. With
+\code{"auto"}, the function uses \code{"select"} when an observed
+survivorship column is present and \code{"scan"} otherwise.}
 
-\item{beta_values}{Positive Weibull shape values to scan. / Valores positivos
-del parametro de forma Weibull que se exploraran.}
+\item{beta_values}{Positive Weibull shape values to scan.}
 
-\item{terminal_window}{Optional terminal window for the scan route. /
-Ventana terminal opcional para la via de barrido.}
+\item{terminal_window}{Optional terminal-survivorship window for the scan
+route.}
 
 \item{sheets}{Optional workbook sheet names to process. By default, all
-sheets are read. / Nombres opcionales de hojas del libro que se procesaran.
-Por defecto, se leen todas las hojas.}
+sheets are inspected.}
 
-\item{tol}{Positive numerical tolerance for root finding. / Tolerancia
-numerica positiva para la busqueda de la raiz.}
+\item{skip_non_data}{Logical. When \code{TRUE} and \code{sheets} is omitted,
+sheets without a recognized fertility column are recorded as skipped instead
+of stopping the run.}
+
+\item{age_column}{Optional explicit age-column name.}
+
+\item{fertility_column}{Optional explicit fertility-column name.}
+
+\item{survivorship_column}{Optional explicit observed-survivorship column
+name.}
+
+\item{tol}{Positive numerical tolerance for root finding.}
 
 \item{r0_tolerance}{Positive numerical tolerance for the \eqn{R_0 = 1}
-check. / Tolerancia numerica positiva para la comprobacion \eqn{R_0 = 1}.}
+check.}
 }
 \value{
 Invisibly, a list with \code{output_file}, one result object per
-input sheet, and a metadata table. / Invisiblemente, una lista con
-\code{output_file}, un objeto de resultado por hoja de entrada y una tabla
-de metadatos.
+processed input sheet, and a metadata table that also records skipped
+sheets.
 }
 \description{
-English: Reads one or more Excel sheets with a required fertility column and
-an optional observed-survivorship column. It uses \code{scan_beta()} when
-no observed \eqn{l_x} is supplied and \code{select_beta()} when it is.
-This is the extended Excel workflow introduced after the historical
-\code{run_analysis()} workflow; \code{run_analysis()} remains unchanged.
-
-Espanol: Lee una o varias hojas Excel con una columna obligatoria de
-fecundidad y una columna opcional de supervivencia observada. Usa
-\code{scan_beta()} cuando no se aporta \eqn{l_x} observado y
-\code{select_beta()} cuando se aporta. Este es el flujo Excel ampliado
-introducido despues del flujo historico \code{run_analysis()};
-\code{run_analysis()} permanece sin cambios.
+Reads one or more Excel sheets containing a fertility schedule and an
+optional observed-survivorship profile. It automatically selects the
+appropriate route, preserves user age labels in the output, creates a
+results workbook beside the input by default, and records skipped non-data
+sheets in metadata.
 }
 \details{
-Reconstruye perfiles de poblacion estable desde un libro Excel
+Fertility aliases include \code{mx}, \code{m_x}, \code{fertility},
+\code{fertility_rates}, \code{fecundity}, \code{fecundidad},
+\code{tasa_fecundidad}, and \code{tasa_de_fecundidad}. Observed-survivorship
+aliases include \code{lx}, \code{l_x}, \code{lx_observed},
+\code{l_x_observed}, \code{survivorship}, \code{survival},
+\code{supervivencia}, and \code{supervivencia_observada}. Age aliases include
+\code{age}, \code{edad}, \code{age_class}, and \code{clase_edad}.
 
-Accepted fertility-column names are \code{mx}, \code{fertility_rates}, and
-\code{fertility}. Accepted observed-survivorship names are
-\code{lx_observed}, \code{lx}, and \code{survivorship}. An optional
-\code{age} column is treated only as an input label: calculations always use
-internal consecutive ages \code{0, 1, ..., n - 1}. /
-Los nombres admitidos para la columna de fecundidad son \code{mx},
-\code{fertility_rates} y \code{fertility}. Los nombres admitidos para la
-supervivencia observada son \code{lx_observed}, \code{lx} y
-\code{survivorship}. Una columna \code{age} opcional se trata solo como
-etiqueta de entrada: los calculos siempre usan edades internas consecutivas
-\code{0, 1, ..., n - 1}.
+A recognized age column is retained as an output label, whereas all
+calculations use the internal consecutive class index \code{0, 1, ..., n - 1}.
+Fully blank rows are ignored. Missing or non-numeric fertility values inside a
+data table stop the run with the affected Excel row numbers; they are never
+silently removed.
+
+With a selected profile, the output includes the derived demographic
+quantities \code{R}, \code{D}, \code{D_relative}, and \code{B}. With a scan
+route, the output includes all candidate profiles and, when a terminal window
+is supplied, the terminal-admissible candidates and their first and last
+profiles.
 }
 \examples{
 \dontrun{
+# Creates demography_StablePopulation.xlsx beside demography.xlsx
+run_reconstruction_excel("demography.xlsx")
+
+# Use explicit column names when an input workbook has custom headings.
 run_reconstruction_excel(
   input_file = "demography.xlsx",
-  output_file = "reconstruction_results.xlsx",
-  mode = "auto"
+  output_file = "results.xlsx",
+  sheets = "Ovis_dalli",
+  age_column = "Age class",
+  fertility_column = "Female fertility",
+  survivorship_column = "Observed survivorship"
 )
 }
 
