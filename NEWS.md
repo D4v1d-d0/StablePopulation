@@ -12,6 +12,8 @@ Development version prepared during the UCM doctoral stage.
   output workbook per worksheet/species.
 - Adds `run_reconstruction_excel()` as a separate extended Excel workflow for
   beta scanning, observed-survivorship selection, and terminal-window scenarios.
+  When called without `input_file` in an interactive R session, it opens the
+  operating-system file chooser.
 - Adds `reconstruct_population()` for one constrained Weibull reconstruction
   under `R0 = 1`.
 - Adds `scan_beta()` to generate and diagnose candidate Weibull profiles under

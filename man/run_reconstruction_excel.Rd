@@ -5,7 +5,7 @@
 \title{Reconstruct stable-population profiles from an Excel workbook}
 \usage{
 run_reconstruction_excel(
-  input_file,
+  input_file = NULL,
   output_file = NULL,
   mode = c("auto", "scan", "select"),
   beta_values = seq(0.05, 3, by = 0.05),
@@ -20,7 +20,9 @@ run_reconstruction_excel(
 )
 }
 \arguments{
-\item{input_file}{Path to an existing Excel workbook.}
+\item{input_file}{Optional path to an existing Excel workbook. When omitted or
+\code{NULL} in an interactive R session, a file chooser opens. It must be
+supplied in non-interactive use.}
 
 \item{output_file}{Optional path for the results workbook. When omitted,
 creates \code{<input name>_StablePopulation.xlsx} beside the input file.}
@@ -88,6 +90,11 @@ profiles.
 }
 \examples{
 \dontrun{
+# Opens a file chooser in an interactive R session.
+if (interactive()) {
+  run_reconstruction_excel()
+}
+
 # Creates demography_StablePopulation.xlsx beside demography.xlsx
 run_reconstruction_excel("demography.xlsx")
 
