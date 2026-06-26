@@ -4,6 +4,8 @@
 
 Development version prepared during the UCM doctoral stage.
 
+- Standardizes source comments, user-facing messages, and package documentation in English.
+
 - Restores and preserves `run_analysis()` exactly as the historical
   StablePopulation 1.0.3 Excel workflow: no function arguments, one fixed
   beta value in cell C2 of each worksheet, fertility rates in column B, and one

@@ -1,42 +1,24 @@
 #' Select a constrained Weibull beta using observed survivorship
 #'
-#' Selecciona un beta Weibull restringido usando supervivencia observada
-#'
 #' @description
-#' English: Generates Weibull survivorship candidates under \eqn{R_0 = 1} and
-#' selects the candidate with the smallest RMSE against an observed
-#' survivorship profile \eqn{l_x}. It is not a free two-parameter Weibull fit:
-#' \eqn{\alpha} remains determined by the fertility schedule and the stability
-#' constraint for every candidate \eqn{\beta}.
-#'
-#' Espanol: Genera candidatos Weibull de supervivencia bajo \eqn{R_0 = 1} y
-#' selecciona el candidato con menor RMSE frente a un perfil observado de
-#' supervivencia \eqn{l_x}. No es un ajuste Weibull libre de dos parametros:
-#' \eqn{\alpha} sigue estando determinado por el calendario de fecundidad y la
-#' restriccion de estabilidad para cada \eqn{\beta} candidato.
+#' Generates Weibull survivorship candidates under \eqn{R_0 = 1} and selects
+#' the candidate with the smallest RMSE against an observed survivorship profile
+#' \eqn{l_x}. It is not a free two-parameter Weibull fit: \eqn{\alpha} remains
+#' determined by the fertility schedule and the stability constraint for every
+#' candidate \eqn{\beta}.
 #'
 #' @param fertility_rates Numeric vector of non-negative age-specific fertility
-#'   rates. / Vector numerico de tasas de fecundidad especificas por edad no
-#'   negativas.
+#'   rates.
 #' @param lx_observed Numeric observed survivorship profile. It must have the
 #'   same length as \code{fertility_rates}, start at one, and be non-increasing.
-#'   / Perfil numerico observado de supervivencia. Debe tener la misma longitud
-#'   que \code{fertility_rates}, comenzar en uno y ser no creciente.
-#' @param beta_values Positive Weibull shape values to scan. / Valores positivos
-#'   del parametro de forma Weibull que se exploraran.
-#' @param tol Positive numerical tolerance for root finding. / Tolerancia
-#'   numerica positiva para la busqueda de la raiz.
+#' @param beta_values Positive Weibull shape values to scan.
+#' @param tol Positive numerical tolerance for root finding.
 #' @param r0_tolerance Positive tolerance for the numerical \eqn{R_0} check.
-#'   / Tolerancia positiva para la comprobacion numerica de \eqn{R_0}.
 #' @param lx_tolerance Positive tolerance used to validate \code{lx_observed}.
-#'   / Tolerancia positiva utilizada para validar \code{lx_observed}.
 #'
 #' @return A list of class \code{"stable_population_selection"} containing the
 #'   selected parameters, the selected profile, the full candidate table, and
-#'   the underlying [scan_beta()] result. / Una lista de clase
-#'   \code{"stable_population_selection"} con los parametros seleccionados, el
-#'   perfil seleccionado, la tabla completa de candidatos y el resultado de
-#'   [scan_beta()] subyacente.
+#'   the underlying [scan_beta()] result.
 #'
 #' @examples
 #' mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
@@ -56,7 +38,6 @@ select_beta <- function(
   lx_tolerance = 1e-8
 ) {
   # Validate data before starting the scan.
-  # Validar los datos antes de iniciar el barrido.
   fertility_rates <- validate_fertility_rates(fertility_rates)
   lx_tolerance <- validate_positive_scalar(lx_tolerance, "lx_tolerance")
   lx_observed <- validate_lx_observed(
@@ -78,13 +59,11 @@ select_beta <- function(
   results$RMSE <- NA_real_
   results$selected <- FALSE
 
-  # Compare only profiles that actually satisfy the requested R0 tolerance.
-  # Comparar solo perfiles que cumplen realmente la tolerancia R0 solicitada.
+  # Compare only profiles that satisfy the requested R0 tolerance.
   stable_index <- which(results$stable)
   if (length(stable_index) == 0L) {
     stop(
-      "No candidate beta produced a valid R0 = 1 profile. / ",
-      "Ningun beta candidato produjo un perfil valido con R0 = 1.",
+      "No candidate beta produced a valid R0 = 1 profile.",
       call. = FALSE
     )
   }
@@ -97,7 +76,6 @@ select_beta <- function(
   }
 
   # beta_values are sorted, so which.min resolves exact RMSE ties toward lower beta.
-  # beta_values esta ordenado, por lo que which.min resuelve empates exactos hacia beta menor.
   best_index <- stable_index[which.min(results$RMSE[stable_index])]
   results$selected[best_index] <- TRUE
 

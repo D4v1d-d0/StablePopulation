@@ -1,62 +1,38 @@
 #' Scan Weibull beta values under the stable-population constraint
 #'
-#' Explora valores beta Weibull bajo la restriccion de poblacion estable
-#'
 #' @description
-#' English: For every candidate \eqn{\beta}, calculates the corresponding
-#' \eqn{\alpha}, reconstructs a Weibull survivorship profile \eqn{l_x}, and
-#' checks whether the numerical result satisfies \eqn{R_0 = \sum_x l_xm_x = 1}.
-#'
-#' Espanol: Para cada \eqn{\beta} candidato, calcula el \eqn{\alpha}
-#' correspondiente, reconstruye un perfil Weibull de supervivencia \eqn{l_x}
-#' y comprueba si el resultado numerico satisface
-#' \eqn{R_0 = \sum_x l_xm_x = 1}.
+#' For every candidate \eqn{\beta}, calculates the corresponding \eqn{\alpha},
+#' reconstructs a Weibull survivorship profile \eqn{l_x}, and checks whether the
+#' numerical result satisfies \eqn{R_0 = \sum_x l_xm_x = 1}.
 #'
 #' @details
 #' Age classes are always assigned internally as \code{0, 1, 2, ..., n - 1}.
 #' When \code{terminal_window} is supplied, the function marks the profiles
-#' whose final survivorship lies inside that inclusive window. This is the
-#' scenario route used when an observed \eqn{l_x} is not available; it does not
+#' whose final survivorship lies inside that inclusive window. This scenario
+#' route is useful when an observed \eqn{l_x} is not available; it does not
 #' select a single empirical optimum.
 #'
-#' Las clases de edad se asignan siempre internamente como
-#' \code{0, 1, 2, ..., n - 1}. Cuando se proporciona \code{terminal_window},
-#' la funcion marca los perfiles cuya supervivencia final pertenece a esa ventana
-#' inclusiva. Esta es la via de escenarios usada cuando no se dispone de un
-#' \eqn{l_x} observado; no selecciona un unico optimo empirico.
-#'
 #' @param fertility_rates Numeric vector of non-negative age-specific fertility
-#'   rates. / Vector numerico de tasas de fecundidad especificas por edad no
-#'   negativas.
-#' @param beta_values Positive Weibull shape values to scan. / Valores positivos
-#'   del parametro de forma Weibull que se exploraran.
-#' @param tol Positive numerical tolerance for root finding. / Tolerancia
-#'   numerica positiva para la busqueda de la raiz.
+#'   rates.
+#' @param beta_values Positive Weibull shape values to scan.
+#' @param tol Positive numerical tolerance for root finding.
 #' @param r0_tolerance Positive tolerance for the numerical \eqn{R_0} check.
-#'   / Tolerancia positiva para la comprobacion numerica de \eqn{R_0}.
 #' @param terminal_window Optional numeric vector \code{c(lower, upper)} in
 #'   \code{[0, 1]}. A stable profile is terminally admissible when its final
-#'   \eqn{l_x} lies in this inclusive interval. Default: \code{NULL}. /
-#'   Vector numerico opcional \code{c(inferior, superior)} en \code{[0, 1]}.
-#'   Un perfil estable es terminalmente admisible cuando su \eqn{l_x} final
-#'   pertenece a este intervalo inclusivo. Por defecto: \code{NULL}.
+#'   \eqn{l_x} lies in this inclusive interval. Default: \code{NULL}.
 #'
 #' @return A list of class \code{"stable_population_scan"}. Its main elements
 #'   are \code{summary}, \code{profiles}, \code{admissible_summary},
 #'   \code{profiles_admissible}, and, when a terminal window is active,
-#'   \code{terminal_extremes}. / Una lista de clase
-#'   \code{"stable_population_scan"}. Sus elementos principales son
-#'   \code{summary}, \code{profiles}, \code{admissible_summary},
-#'   \code{profiles_admissible} y, cuando la ventana terminal esta activa,
 #'   \code{terminal_extremes}.
 #'
 #' @examples
 #' mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
 #'
-#' # All stable candidate profiles / Todos los perfiles candidatos estables
+#' # All stable candidate profiles
 #' scan <- scan_beta(mx, beta_values = seq(0.05, 1.50, by = 0.05))
 #'
-#' # Scenario route without observed lx / Via de escenarios sin lx observado
+#' # Scenario route without observed lx
 #' terminal_scan <- scan_beta(
 #'   mx,
 #'   beta_values = seq(0.05, 1.50, by = 0.05),
@@ -72,8 +48,7 @@ scan_beta <- function(
   r0_tolerance = 1e-8,
   terminal_window = NULL
 ) {
-  # Validate inputs once and reuse the validated objects throughout the sweep.
-  # Validar los datos una sola vez y reutilizarlos durante todo el barrido.
+  # Validate inputs once and reuse the validated objects throughout the scan.
   fertility_rates <- validate_fertility_rates(fertility_rates)
   beta_values <- validate_beta_values(beta_values)
   tol <- validate_positive_scalar(tol, "tol")
@@ -85,7 +60,6 @@ scan_beta <- function(
   n_beta <- length(beta_values)
 
   # Use readable and unique profile column names.
-  # Usar nombres de columna de perfiles legibles y unicos.
   beta_labels <- make.unique(paste0(
     "beta_",
     formatC(beta_values, format = "fg", digits = 10, flag = "#")
@@ -112,7 +86,6 @@ scan_beta <- function(
   )
 
   # Build every candidate profile. A failed beta is recorded rather than fatal.
-  # Construir cada perfil candidato. Un beta fallido se registra y no detiene el barrido.
   for (index in seq_along(beta_values)) {
     beta <- beta_values[index]
 
@@ -145,7 +118,6 @@ scan_beta <- function(
   }
 
   # With no terminal window, every numerically stable profile is admissible.
-  # Sin ventana terminal, todo perfil numericamente estable es admisible.
   if (is.null(terminal_window)) {
     summary_table$admissible <- summary_table$stable
   } else {
@@ -161,7 +133,6 @@ scan_beta <- function(
   admissible_summary <- summary_table[admissible_index, , drop = FALSE]
 
   # Build the first and last admissible profiles in beta order, matching MATLAB.
-  # Construir los perfiles admisibles primero y ultimo por orden beta, como MATLAB.
   build_terminal_candidate <- function(index) {
     list(
       beta = summary_table$beta[index],
@@ -187,11 +158,9 @@ scan_beta <- function(
   }
 
   # Make an empty terminal selection explicit rather than silently ambiguous.
-  # Hacer explicita una seleccion terminal vacia en lugar de dejarla ambigua.
   if (!is.null(terminal_window) && length(admissible_index) == 0L) {
     warning(
-      "No stable profile satisfies the terminal window; revise the age range, beta range, or terminal criterion. / ",
-      "Ningun perfil estable satisface la ventana terminal; revise el rango de edad, beta o el criterio terminal.",
+      "No stable profile satisfies the terminal window; revise the age range, beta range, or terminal criterion.",
       call. = FALSE
     )
   }

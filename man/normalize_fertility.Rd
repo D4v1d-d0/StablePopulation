@@ -7,42 +7,28 @@
 normalize_fertility(fertility_rates, lx_reference, tolerance = 1e-08)
 }
 \arguments{
-\item{fertility_rates}{Numeric vector of age-specific fertility rates. /
-Vector numerico de tasas de fecundidad especificas por edad.}
+\item{fertility_rates}{Numeric vector of age-specific fertility rates.}
 
 \item{lx_reference}{Numeric reference survivorship profile. It must have the
-same length as \code{fertility_rates}. / Perfil numerico de supervivencia
-de referencia. Debe tener la misma longitud que \code{fertility_rates}.}
+same length as \code{fertility_rates}.}
 
 \item{tolerance}{Positive numerical tolerance used to validate
-\code{lx_reference}. / Tolerancia numerica positiva usada para validar
 \code{lx_reference}.}
 }
 \value{
 A list of class \code{"stable_population_normalized_fertility"}
 containing the original fertility schedule, the normalized schedule,
-\code{R0_reference}, the scaling factor, and a numerical check. /
-Una lista de clase \code{"stable_population_normalized_fertility"} con
-el calendario original, el calendario normalizado, \code{R0_reference},
-el factor de escala y una comprobacion numerica.
+\code{R0_reference}, the scaling factor, and a numerical check.
 }
 \description{
-English: Divides an age-specific fertility schedule by the net replacement
-calculated from a reference survivorship profile. The returned schedule
-satisfies \eqn{\sum_x l_x m_x = 1} for that reference profile.
-
-Espanol: Divide un calendario de fecundidad especifica por edad por el
-reemplazo neto calculado a partir de un perfil de supervivencia de referencia.
-El calendario devuelto satisface \eqn{\sum_x l_x m_x = 1} para ese perfil.
+Divides an age-specific fertility schedule by the net replacement calculated
+from a reference survivorship profile. The returned schedule satisfies
+\eqn{\sum_x l_x m_x = 1} for that reference profile.
 }
 \details{
-Normaliza la fecundidad usando un perfil de supervivencia de referencia
-
 This helper prepares fertility data before they enter a reconstruction route
-that fixes \eqn{R_0 = 1}. It does not change the internal demographic rule
-of the package. / Esta funcion auxiliar prepara las fecundidades antes de
-que entren en una via de reconstruccion que fija \eqn{R_0 = 1}. No cambia
-la regla demografica interna del paquete.
+that fixes \eqn{R_0 = 1}. It does not change the package's internal
+demographic rule.
 }
 \examples{
 mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)

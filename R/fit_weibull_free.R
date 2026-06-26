@@ -1,15 +1,9 @@
 #' Fit a free two-parameter Weibull survivorship model
 #'
-#' Ajusta un modelo Weibull libre de dos parametros a un perfil de supervivencia
-#'
 #' @description
-#' English: Jointly estimates the Weibull scale parameter \eqn{\alpha} and
-#' shape parameter \eqn{\beta} from an observed survivorship profile by
-#' minimising MSE. It does not impose \eqn{\sum_x l_xm_x = 1}.
-#'
-#' Espanol: Estima conjuntamente el parametro de escala Weibull \eqn{\alpha}
-#' y el parametro de forma \eqn{\beta} a partir de un perfil de supervivencia
-#' observado minimizando el MSE. No impone \eqn{\sum_x l_xm_x = 1}.
+#' Jointly estimates the Weibull scale parameter \eqn{\alpha} and shape
+#' parameter \eqn{\beta} from an observed survivorship profile by minimizing
+#' MSE. It does not impose \eqn{\sum_x l_xm_x = 1}.
 #'
 #' @details
 #' This function is a reference comparison, not the default StablePopulation
@@ -17,35 +11,19 @@
 #' free. If \code{fertility_rates} are supplied, they are used only to report
 #' the \eqn{R_0} implied by the fitted free profile.
 #'
-#' Esta funcion es una comparacion de referencia, no la via predeterminada de
-#' reconstruccion de StablePopulation. A diferencia de [select_beta()], ambos
-#' parametros son libres. Si se proporcionan \code{fertility_rates}, se usan
-#' unicamente para informar del \eqn{R_0} implicito en el perfil libre ajustado.
-#'
-#' @param lx_observed Numeric observed survivorship profile. / Perfil numerico
-#'   observado de supervivencia.
+#' @param lx_observed Numeric observed survivorship profile.
 #' @param fertility_rates Optional fertility schedule of the same length as
-#'   \code{lx_observed}. / Calendario de fecundidad opcional de la misma
-#'   longitud que \code{lx_observed}.
-#' @param start_alpha Optional positive starting value for \eqn{\alpha}. /
-#'   Valor inicial positivo opcional para \eqn{\alpha}.
-#' @param start_beta Optional positive starting value for \eqn{\beta}. /
-#'   Valor inicial positivo opcional para \eqn{\beta}.
-#' @param alpha_bounds Positive lower and upper bounds for \eqn{\alpha}. /
-#'   Limites positivo inferior y superior para \eqn{\alpha}.
-#' @param beta_bounds Positive lower and upper bounds for \eqn{\beta}. /
-#'   Limites positivo inferior y superior para \eqn{\beta}.
-#' @param control Optional list passed to [stats::optim()]. / Lista opcional
-#'   pasada a [stats::optim()].
+#'   \code{lx_observed}.
+#' @param start_alpha Optional positive starting value for \eqn{\alpha}.
+#' @param start_beta Optional positive starting value for \eqn{\beta}.
+#' @param alpha_bounds Positive lower and upper bounds for \eqn{\alpha}.
+#' @param beta_bounds Positive lower and upper bounds for \eqn{\beta}.
+#' @param control Optional list passed to [stats::optim()].
 #' @param lx_tolerance Positive tolerance used to validate \code{lx_observed}.
-#'   / Tolerancia positiva utilizada para validar \code{lx_observed}.
 #'
 #' @return A list of class \code{"stable_population_free_fit"} containing the
-#'   free estimates, the fitted profile, error measures, all optimisation starts,
-#'   and \eqn{R_0} if fertility rates are supplied. / Una lista de clase
-#'   \code{"stable_population_free_fit"} con las estimaciones libres, el perfil
-#'   ajustado, medidas de error, todos los arranques de optimizacion y \eqn{R_0}
-#'   si se suministran tasas de fecundidad.
+#'   free estimates, the fitted profile, error measures, all optimization starts,
+#'   and \eqn{R_0} if fertility rates are supplied.
 #'
 #' @examples
 #' lx_observed <- c(1, 0.92, 0.78, 0.57, 0.33, 0.12)
@@ -65,7 +43,6 @@ fit_weibull_free <- function(
   lx_tolerance = 1e-8
 ) {
   # Validate the observed profile and optional fertility schedule.
-  # Validar el perfil observado y el calendario de fecundidad opcional.
   lx_tolerance <- validate_positive_scalar(lx_tolerance, "lx_tolerance")
   lx_observed <- validate_lx_observed(
     lx_observed = lx_observed,
@@ -76,8 +53,7 @@ fit_weibull_free <- function(
     fertility_rates <- validate_fertility_rates(fertility_rates)
     if (length(fertility_rates) != length(lx_observed)) {
       stop(
-        "'fertility_rates' must have the same length as 'lx_observed'. / ",
-        "'fertility_rates' debe tener la misma longitud que 'lx_observed'.",
+        "'fertility_rates' must have the same length as 'lx_observed'.",
         call. = FALSE
       )
     }
@@ -87,10 +63,7 @@ fit_weibull_free <- function(
   beta_bounds <- validate_positive_bounds(beta_bounds, "beta_bounds")
 
   if (!is.list(control)) {
-    stop(
-      "'control' must be a list. / 'control' debe ser una lista.",
-      call. = FALSE
-    )
+    stop("'control' must be a list.", call. = FALSE)
   }
 
   if (!is.null(start_alpha)) {
@@ -103,7 +76,6 @@ fit_weibull_free <- function(
   age <- seq.int(0L, length(lx_observed) - 1L)
 
   # Build a data-driven default alpha start from the first l_x below exp(-1).
-  # Construir un inicio alpha basado en el primer l_x por debajo de exp(-1).
   crossing <- which(lx_observed[-1L] <= exp(-1))
   default_alpha <- if (length(crossing) > 0L) {
     age[crossing[1L] + 1L]
@@ -113,7 +85,6 @@ fit_weibull_free <- function(
   default_alpha <- min(max(default_alpha, alpha_bounds[1L]), alpha_bounds[2L])
 
   # Multiple starts make the free reference fit less dependent on one initial guess.
-  # Los arranques multiples hacen que el ajuste libre dependa menos de una sola semilla.
   alpha_starts <- unique(c(
     default_alpha,
     sqrt(alpha_bounds[1L] * alpha_bounds[2L]),
@@ -132,8 +103,7 @@ fit_weibull_free <- function(
 
   if (length(alpha_starts) == 0L || length(beta_starts) == 0L) {
     stop(
-      "No valid optimisation starts remained within the supplied bounds. / ",
-      "No quedaron arranques de optimizacion validos dentro de los limites suministrados.",
+      "No valid optimization starts remained within the supplied bounds.",
       call. = FALSE
     )
   }
@@ -145,8 +115,7 @@ fit_weibull_free <- function(
     stringsAsFactors = FALSE
   )
 
-  # Optimise on the log scale to keep alpha and beta strictly positive.
-  # Optimizar en escala logaritmica para mantener alpha y beta estrictamente positivos.
+  # Optimize on the log scale to keep alpha and beta strictly positive.
   objective <- function(log_parameters) {
     alpha <- exp(log_parameters[1L])
     beta <- exp(log_parameters[2L])
@@ -204,14 +173,12 @@ fit_weibull_free <- function(
   finite_attempts <- which(is.finite(attempts$MSE))
   if (length(finite_attempts) == 0L) {
     stop(
-      "The free Weibull optimiser did not return a finite fit. / ",
-      "El optimizador Weibull libre no devolvio un ajuste finito.",
+      "The free Weibull optimizer did not return a finite fit.",
       call. = FALSE
     )
   }
 
   # Prefer converged fits when available; otherwise retain the best finite attempt.
-  # Preferir ajustes convergidos cuando existan; si no, conservar el mejor intento finito.
   converged_attempts <- finite_attempts[attempts$convergence[finite_attempts] == 0L]
   candidate_attempts <- if (length(converged_attempts) > 0L) {
     converged_attempts

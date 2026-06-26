@@ -8,27 +8,16 @@ validate_fertility_rates(fertility_rates, min_length = 2L)
 }
 \arguments{
 \item{fertility_rates}{Numeric vector of non-negative age-specific fertility
-rates. / Vector numerico de tasas de fecundidad especificas por edad no
-negativas.}
+rates.}
 
-\item{min_length}{Minimum permitted number of age classes. / Numero minimo
-permitido de clases de edad.}
+\item{min_length}{Minimum permitted number of age classes.}
 }
 \value{
-A validated numeric vector. / Un vector numerico validado.
+A validated numeric vector.
 }
 \description{
-English: Checks that an age-specific fertility schedule is a finite,
-one-dimensional, non-negative numeric vector with at least one positive
-value. StablePopulation interprets positions as consecutive age classes
-0, 1, 2, ... .
-
-Espanol: Comprueba que un calendario de fecundidad especifica por edad sea
-un vector numerico, unidimensional, finito y no negativo, con al menos un
-valor positivo. StablePopulation interpreta sus posiciones como clases de
-edad consecutivas 0, 1, 2, ... .
-}
-\details{
-Valida tasas de fecundidad especificas por edad
+Checks that an age-specific fertility schedule is a finite, non-negative,
+numeric vector with at least one positive value. StablePopulation assigns
+age classes internally as consecutive indices \code{0, 1, 2, ...}.
 }
 \keyword{internal}

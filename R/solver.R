@@ -1,10 +1,5 @@
-# Internal alpha solver used by the new StablePopulation workflow
-# Solucionador interno de alpha usado por el nuevo flujo de StablePopulation
-
-# Solve alpha under the R0 = 1 constraint without returning an endpoint as a root.
-# Resolver alpha bajo la restriccion R0 = 1 sin devolver un extremo como si fuera una raiz.
+# Internal alpha solver used by the extended StablePopulation workflow.
 # This helper is internal and intentionally not exported.
-# Esta funcion auxiliar es interna y deliberadamente no se exporta.
 solve_alpha <- function(
   beta,
   fertility_rates,
@@ -15,13 +10,11 @@ solve_alpha <- function(
   max_upper = 1e12
 ) {
   # Validate all scalar and vector inputs before solving.
-  # Validar todos los datos escalares y vectoriales antes de resolver.
   fertility_rates <- validate_fertility_rates(fertility_rates)
   beta <- validate_beta_values(beta)
   if (length(beta) != 1L) {
     stop(
-      "'beta' must contain exactly one positive value. / ",
-      "'beta' debe contener exactamente un valor positivo.",
+      "'beta' must contain exactly one positive value.",
       call. = FALSE
     )
   }
@@ -34,8 +27,7 @@ solve_alpha <- function(
 
   if (initial_upper <= lower || max_upper <= lower) {
     stop(
-      "The upper search bounds must be greater than 'lower'. / ",
-      "Los limites superiores de busqueda deben ser mayores que 'lower'.",
+      "The upper search bounds must be greater than 'lower'.",
       call. = FALSE
     )
   }
@@ -43,7 +35,6 @@ solve_alpha <- function(
   age <- seq.int(0L, length(fertility_rates) - 1L)
 
   # The demographic objective is monotone non-decreasing in alpha.
-  # El objetivo demografico es monotono no decreciente respecto a alpha.
   objective <- function(alpha) {
     lx <- weibull_survival(alpha = alpha, beta = beta, age = age)
     sum(lx * fertility_rates) - 1
@@ -59,8 +50,6 @@ solve_alpha <- function(
   }
 
   # A positive lower-bound objective means no interior alpha can lower R0 to 1.
-  # Un objetivo positivo en el limite inferior implica que ningun alpha interior
-  # puede reducir R0 hasta 1.
   if (f_lower > r0_tolerance) {
     return(list(
       alpha = NA_real_, R0 = f_lower + 1, residual = f_lower,
@@ -69,8 +58,7 @@ solve_alpha <- function(
     ))
   }
 
-  # Retain an explicit boundary solution only when it already meets the tolerance.
-  # Conservar una solucion explicita de borde solo cuando ya cumple la tolerancia.
+  # Retain a boundary solution only when it already meets the tolerance.
   if (abs(f_lower) <= r0_tolerance) {
     return(list(
       alpha = lower, R0 = f_lower + 1, residual = f_lower,
@@ -84,7 +72,6 @@ solve_alpha <- function(
   f_upper <- objective(upper)
 
   # Expand the upper bound until the sign changes or the maximum bound is reached.
-  # Ampliar el limite superior hasta que cambie el signo o se alcance el maximo.
   while (is.finite(f_upper) && f_upper < 0 && upper < max_upper) {
     next_upper <- min(upper * 10, max_upper)
     if (identical(next_upper, upper)) {
