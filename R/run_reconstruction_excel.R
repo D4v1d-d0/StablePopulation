@@ -133,6 +133,31 @@ default_reconstruction_output_file <- function(input_file) {
   file.path(input_directory, paste0(input_stem, "_StablePopulation.xlsx"))
 }
 
+# Open the operating-system file chooser for the interactive Excel workflow.
+choose_reconstruction_input_file <- function(is_interactive = interactive()) {
+  if (!isTRUE(is_interactive)) {
+    stop(
+      "'input_file' must be supplied when run_reconstruction_excel() is used non-interactively.",
+      call. = FALSE
+    )
+  }
+
+  selected_file <- tryCatch(
+    base::file.choose(new = FALSE),
+    error = function(e) NA_character_
+  )
+
+  if (!is.character(selected_file) || length(selected_file) != 1L ||
+      is.na(selected_file) || !nzchar(trimws(selected_file))) {
+    stop(
+      "No input workbook was selected.",
+      call. = FALSE
+    )
+  }
+
+  selected_file
+}
+
 # Write an output table with basic spreadsheet usability settings.
 write_reconstruction_table <- function(workbook, sheet_name, data) {
   openxlsx::addWorksheet(workbook, sheet_name)
@@ -392,7 +417,9 @@ prepare_reconstruction_sheet <- function(
 #' results workbook beside the input by default, and records skipped non-data
 #' sheets in metadata.
 #'
-#' @param input_file Path to an existing Excel workbook.
+#' @param input_file Optional path to an existing Excel workbook. When omitted or
+#'   \code{NULL} in an interactive R session, a file chooser opens. It must be
+#'   supplied in non-interactive use.
 #' @param output_file Optional path for the results workbook. When omitted,
 #'   creates \code{<input name>_StablePopulation.xlsx} beside the input file.
 #' @param mode One of \code{"auto"}, \code{"scan"}, or \code{"select"}. With
@@ -441,6 +468,11 @@ prepare_reconstruction_sheet <- function(
 #'
 #' @examples
 #' \dontrun{
+#' # Opens a file chooser in an interactive R session.
+#' if (interactive()) {
+#'   run_reconstruction_excel()
+#' }
+#'
 #' # Creates demography_StablePopulation.xlsx beside demography.xlsx
 #' run_reconstruction_excel("demography.xlsx")
 #'
@@ -457,7 +489,7 @@ prepare_reconstruction_sheet <- function(
 #'
 #' @export
 run_reconstruction_excel <- function(
-  input_file,
+  input_file = NULL,
   output_file = NULL,
   mode = c("auto", "scan", "select"),
   beta_values = seq(0.05, 3.00, by = 0.05),
@@ -472,9 +504,20 @@ run_reconstruction_excel <- function(
 ) {
   mode <- match.arg(mode)
 
+  if (is.null(input_file)) {
+    input_file <- choose_reconstruction_input_file()
+  }
+
   if (!is.character(input_file) || length(input_file) != 1L ||
-      is.na(input_file) || !nzchar(trimws(input_file)) ||
-      !file.exists(input_file)) {
+      is.na(input_file) || !nzchar(trimws(input_file))) {
+    stop(
+      "'input_file' must identify an existing file.",
+      call. = FALSE
+    )
+  }
+  input_file <- trimws(input_file)
+
+  if (!file.exists(input_file)) {
     stop(
       "'input_file' must identify an existing file.",
       call. = FALSE

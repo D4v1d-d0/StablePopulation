@@ -89,3 +89,10 @@ test_that("run_reconstruction_excel recognizes aliases, preserves age labels, an
   selected <- readxl::read_excel(expected_output, sheet = processed$profile_sheet)
   expect_identical(selected$age, c("0-1", "1-2", "2-3", "3-4", "4-5", "5-6"))
 })
+
+test_that("the interactive input helper fails clearly outside an interactive session", {
+  expect_error(
+    StablePopulation:::choose_reconstruction_input_file(is_interactive = FALSE),
+    "must be supplied when run_reconstruction_excel\\(\\) is used non-interactively"
+  )
+})

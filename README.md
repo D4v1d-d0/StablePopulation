@@ -144,7 +144,14 @@ profile, and `B` is conditional survival between consecutive classes.
 
 `run_reconstruction_excel()` is the extended interface for ordinary data
 workbooks. It reads one or more sheets, preserves an age column as an output
-label, and writes a separate results workbook. By default, the output is created
+label, and writes a separate results workbook. In an interactive R session, it
+can open the operating-system file chooser directly:
+
+```r
+run_reconstruction_excel()
+```
+
+You can also provide the path explicitly. By default, the output is created
 beside the input file:
 
 ```r
