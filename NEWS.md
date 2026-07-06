@@ -4,6 +4,16 @@
 
 Development version prepared during the UCM doctoral stage.
 
+- Redesigns `run_reconstruction_excel()` output workbooks. The default
+  `output_detail = "standard"` now creates `Overview` followed by one
+  `Result_<sheet>` worksheet per processed input sheet. It omits technical
+  metadata and diagnostic sheets. `output_detail = "full"` additionally
+  writes candidate and scan-profile sheets, followed by `Metadata` as the final
+  worksheet.
+- Prevents a scan route from presenting an arbitrary first beta as the result.
+  Scan results now state that no unique profile was selected and list the stable
+  or terminal-window-admissible scenarios instead.
+
 - Clarifies `run_analysis()` as a legacy source-tree workflow. Its historical
   interface and behavior are unchanged; `run_reconstruction_excel()` remains
   the recommended interface for installed-package and new-analysis use.

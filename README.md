@@ -151,17 +151,16 @@ profile, and `B` is conditional survival between consecutive classes.
 
 ## Extended Excel workflow
 
-`run_reconstruction_excel()` is the extended interface for ordinary data
-workbooks. It reads one or more sheets, preserves an age column as an output
-label, and writes a separate results workbook. In an interactive R session, it
-can open the operating-system file chooser directly:
+`run_reconstruction_excel()` is the recommended interface for ordinary data
+workbooks. In an interactive R session, the simplest use opens the operating-
+system file chooser:
 
 ```r
 run_reconstruction_excel()
 ```
 
-You can also provide the path explicitly. By default, the output is created
-beside the input file:
+You can also provide the workbook path explicitly. By default, the output is
+created beside the input file:
 
 ```r
 run_reconstruction_excel("demography.xlsx")
@@ -173,41 +172,20 @@ This creates:
 demography_StablePopulation.xlsx
 ```
 
-With `mode = "auto"`, a sheet with observed survivorship uses the `select`
-route. When observed survivorship is absent but the sheet contains one positive
-fixed beta value in a recognized `Beta` column, it uses the `fixed` route.
-Otherwise it uses the `scan` route. Fully blank rows are ignored, but missing or
-non-numeric fertility values inside a data table stop the run and report the
-affected Excel rows.
+### Automatic route selection
+
+With `mode = "auto"`, each input sheet follows one of these routes:
+
+| Available input | Route | Interpretation |
+|---|---|---|
+| Observed survivorship (`lx`) | `select` | Scans beta values and selects the constrained profile with the lowest RMSE. |
+| No `lx`, one positive `Beta` value | `fixed` | Reconstructs one profile using the supplied beta. |
+| Neither `lx` nor `Beta` | `scan` | Produces a family of constrained scenarios; it does not select an arbitrary profile. |
 
 Recognized headers are case-insensitive and tolerate spaces, hyphens, accents,
-underscores, units, and descriptive text. For example, the legacy headings
-`Age (years)`, `mx (Fertility Rate)`, and `lx (Survivorship)` are recognized
+underscores, units, and descriptive text. For example, `Age (years)`,
+`mx (Fertility Rate)`, `lx (Survivorship)`, and `Beta` are recognized
 automatically.
-
-Fertility aliases include:
-
-```text
-mx | m_x | fertility_rates | fertility | fecundity | fecundidad
-```
-
-Observed-survivorship aliases include:
-
-```text
-lx_observed | l_x_observed | lx | l_x | survivorship | survival | supervivencia
-```
-
-Age aliases include:
-
-```text
-age | edad | age_class | clase_edad
-```
-
-Fixed-beta aliases include:
-
-```text
-beta | weibull_beta | shape | shape_parameter
-```
 
 For custom headings, specify the columns explicitly:
 
@@ -223,17 +201,57 @@ run_reconstruction_excel(
 )
 ```
 
-The output workbook includes a `README` sheet, `metadata_run`, and one or more
-sheets per processed input sheet:
+### Output workbooks
 
-| Pattern | Contents |
-|---|---|
-| `summary_<input sheet>` | Candidate beta values and numerical diagnostics. |
-| `profiles_<input sheet>` | All reconstructed survivorship candidates for a scan route. |
-| `selected_<input sheet>` | The selected profile, observed and reconstructed survivorship, and derived `R`, `D`, `D_relative`, and `B`. |
-| `fixed_<input sheet>` | A profile reconstructed from a fixed beta value supplied in the input sheet. |
-| `admissible_<input sheet>` | Candidates retained by an optional terminal-survivorship window. |
-| `scenarios_<input sheet>` | First and last terminal-admissible profiles. |
+The default is deliberately concise:
+
+```r
+run_reconstruction_excel("demography.xlsx")
+# Equivalent to output_detail = "standard"
+```
+
+It creates, in this order:
+
+```text
+Overview
+Result_<input sheet 1>
+Result_<input sheet 2>
+...
+```
+
+`Overview` is the first worksheet. It records the input sheet, route, beta and
+alpha where a single profile exists, RMSE where applicable, the result-sheet
+name, and any note or skipped-sheet explanation. Every `Result_<...>` worksheet
+is intended for direct use. Selected and fixed-beta results contain age,
+fertility, observed survivorship when available, reconstructed survivorship,
+`R`, `D`, `D_relative`, and `B`.
+
+A scan result never selects the first beta merely for convenience. Its
+`Result_<...>` worksheet lists the stable candidates, or the candidates
+satisfying a requested terminal window, and explains why no unique profile is
+shown.
+
+For audit or method development, request the complete workbook:
+
+```r
+run_reconstruction_excel(
+  "demography.xlsx",
+  output_detail = "full"
+)
+```
+
+The full workbook contains:
+
+```text
+Overview
+Result_<input sheet>
+Candidates_<input sheet>   # select and scan routes
+Profiles_<input sheet>     # scan route only
+Metadata                   # always the last worksheet
+```
+
+`Metadata` is omitted from the standard workbook but is always returned
+invisibly by the function.
 
 ## Installation
 
