@@ -25,9 +25,9 @@ source-tree route documented for the CRAN release 1.0.3.
 
 - `run_analysis()` keeps its original no-argument interface and fixed-`beta`
   Excel layout as a legacy source-tree workflow.
-- `run_reconstruction_excel()` is the recommended Excel interface for beta
-  scanning, optional comparison with observed survivorship, and terminal-window
-  scenarios.
+- `run_reconstruction_excel()` is the recommended Excel interface for fixed
+  beta values supplied in a workbook, beta scanning, optional comparison with
+  observed survivorship, and terminal-window scenarios.
 
 The present development is linked primarily to the doctoral work of David
 Palacios-Morales at the Universidad Complutense de Madrid (UCM), while retaining
@@ -89,7 +89,7 @@ For all new analyses, use `run_reconstruction_excel()`.
 | `derive_demographic_profile()` | Derives stable structure `R`, exit-by-death profile `D`, relative `D`, and conditional survival `B`. |
 | `fit_weibull_free()` | Fits an unconstrained two-parameter Weibull reference model. |
 | `normalize_fertility()` | Rescales fertility relative to a reference `lx` so its `R0` equals 1. |
-| `run_reconstruction_excel()` | New Excel interface for scan and observed-survivorship routes. |
+| `run_reconstruction_excel()` | Excel interface for fixed-beta reconstruction, beta scanning, and observed-survivorship selection. |
 
 ## Two reconstruction routes
 
@@ -174,12 +174,18 @@ demography_StablePopulation.xlsx
 ```
 
 With `mode = "auto"`, a sheet with observed survivorship uses the `select`
-route; a sheet without it uses the `scan` route. Fully blank rows are ignored,
-but missing or non-numeric fertility values inside a data table stop the run and
-report the affected Excel rows.
+route. When observed survivorship is absent but the sheet contains one positive
+fixed beta value in a recognized `Beta` column, it uses the `fixed` route.
+Otherwise it uses the `scan` route. Fully blank rows are ignored, but missing or
+non-numeric fertility values inside a data table stop the run and report the
+affected Excel rows.
 
 Recognized headers are case-insensitive and tolerate spaces, hyphens, accents,
-and underscores. Fertility aliases include:
+underscores, units, and descriptive text. For example, the legacy headings
+`Age (years)`, `mx (Fertility Rate)`, and `lx (Survivorship)` are recognized
+automatically.
+
+Fertility aliases include:
 
 ```text
 mx | m_x | fertility_rates | fertility | fecundity | fecundidad
@@ -197,6 +203,12 @@ Age aliases include:
 age | edad | age_class | clase_edad
 ```
 
+Fixed-beta aliases include:
+
+```text
+beta | weibull_beta | shape | shape_parameter
+```
+
 For custom headings, specify the columns explicitly:
 
 ```r
@@ -206,7 +218,8 @@ run_reconstruction_excel(
   sheets = "Ovis_dalli",
   age_column = "Age class",
   fertility_column = "Female fertility",
-  survivorship_column = "Observed survivorship"
+  survivorship_column = "Observed survivorship",
+  beta_column = "Beta"
 )
 ```
 
@@ -218,6 +231,7 @@ sheets per processed input sheet:
 | `summary_<input sheet>` | Candidate beta values and numerical diagnostics. |
 | `profiles_<input sheet>` | All reconstructed survivorship candidates for a scan route. |
 | `selected_<input sheet>` | The selected profile, observed and reconstructed survivorship, and derived `R`, `D`, `D_relative`, and `B`. |
+| `fixed_<input sheet>` | A profile reconstructed from a fixed beta value supplied in the input sheet. |
 | `admissible_<input sheet>` | Candidates retained by an optional terminal-survivorship window. |
 | `scenarios_<input sheet>` | First and last terminal-admissible profiles. |
 

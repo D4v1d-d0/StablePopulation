@@ -96,3 +96,65 @@ test_that("the interactive input helper fails clearly outside an interactive ses
     "must be supplied when run_reconstruction_excel\\(\\) is used non-interactively"
   )
 })
+
+
+test_that("run_reconstruction_excel recognizes decorated legacy headers and fixed beta input", {
+  input_file <- tempfile(fileext = ".xlsx")
+  output_file <- tempfile(fileext = ".xlsx")
+
+  workbook <- openxlsx::createWorkbook()
+
+  openxlsx::addWorksheet(workbook, "legacy_select")
+  openxlsx::writeData(
+    workbook,
+    "legacy_select",
+    data.frame(
+      "Age (years)" = 0:5,
+      "mx (Fertility Rate)" = c(0, 0, 0.30, 0.75, 0.60, 0.20),
+      "lx (Survivorship)" = c(1, 0.93, 0.82, 0.67, 0.41, 0.15),
+      "Beta" = c(0.70, rep(NA_real_, 5L)),
+      check.names = FALSE
+    )
+  )
+
+  openxlsx::addWorksheet(workbook, "legacy_fixed")
+  openxlsx::writeData(
+    workbook,
+    "legacy_fixed",
+    data.frame(
+      "Age (years)" = 0:5,
+      "mx (Fertility Rate)" = c(0, 0, 0.30, 0.75, 0.60, 0.20),
+      "Beta" = c(0.70, rep(NA_real_, 5L)),
+      check.names = FALSE
+    )
+  )
+
+  openxlsx::saveWorkbook(workbook, input_file, overwrite = TRUE)
+
+  result <- run_reconstruction_excel(
+    input_file = input_file,
+    output_file = output_file,
+    beta_values = c(0.5, 1)
+  )
+
+  selected <- result$metadata[result$metadata$sheet == "legacy_select", ]
+  fixed <- result$metadata[result$metadata$sheet == "legacy_fixed", ]
+
+  expect_identical(selected$route, "select")
+  expect_identical(selected$age_column, "Age (years)")
+  expect_identical(selected$fertility_column, "mx (Fertility Rate)")
+  expect_identical(selected$survivorship_column, "lx (Survivorship)")
+  expect_identical(selected$beta_column, "Beta")
+  expect_match(selected$note, "fixed beta input was not used")
+
+  expect_identical(fixed$route, "fixed")
+  expect_identical(fixed$age_column, "Age (years)")
+  expect_identical(fixed$fertility_column, "mx (Fertility Rate)")
+  expect_identical(fixed$beta_column, "Beta")
+  expect_equal(fixed$fixed_beta, 0.70)
+  expect_identical(fixed$n_beta, 1L)
+
+  fixed_output <- readxl::read_excel(output_file, sheet = fixed$profile_sheet)
+  expect_equal(fixed_output$lx_reconstructed[1L], 1)
+  expect_true(all(c("R", "D", "D_relative", "B") %in% names(fixed_output)))
+})
