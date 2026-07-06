@@ -7,7 +7,7 @@
 run_reconstruction_excel(
   input_file = NULL,
   output_file = NULL,
-  mode = c("auto", "scan", "select", "fixed"),
+  mode = c("auto", "scan", "select"),
   beta_values = seq(0.05, 3, by = 0.05),
   terminal_window = NULL,
   sheets = NULL,
@@ -15,9 +15,9 @@ run_reconstruction_excel(
   age_column = NULL,
   fertility_column = NULL,
   survivorship_column = NULL,
-  beta_column = NULL,
   tol = 1e-12,
-  r0_tolerance = 1e-08
+  r0_tolerance = 1e-08,
+  output_detail = c("standard", "full")
 )
 }
 \arguments{
@@ -28,11 +28,9 @@ supplied in non-interactive use.}
 \item{output_file}{Optional path for the results workbook. When omitted,
 creates \code{<input name>_StablePopulation.xlsx} beside the input file.}
 
-\item{mode}{One of \code{"auto"}, \code{"scan"}, \code{"select"}, or
-\code{"fixed"}. With \code{"auto"}, the function uses \code{"select"}
-when an observed-survivorship column is present, \code{"fixed"} when one
-fixed beta value is supplied in a recognized beta column, and
-\code{"scan"} otherwise.}
+\item{mode}{One of \code{"auto"}, \code{"scan"}, or \code{"select"}. With
+\code{"auto"}, the function uses \code{"select"} when an observed
+survivorship column is present and \code{"scan"} otherwise.}
 
 \item{beta_values}{Positive Weibull shape values to scan.}
 
@@ -53,13 +51,15 @@ of stopping the run.}
 \item{survivorship_column}{Optional explicit observed-survivorship column
 name.}
 
-\item{beta_column}{Optional explicit fixed-beta column name. A fixed-beta
-column may contain one positive value and blank cells below it.}
-
 \item{tol}{Positive numerical tolerance for root finding.}
 
 \item{r0_tolerance}{Positive numerical tolerance for the \eqn{R_0 = 1}
 check.}
+
+\item{output_detail}{One of \code{"standard"} or \code{"full"}. With
+\code{"standard"}, output sheets show only biologically relevant columns
+with descriptive headers. With \code{"full"}, all diagnostic columns are
+included.}
 }
 \value{
 Invisibly, a list with \code{output_file}, one result object per
@@ -74,16 +74,13 @@ results workbook beside the input by default, and records skipped non-data
 sheets in metadata.
 }
 \details{
-Headings are matched case-insensitively and may include descriptive text or
-units. For example, \code{Age (years)}, \code{mx (Fertility Rate)}, and
-\code{lx (Survivorship)} are recognized automatically. Fertility aliases
-include \code{mx}, \code{m_x}, \code{fertility}, \code{fertility_rates},
-\code{fecundity}, and \code{fecundidad}. Observed-survivorship aliases
-include \code{lx}, \code{l_x}, \code{lx_observed},
-\code{l_x_observed}, \code{survivorship}, \code{survival}, and
-\code{supervivencia}. Age aliases include \code{age}, \code{edad},
-\code{age_class}, and \code{clase_edad}. Fixed-beta aliases include
-\code{beta}, \code{weibull_beta}, \code{shape}, and \code{shape_parameter}.
+Fertility aliases include \code{mx}, \code{m_x}, \code{fertility},
+\code{fertility_rates}, \code{fecundity}, \code{fecundidad},
+\code{tasa_fecundidad}, and \code{tasa_de_fecundidad}. Observed-survivorship
+aliases include \code{lx}, \code{l_x}, \code{lx_observed},
+\code{l_x_observed}, \code{survivorship}, \code{survival},
+\code{supervivencia}, and \code{supervivencia_observada}. Age aliases include
+\code{age}, \code{edad}, \code{age_class}, and \code{clase_edad}.
 
 A recognized age column is retained as an output label, whereas all
 calculations use the internal consecutive class index \code{0, 1, ..., n - 1}.
@@ -91,11 +88,11 @@ Fully blank rows are ignored. Missing or non-numeric fertility values inside a
 data table stop the run with the affected Excel row numbers; they are never
 silently removed.
 
-With a selected or fixed-beta profile, the output includes the derived
-demographic quantities \code{R}, \code{D}, \code{D_relative}, and
-\code{B}. With a scan route, the output includes all candidate profiles and,
-when a terminal window is supplied, the terminal-admissible candidates and
-their first and last profiles.
+With a selected profile, the output includes the derived demographic
+quantities \code{R}, \code{D}, \code{D_relative}, and \code{B}. With a scan
+route, the output includes all candidate profiles and, when a terminal window
+is supplied, the terminal-admissible candidates and their first and last
+profiles.
 }
 \examples{
 \dontrun{
@@ -106,9 +103,6 @@ if (interactive()) {
 
 # Creates demography_StablePopulation.xlsx beside demography.xlsx
 run_reconstruction_excel("demography.xlsx")
-
-# A sheet with a column named "Beta" and no observed lx uses the fixed route
-# automatically.
 
 # Use explicit column names when an input workbook has custom headings.
 run_reconstruction_excel(
