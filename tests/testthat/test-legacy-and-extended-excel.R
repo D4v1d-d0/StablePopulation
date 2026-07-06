@@ -32,7 +32,8 @@ test_that("run_reconstruction_excel writes scan and select workbooks", {
     output_file = output_scan,
     mode = "scan",
     sheets = "scan_case",
-    beta_values = c(0.5, 1)
+    beta_values = c(0.5, 1),
+    output_detail = "full"
   )
   expect_true(file.exists(output_scan))
   expect_identical(scan_result$metadata$route, "scan")
@@ -42,7 +43,8 @@ test_that("run_reconstruction_excel writes scan and select workbooks", {
     output_file = output_select,
     mode = "auto",
     sheets = "select_case",
-    beta_values = c(0.5, 1)
+    beta_values = c(0.5, 1),
+    output_detail = "full"
   )
   expect_true(file.exists(output_select))
   expect_identical(select_result$metadata$route, "select")
@@ -72,7 +74,8 @@ test_that("run_reconstruction_excel recognizes aliases, preserves age labels, an
 
   result <- run_reconstruction_excel(
     input_file = input_file,
-    beta_values = c(0.5, 1)
+    beta_values = c(0.5, 1),
+    output_detail = "full"
   )
 
   expect_identical(result$output_file, expected_output)
@@ -134,7 +137,8 @@ test_that("run_reconstruction_excel recognizes decorated legacy headers and fixe
   result <- run_reconstruction_excel(
     input_file = input_file,
     output_file = output_file,
-    beta_values = c(0.5, 1)
+    beta_values = c(0.5, 1),
+    output_detail = "full"
   )
 
   selected <- result$metadata[result$metadata$sheet == "legacy_select", ]
