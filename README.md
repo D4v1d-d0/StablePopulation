@@ -21,11 +21,11 @@ classes are represented internally as consecutive indices:
 ## Version 1.1.0.9000: development scope
 
 This development version extends the package while preserving the historical
-Excel route documented for the CRAN release 1.0.3.
+source-tree route documented for the CRAN release 1.0.3.
 
 - `run_analysis()` keeps its original no-argument interface and fixed-`beta`
-  Excel layout.
-- `run_reconstruction_excel()` is the separate, new Excel interface for beta
+  Excel layout as a legacy source-tree workflow.
+- `run_reconstruction_excel()` is the recommended Excel interface for beta
   scanning, optional comparison with observed survivorship, and terminal-window
   scenarios.
 
@@ -42,16 +42,23 @@ of the earlier UBU stage and are not retroactively altered.
 | `calculate_population(alpha, beta, fertility_rates)` | Returns the discrete survivorship vector and its implied births. |
 | `alpha_objective(alpha, beta, fertility_rates)` | Computes `births - 1`. |
 | `find_alphas(beta, fertility_rates, tol)` | Historical alpha solver. |
-| `run_analysis()` | Historical Excel workflow with one beta value per worksheet. |
+| `run_analysis()` | Legacy source-tree Excel workflow with one beta value per worksheet. |
 
-## Historical Excel workflow: `run_analysis()`
+## Legacy source-tree workflow: `run_analysis()`
 
 `run_analysis()` is retained for compatibility with the workflow described for
-StablePopulation 1.0.3. It takes no arguments and reads:
+StablePopulation 1.0.3. Its interface remains intentionally unchanged: it takes
+no arguments and reads:
 
 ```text
 inst/extdata/Input_Data.xlsx
 ```
+
+> **Important:** `run_analysis()` is supported only when run from a Git checkout
+> or unpacked source archive that retains `inst/extdata/Input_Data.xlsx`. The
+> historical workbook is excluded from built package artifacts and installed
+> package libraries are generally not writable. Do not use `run_analysis()` as
+> the interface for a package installed from CRAN or GitHub.
 
 Each worksheet is treated as one case/species. The expected layout is:
 
@@ -68,7 +75,9 @@ and writes a separate file named:
 <sheet_name>_results.xlsx
 ```
 
-inside `inst/extdata/`.
+inside the source-tree `inst/extdata/` directory.
+
+For all new analyses, use `run_reconstruction_excel()`.
 
 ## New functions in 1.1.0.9000
 

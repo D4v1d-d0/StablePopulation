@@ -2,16 +2,17 @@
 % Please edit documentation in R/main.R
 \name{run_analysis}
 \alias{run_analysis}
-\title{Run Analysis on Excel Data and Export Results}
+\title{Run the Legacy Source-Tree Excel Workflow}
 \usage{
 run_analysis()
 }
 \value{
-No return value. Called for side effects: reading the bundled project
-workbook, writing one result workbook per worksheet, and printing messages.
+No return value. Called for side effects: reading the historical
+source-tree workbook, writing one result workbook per worksheet in
+\code{inst/extdata}, and printing messages.
 }
 \description{
-This historical function reads fertility rates and one pre-defined \code{beta}
+This legacy function reads fertility rates and one pre-defined \code{beta}
 value from each worksheet of \code{inst/extdata/Input_Data.xlsx}. It calculates
 the corresponding \code{alpha} under \eqn{R_0 = 1} and writes one results
 workbook per worksheet/species.
@@ -24,10 +25,17 @@ The historical Excel layout is fixed:
 \item the first row is interpreted as a header row.
 }
 
-This function is retained for compatibility with StablePopulation 1.0.3 and
-with the workflow described in the ecoinformatics note. New scan and
-observed-survivorship workflows are available separately through
-\code{run_reconstruction_excel()}.
+This function is intentionally retained as a legacy source-tree workflow for
+compatibility with StablePopulation 1.0.3 and with the workflow described in
+the ecoinformatics note. It must be run from a Git checkout or unpacked source
+archive that contains \code{inst/extdata/Input_Data.xlsx}. The historical
+workbook is excluded from built package artifacts, and installed package
+libraries are generally not writable, so this is not a supported installed-
+package workflow.
+
+For new analyses, use \code{run_reconstruction_excel()}, which accepts an
+external workbook and writes results to a user-selected or automatically
+derived location.
 }
 \seealso{
 \code{\link[readxl]{excel_sheets}},
