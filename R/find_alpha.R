@@ -69,6 +69,13 @@ find_alphas <- function(beta, fertility_rates, tol = 1e-22) {
     return(root_result$root)  # Return the alpha value found
   } else {
     # If the signs are the same, return the value closest to 0
+    warning(
+      "No exact root was found: the objective function does not change sign ",
+      "over the search interval. The returned alpha is the interval endpoint ",
+      "closest to satisfying R0 = 1 and may not be a valid solution. ",
+      "Consider using reconstruct_population() for stricter diagnostics.",
+      call. = FALSE
+    )
     if (abs(f_lower) < abs(f_upper)) {
       return(lower)  # f(lower) is closer to 0
     } else {

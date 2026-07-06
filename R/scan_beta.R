@@ -62,7 +62,7 @@ scan_beta <- function(
   # Use readable and unique profile column names.
   beta_labels <- make.unique(paste0(
     "beta_",
-    formatC(beta_values, format = "fg", digits = 10, flag = "#")
+    formatC(beta_values, format = "fg", digits = 4)
   ))
 
   profiles <- matrix(
