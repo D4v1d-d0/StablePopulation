@@ -4,6 +4,10 @@
 
 Development version prepared during the UCM doctoral stage.
 
+- Clarifies `run_analysis()` as a legacy source-tree workflow. Its historical
+  interface and behavior are unchanged; `run_reconstruction_excel()` remains
+  the recommended interface for installed-package and new-analysis use.
+
 - Standardizes source comments, user-facing messages, and package documentation in English.
 
 - Restores and preserves `run_analysis()` exactly as the historical
