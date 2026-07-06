@@ -8,6 +8,12 @@ Development version prepared during the UCM doctoral stage.
   interface and behavior are unchanged; `run_reconstruction_excel()` remains
   the recommended interface for installed-package and new-analysis use.
 
+- Extends `run_reconstruction_excel()` to recognize descriptive legacy headings
+  such as `Age (years)`, `mx (Fertility Rate)`, and `lx (Survivorship)`.
+  When no observed survivorship is present, `mode = "auto"` now uses a
+  recognized one-value `Beta` column for a fixed-beta reconstruction before
+  falling back to a beta scan.
+
 - Standardizes source comments, user-facing messages, and package documentation in English.
 
 - Restores and preserves `run_analysis()` exactly as the historical

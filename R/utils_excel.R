@@ -70,6 +70,20 @@ validate_reconstruction_column_name <- function(value, argument_name) {
   trimws(value)
 }
 
+# Identify headers that match an accepted alias exactly or as a decorated
+# header such as "mx (Fertility Rate)" or "Age (years)".
+reconstruction_alias_matches <- function(normalized_names, accepted_names) {
+  accepted_normalized <- unique(normalize_reconstruction_name(accepted_names))
+
+  vapply(normalized_names, function(name) {
+    any(
+      name == accepted_normalized |
+        startsWith(name, paste0(accepted_normalized, "_")) |
+        endsWith(name, paste0("_", accepted_normalized))
+    )
+  }, logical(1))
+}
+
 # Identify one input column by an optional explicit name or by accepted aliases.
 find_reconstruction_column <- function(
   data_names,
@@ -95,8 +109,12 @@ find_reconstruction_column <- function(
     return(matches)
   }
 
-  accepted_normalized <- normalize_reconstruction_name(accepted_names)
-  matches <- which(normalized_names %in% accepted_normalized)
+  matches <- which(
+    reconstruction_alias_matches(
+      normalized_names = normalized_names,
+      accepted_names = accepted_names
+    )
+  )
 
   if (length(matches) > 1L) {
     stop(
@@ -211,6 +229,7 @@ write_reconstruction_readme <- function(
       "summary_<input sheet>",
       "profiles_<input sheet>",
       "selected_<input sheet>",
+      "fixed_<input sheet>",
       "admissible_<input sheet>",
       "scenarios_<input sheet>"
     ),
@@ -219,6 +238,7 @@ write_reconstruction_readme <- function(
       "Candidate beta values and numerical diagnostics.",
       "All reconstructed survivorship candidates for a scan route.",
       "Selected profile, observed and reconstructed survivorship, and derived demographic quantities R, D, D_relative and B.",
+      "Profile reconstructed from one fixed beta value supplied in the input sheet.",
       "Candidates retained by the optional terminal-survivorship window.",
       "First and last terminal-admissible profiles when a terminal window is used."
     ),
@@ -237,6 +257,52 @@ write_reconstruction_readme <- function(
   openxlsx::setColWidths(workbook, "README", cols = 1:2, widths = "auto")
 }
 
+# Extract an optional fixed beta value from a recognized input column.
+extract_reconstruction_fixed_beta <- function(
+  raw_beta,
+  source_rows,
+  sheet_name,
+  column_name
+) {
+  beta_missing <- is_reconstruction_blank(raw_beta)
+
+  if (all(beta_missing)) {
+    return(NULL)
+  }
+
+  beta_rows <- source_rows[!beta_missing]
+  beta_values <- coerce_reconstruction_numeric(raw_beta[!beta_missing])
+
+  if (any(!is.finite(beta_values))) {
+    stop(
+      "Sheet '", sheet_name, "' has non-numeric beta values in Excel row(s) ",
+      paste(beta_rows[!is.finite(beta_values)], collapse = ", "), ".",
+      call. = FALSE
+    )
+  }
+
+  if (any(beta_values <= 0)) {
+    stop(
+      "Sheet '", sheet_name, "' has non-positive beta values in Excel row(s) ",
+      paste(beta_rows[beta_values <= 0], collapse = ", "), ".",
+      call. = FALSE
+    )
+  }
+
+  scale <- max(1, max(abs(beta_values)))
+  if ((max(beta_values) - min(beta_values)) >
+      sqrt(.Machine$double.eps) * scale) {
+    stop(
+      "Sheet '", sheet_name, "' has multiple beta values in column '",
+      column_name,
+      "'. A fixed-beta input column must contain one positive value, with optional blank cells below it.",
+      call. = FALSE
+    )
+  }
+
+  beta_values[1L]
+}
+
 # Prepare a recognized data sheet, retaining user labels but calculating on
 # consecutive internal class indices.
 prepare_reconstruction_sheet <- function(
@@ -244,7 +310,8 @@ prepare_reconstruction_sheet <- function(
   sheet_name,
   age_column = NULL,
   fertility_column = NULL,
-  survivorship_column = NULL
+  survivorship_column = NULL,
+  beta_column = NULL
 ) {
   data <- as.data.frame(data, stringsAsFactors = FALSE, check.names = FALSE)
 
@@ -258,17 +325,25 @@ prepare_reconstruction_sheet <- function(
   data_names <- names(data)
   aliases <- list(
     age = c(
-      "age", "edad", "age_class", "age_classes", "clase_edad",
-      "clase_de_edad", "age_group", "grupo_edad"
+      "age", "edad", "age_year", "age_years", "edad_ano", "edad_anos",
+      "edad_anio", "edad_anios", "age_class", "age_classes",
+      "clase_edad", "clase_de_edad", "age_group", "grupo_edad"
     ),
     fertility = c(
       "mx", "m_x", "fertility_rates", "fertility_rate", "fertility",
-      "fecundity", "fecundidad", "tasa_fecundidad", "tasa_de_fecundidad"
+      "female_fertility", "female_fertility_rate", "fecundity",
+      "fecundity_rate", "fecundity_rates", "female_fecundity",
+      "female_fecundity_rate", "fecundidad", "tasa_fecundidad",
+      "tasa_de_fecundidad"
     ),
     survivorship = c(
       "lx_observed", "l_x_observed", "lx", "l_x", "survivorship",
       "survival", "supervivencia", "supervivencia_observada",
       "supervivencia_obs", "lx_obs", "l_x_obs"
+    ),
+    beta = c(
+      "beta", "weibull_beta", "beta_weibull", "beta_parameter",
+      "shape", "shape_parameter", "weibull_shape"
     )
   )
 
@@ -303,6 +378,14 @@ prepare_reconstruction_sheet <- function(
     accepted_names = aliases$survivorship,
     requested_name = survivorship_column,
     role = "survivorship",
+    sheet_name = sheet_name
+  )
+
+  beta_match <- find_reconstruction_column(
+    data_names = data_names,
+    accepted_names = aliases$beta,
+    requested_name = beta_column,
+    role = "beta",
     sheet_name = sheet_name
   )
 
@@ -394,16 +477,33 @@ prepare_reconstruction_sheet <- function(
     }
   }
 
+  fixed_beta <- NULL
+  beta_source_name <- NA_character_
+  if (length(beta_match) > 0L) {
+    fixed_beta <- extract_reconstruction_fixed_beta(
+      raw_beta = data[[beta_match]],
+      source_rows = source_rows,
+      sheet_name = sheet_name,
+      column_name = data_names[beta_match]
+    )
+
+    if (!is.null(fixed_beta)) {
+      beta_source_name <- data_names[beta_match]
+    }
+  }
+
   list(
     is_data_sheet = TRUE,
     age_index = age_index,
     age_labels = unname(age_labels),
     fertility_rates = fertility_rates,
     lx_observed = lx_observed,
+    fixed_beta = fixed_beta,
     source_columns = list(
       age = age_source_name,
       fertility = data_names[fertility_match],
-      survivorship = survivorship_source_name
+      survivorship = survivorship_source_name,
+      beta = beta_source_name
     )
   )
 }

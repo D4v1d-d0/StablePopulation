@@ -13,9 +13,11 @@
 #'   supplied in non-interactive use.
 #' @param output_file Optional path for the results workbook. When omitted,
 #'   creates \code{<input name>_StablePopulation.xlsx} beside the input file.
-#' @param mode One of \code{"auto"}, \code{"scan"}, or \code{"select"}. With
-#'   \code{"auto"}, the function uses \code{"select"} when an observed
-#'   survivorship column is present and \code{"scan"} otherwise.
+#' @param mode One of \code{"auto"}, \code{"scan"}, \code{"select"}, or
+#'   \code{"fixed"}. With \code{"auto"}, the function uses \code{"select"}
+#'   when an observed-survivorship column is present, \code{"fixed"} when one
+#'   fixed beta value is supplied in a recognized beta column, and
+#'   \code{"scan"} otherwise.
 #' @param beta_values Positive Weibull shape values to scan.
 #' @param terminal_window Optional terminal-survivorship window for the scan
 #'   route.
@@ -28,18 +30,23 @@
 #' @param fertility_column Optional explicit fertility-column name.
 #' @param survivorship_column Optional explicit observed-survivorship column
 #'   name.
+#' @param beta_column Optional explicit fixed-beta column name. A fixed-beta
+#'   column may contain one positive value and blank cells below it.
 #' @param tol Positive numerical tolerance for root finding.
 #' @param r0_tolerance Positive numerical tolerance for the \eqn{R_0 = 1}
 #'   check.
 #'
 #' @details
-#' Fertility aliases include \code{mx}, \code{m_x}, \code{fertility},
-#' \code{fertility_rates}, \code{fecundity}, \code{fecundidad},
-#' \code{tasa_fecundidad}, and \code{tasa_de_fecundidad}. Observed-survivorship
-#' aliases include \code{lx}, \code{l_x}, \code{lx_observed},
-#' \code{l_x_observed}, \code{survivorship}, \code{survival},
-#' \code{supervivencia}, and \code{supervivencia_observada}. Age aliases include
-#' \code{age}, \code{edad}, \code{age_class}, and \code{clase_edad}.
+#' Headings are matched case-insensitively and may include descriptive text or
+#' units. For example, \code{Age (years)}, \code{mx (Fertility Rate)}, and
+#' \code{lx (Survivorship)} are recognized automatically. Fertility aliases
+#' include \code{mx}, \code{m_x}, \code{fertility}, \code{fertility_rates},
+#' \code{fecundity}, and \code{fecundidad}. Observed-survivorship aliases
+#' include \code{lx}, \code{l_x}, \code{lx_observed},
+#' \code{l_x_observed}, \code{survivorship}, \code{survival}, and
+#' \code{supervivencia}. Age aliases include \code{age}, \code{edad},
+#' \code{age_class}, and \code{clase_edad}. Fixed-beta aliases include
+#' \code{beta}, \code{weibull_beta}, \code{shape}, and \code{shape_parameter}.
 #'
 #' A recognized age column is retained as an output label, whereas all
 #' calculations use the internal consecutive class index \code{0, 1, ..., n - 1}.
@@ -47,11 +54,11 @@
 #' data table stop the run with the affected Excel row numbers; they are never
 #' silently removed.
 #'
-#' With a selected profile, the output includes the derived demographic
-#' quantities \code{R}, \code{D}, \code{D_relative}, and \code{B}. With a scan
-#' route, the output includes all candidate profiles and, when a terminal window
-#' is supplied, the terminal-admissible candidates and their first and last
-#' profiles.
+#' With a selected or fixed-beta profile, the output includes the derived
+#' demographic quantities \code{R}, \code{D}, \code{D_relative}, and
+#' \code{B}. With a scan route, the output includes all candidate profiles and,
+#' when a terminal window is supplied, the terminal-admissible candidates and
+#' their first and last profiles.
 #'
 #' @return Invisibly, a list with \code{output_file}, one result object per
 #'   processed input sheet, and a metadata table that also records skipped
@@ -66,6 +73,9 @@
 #'
 #' # Creates demography_StablePopulation.xlsx beside demography.xlsx
 #' run_reconstruction_excel("demography.xlsx")
+#'
+#' # A sheet with a column named "Beta" and no observed lx uses the fixed route
+#' # automatically.
 #'
 #' # Use explicit column names when an input workbook has custom headings.
 #' run_reconstruction_excel(
@@ -82,7 +92,7 @@
 run_reconstruction_excel <- function(
   input_file = NULL,
   output_file = NULL,
-  mode = c("auto", "scan", "select"),
+  mode = c("auto", "scan", "select", "fixed"),
   beta_values = seq(0.05, 3.00, by = 0.05),
   terminal_window = NULL,
   sheets = NULL,
@@ -90,6 +100,7 @@ run_reconstruction_excel <- function(
   age_column = NULL,
   fertility_column = NULL,
   survivorship_column = NULL,
+  beta_column = NULL,
   tol = 1e-12,
   r0_tolerance = 1e-8
 ) {
@@ -147,6 +158,7 @@ run_reconstruction_excel <- function(
     survivorship_column,
     "survivorship_column"
   )
+  beta_column <- validate_reconstruction_column_name(beta_column, "beta_column")
 
   beta_values <- validate_beta_values(beta_values)
   terminal_window <- validate_terminal_window(terminal_window)
@@ -196,13 +208,18 @@ run_reconstruction_excel <- function(
   metadata_rows <- list()
 
   for (sheet in sheets) {
-    data <- readxl::read_excel(input_file, sheet = sheet)
+    data <- readxl::read_excel(
+      input_file,
+      sheet = sheet,
+      .name_repair = "unique_quiet"
+    )
     prepared <- prepare_reconstruction_sheet(
       data = data,
       sheet_name = sheet,
       age_column = age_column,
       fertility_column = fertility_column,
-      survivorship_column = survivorship_column
+      survivorship_column = survivorship_column,
+      beta_column = beta_column
     )
 
     if (!isTRUE(prepared$is_data_sheet)) {
@@ -225,6 +242,8 @@ run_reconstruction_excel <- function(
         age_column = NA_character_,
         fertility_column = NA_character_,
         survivorship_column = NA_character_,
+        beta_column = NA_character_,
+        fixed_beta = NA_real_,
         summary_sheet = NA_character_,
         profile_sheet = NA_character_,
         scenario_sheet = NA_character_,
@@ -239,7 +258,13 @@ run_reconstruction_excel <- function(
     }
 
     route <- if (identical(mode, "auto")) {
-      if (is.null(prepared$lx_observed)) "scan" else "select"
+      if (!is.null(prepared$lx_observed)) {
+        "select"
+      } else if (!is.null(prepared$fixed_beta)) {
+        "fixed"
+      } else {
+        "scan"
+      }
     } else {
       mode
     }
@@ -252,11 +277,31 @@ run_reconstruction_excel <- function(
       )
     }
 
+    if (identical(route, "fixed") && is.null(prepared$fixed_beta)) {
+      stop(
+        "Sheet '", sheet,
+        "' needs one positive beta value for mode = 'fixed'.",
+        call. = FALSE
+      )
+    }
+
     summary_sheet <- make_reconstruction_sheet_name("summary", sheet, used_names)
     used_names <- c(used_names, summary_sheet)
     profile_sheet <- NA_character_
     scenario_sheet <- NA_character_
     note <- NA_character_
+
+    if (identical(route, "select") && !is.null(prepared$fixed_beta)) {
+      note <- "Observed survivorship was available, so the fixed beta input was not used."
+    }
+
+    if (identical(route, "scan") && !is.null(prepared$fixed_beta)) {
+      note <- "A fixed beta input was detected but was not used because mode = 'scan'."
+    }
+
+    if (identical(route, "fixed") && !is.null(terminal_window)) {
+      note <- "terminal_window is not used for a fixed-beta reconstruction."
+    }
 
     if (identical(route, "scan")) {
       result <- scan_beta(
@@ -333,6 +378,56 @@ run_reconstruction_excel <- function(
           )
         }
       }
+    } else if (identical(route, "fixed")) {
+      result <- reconstruct_population(
+        fertility_rates = prepared$fertility_rates,
+        beta = prepared$fixed_beta,
+        tol = tol,
+        r0_tolerance = r0_tolerance
+      )
+
+      fixed_sheet <- make_reconstruction_sheet_name("fixed", sheet, used_names)
+      used_names <- c(used_names, fixed_sheet)
+      profile_sheet <- fixed_sheet
+
+      demographic_profile <- derive_demographic_profile(
+        lx = result$lx,
+        fertility_rates = prepared$fertility_rates,
+        tolerance = r0_tolerance
+      )
+
+      fixed_output <- data.frame(
+        age_index = prepared$age_index,
+        age = prepared$age_labels,
+        fertility_rates = prepared$fertility_rates,
+        lx_reconstructed = result$lx,
+        lxmx = result$lxmx,
+        R = demographic_profile$R,
+        D = demographic_profile$D,
+        D_relative = demographic_profile$D_relative,
+        B = demographic_profile$B,
+        stringsAsFactors = FALSE
+      )
+
+      if (!is.null(prepared$lx_observed)) {
+        fixed_output$lx_observed <- prepared$lx_observed
+        fixed_output$residual <- result$lx - prepared$lx_observed
+        fixed_output$squared_error <- fixed_output$residual ^ 2
+      }
+
+      fixed_summary <- data.frame(
+        beta = result$beta,
+        alpha = result$alpha,
+        R0 = result$R0,
+        residual = result$residual,
+        lx_terminal = result$lx[length(result$lx)],
+        stable = result$stable,
+        status = "fixed_beta_input",
+        stringsAsFactors = FALSE
+      )
+
+      write_reconstruction_table(workbook, summary_sheet, fixed_summary)
+      write_reconstruction_table(workbook, fixed_sheet, fixed_output)
     } else {
       result <- select_beta(
         fertility_rates = prepared$fertility_rates,
@@ -378,10 +473,12 @@ run_reconstruction_excel <- function(
       status = "processed",
       route = route,
       n_age = length(prepared$fertility_rates),
-      n_beta = length(beta_values),
+      n_beta = if (identical(route, "fixed")) 1L else length(beta_values),
       age_column = prepared$source_columns$age,
       fertility_column = prepared$source_columns$fertility,
       survivorship_column = prepared$source_columns$survivorship,
+      beta_column = prepared$source_columns$beta,
+      fixed_beta = if (is.null(prepared$fixed_beta)) NA_real_ else prepared$fixed_beta,
       summary_sheet = summary_sheet,
       profile_sheet = profile_sheet,
       scenario_sheet = scenario_sheet,
