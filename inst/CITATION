@@ -1,14 +1,33 @@
-citHeader("To cite StablePopulation in publications use:")
+citHeader(
+  "To cite StablePopulation in publications, please cite both the",
+  "package and the article describing the methodology:"
+)
 
-citEntry(
-  entry = "Manual",
+bibentry(
+  bibtype = "Manual",
   title = "StablePopulation: Reconstructs Stable and Stationary Survivorship Profiles",
-  author = personList(
-    as.person("David Palacios-Morales"),
-    as.person("Guillermo Rodríguez-Gómez"),
-    as.person("Jesús A. Martín-González")
+  author = c(
+    person("David", "Palacios-Morales"),
+    person("Guillermo", "Rodríguez-Gómez"),
+    person("Jesús A.", "Martín-González")
   ),
   year = "2026",
-  note = "R package version 1.1.0.9000 (development version)",
-  url = "https://github.com/D4v1d-d0/StablePopulation"
+  note = "R package version 1.1.0",
+  url = "https://CRAN.R-project.org/package=StablePopulation",
+  doi = "10.32614/CRAN.package.StablePopulation"
+)
+
+bibentry(
+  bibtype = "Article",
+  title = "Survival profiles from linear models versus Weibull models: Estimating stable and stationary population structures for Pleistocene large mammals",
+  author = c(
+    person("Jesús A.", "Martín-González"),
+    person("Guillermo", "Rodríguez-Gómez"),
+    person("Paul", "Palmqvist")
+  ),
+  journal = "Journal of Archaeological Science: Reports",
+  year = "2019",
+  volume = "25",
+  pages = "119--127",
+  doi = "10.1016/j.jasrep.2019.03.031"
 )
