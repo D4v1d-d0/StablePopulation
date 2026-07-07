@@ -12,9 +12,12 @@ bibentry(
     person("Jesús A.", "Martín-González")
   ),
   year = "2026",
-  note = "R package version 1.1.0",
-  url = "https://CRAN.R-project.org/package=StablePopulation",
-  doi = "10.32614/CRAN.package.StablePopulation"
+  note = paste(
+    "Development version 1.1.0.9000 available from GitHub.",
+    "The published CRAN release is version 1.0.3",
+    "(doi:10.32614/CRAN.package.StablePopulation)."
+  ),
+  url = "https://github.com/D4v1d-d0/StablePopulation"
 )
 
 bibentry(

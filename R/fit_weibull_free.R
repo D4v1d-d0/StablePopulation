@@ -6,10 +6,14 @@
 #' MSE. It does not impose \eqn{\sum_x l_xm_x = 1}.
 #'
 #' @details
-#' This function is a reference comparison, not the default StablePopulation
-#' reconstruction route. In contrast with [select_beta()], both parameters are
-#' free. If \code{fertility_rates} are supplied, they are used only to report
-#' the \eqn{R_0} implied by the fitted free profile.
+#' This function is a descriptive reference comparison, not the default
+#' StablePopulation reconstruction route. In contrast with [select_beta()],
+#' both parameters are free. If \code{fertility_rates} are supplied, they are
+#' used only after fitting to report the \eqn{R_0} implied by the free profile.
+#'
+#' The optimizer uses several starts on a log parameter scale and retains the
+#' best converged fit when available. Inspect \code{attempts} if convergence
+#' diagnostics or sensitivity to starting values are relevant.
 #'
 #' @param lx_observed Numeric observed survivorship profile.
 #' @param fertility_rates Optional fertility schedule of the same length as
@@ -21,9 +25,13 @@
 #' @param control Optional list passed to [stats::optim()].
 #' @param lx_tolerance Positive tolerance used to validate \code{lx_observed}.
 #'
-#' @return A list of class \code{"stable_population_free_fit"} containing the
-#'   free estimates, the fitted profile, error measures, all optimization starts,
-#'   and \eqn{R_0} if fertility rates are supplied.
+#' @return A list of class \code{"stable_population_free_fit"}. Main
+#'   elements are free \code{alpha} and \code{beta}, \code{lx_fitted},
+#'   \code{MSE}, \code{RMSE}, \code{R0_fitted} when fertility is supplied,
+#'   a row-by-age \code{profile}, and \code{attempts} from all optimization
+#'   starts.
+#'
+#' @seealso [select_beta()] for the constrained observed-survivorship route.
 #'
 #' @examples
 #' lx_observed <- c(1, 0.92, 0.78, 0.57, 0.33, 0.12)

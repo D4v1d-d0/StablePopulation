@@ -2,7 +2,7 @@
 % Please edit documentation in R/reconstruct_population.R
 \name{reconstruct_population}
 \alias{reconstruct_population}
-\title{Reconstruct a stable Weibull survivorship profile}
+\title{Reconstruct one constrained Weibull survivorship profile}
 \usage{
 reconstruct_population(
   fertility_rates,
@@ -22,9 +22,12 @@ reconstruct_population(
 with \eqn{R_0 = 1}.}
 }
 \value{
-A list of class \code{"stable_population_reconstruction"} with the
-fitted parameters, the survivorship profile, a result table, and solver
-diagnostics.
+A list of class \code{"stable_population_reconstruction"}. Main
+elements are \code{alpha}, \code{beta}, \code{lx},
+\code{fertility_rates}, \code{lxmx}, numerical \code{R0},
+\code{residual}, \code{solver} diagnostics, and a row-by-age
+\code{table}. The historical alias \code{population} is retained and
+equals \code{lx}; it is not the normalized stable age structure.
 }
 \description{
 For a fixed Weibull shape parameter \eqn{\beta} and a fertility schedule
@@ -33,10 +36,11 @@ For a fixed Weibull shape parameter \eqn{\beta} and a fertility schedule
 \eqn{\sum_x l_xm_x = 1}.
 }
 \details{
-Age classes are generated internally as \code{0, 1, 2, ..., n - 1}. The
-function uses the verified internal solver used by the extended workflow; it
-therefore stops rather than silently treating a search endpoint as a valid
-root.
+This is the fixed-beta route. Use it when beta has been selected elsewhere
+or when a specific beta value is being examined as a hypothesis. Age classes
+are generated internally as \code{0, 1, 2, ..., n - 1}. The function uses
+the verified internal solver used by the extended workflow; it stops rather
+than silently treating a search endpoint as a valid root.
 }
 \examples{
 mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
@@ -44,4 +48,9 @@ reconstruction <- reconstruct_population(mx, beta = 1.10)
 reconstruction$alpha
 reconstruction$table
 
+}
+\seealso{
+\code{\link[=scan_beta]{scan_beta()}} to generate candidate profiles, \code{\link[=select_beta]{select_beta()}} to
+select a candidate using observed survivorship, and
+\code{\link[=derive_demographic_profile]{derive_demographic_profile()}} to calculate \code{R}, \code{D}, and \code{B}.
 }

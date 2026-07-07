@@ -63,6 +63,11 @@
 #' candidates, or terminal-window-admissible candidates when a terminal window
 #' is supplied.
 #'
+#' The Excel workflow analyses fertility exactly as supplied; it never applies
+#' implicit fertility normalisation. When a schedule must be rescaled relative
+#' to a reference survivorship profile, use [normalize_fertility()] in R first
+#' and save the resulting fertility values to the workbook.
+#'
 #' @return Invisibly, a list with \code{output_file}, one result object per
 #'   processed input sheet, and a metadata table that also records skipped
 #'   sheets. Metadata is returned regardless of \code{output_detail}.

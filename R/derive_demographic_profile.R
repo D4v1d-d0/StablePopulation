@@ -7,11 +7,16 @@
 #' version, and conditional survival between consecutive classes.
 #'
 #' @details
-#' The stable structure is \eqn{R_x = l_x / \sum_x l_x}. The mortality profile
-#' is \eqn{D_x = R_x - R_{x+1}} for all but the last class, and
-#' \eqn{D_n = R_n}. Its total is \eqn{R_{x=0}} of the stable structure, not
-#' necessarily one. The relative profile is \eqn{D_x / \sum_x D_x}; it is
-#' therefore a distinct quantity that sums to one.
+#' The stable structure is \eqn{R_x = l_x / \sum_x l_x}. The raw
+#' exit-by-death profile is \eqn{D_x = R_x - R_{x+1}} for all but the last
+#' class, and \eqn{D_n = R_n}. Its total equals \eqn{R} in the first class,
+#' so it is not generally a probability vector. The relative profile is
+#' \eqn{D_x / \sum_x D_x}; it is a distinct quantity that sums to one.
+#'
+#' Conditional survival is \eqn{B_x = l_{x+1}/l_x}. It is returned as
+#' \code{NA} when the denominator is zero, because the conditional ratio is
+#' then undefined. If fertility is supplied, the result also contains
+#' \eqn{l_xm_x}, the resulting \eqn{R_0}, and a numerical stability check.
 #'
 #' @param lx Numeric survivorship profile. It must start at one and be
 #'   non-increasing.
@@ -22,6 +27,14 @@
 #'   \eqn{R_0 = 1} when fertility is provided.
 #'
 #' @return A list of class \code{"stable_population_demographic_profile"}.
+#'   Main elements are \code{stable_structure} (also \code{R}),
+#'   \code{mortality_profile} (also \code{D}),
+#'   \code{mortality_profile_relative} (also \code{D_relative}),
+#'   \code{conditional_survival} (also \code{B}), \code{lxmx},
+#'   \code{R0}, \code{checks}, and a row-by-age \code{table}.
+#'
+#' @seealso [reconstruct_population()], [select_beta()], and [scan_beta()] to
+#'   obtain survivorship profiles before deriving these quantities.
 #'
 #' @examples
 #' mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)

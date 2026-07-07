@@ -27,10 +27,13 @@ rates.}
 \eqn{l_x} lies in this inclusive interval. Default: \code{NULL}.}
 }
 \value{
-A list of class \code{"stable_population_scan"}. Its main elements
-are \code{summary}, \code{profiles}, \code{admissible_summary},
-\code{profiles_admissible}, and, when a terminal window is active,
-\code{terminal_extremes}.
+A list of class \code{"stable_population_scan"}. Main elements are
+\code{summary} (one row per beta, including numerical diagnostics and
+terminal admissibility), \code{profiles} (one survivorship column per
+beta), \code{admissible_summary}, \code{profiles_admissible}, and
+\code{terminal_extremes} when an active terminal window retains at least
+one profile. \code{checks} records the numbers of scanned, stable, and
+admissible candidates.
 }
 \description{
 For every candidate \eqn{\beta}, calculates the corresponding \eqn{\alpha},
@@ -39,10 +42,18 @@ numerical result satisfies \eqn{R_0 = \sum_x l_xm_x = 1}.
 }
 \details{
 Age classes are always assigned internally as \code{0, 1, 2, ..., n - 1}.
-When \code{terminal_window} is supplied, the function marks the profiles
-whose final survivorship lies inside that inclusive window. This scenario
-route is useful when an observed \eqn{l_x} is not available; it does not
-select a single empirical optimum.
+This is the scenario route when observed \eqn{l_x} is unavailable: it
+generates a family of constrained profiles and does not select an empirical
+optimum.
+
+When \code{terminal_window} is supplied, the function marks profiles whose
+final survivorship lies inside that inclusive interval. The terminal criterion
+filters candidate scenarios after the numerical \eqn{R_0} check; it does not
+estimate beta. When at least one candidate passes the window,
+\code{terminal_extremes$first} and \code{terminal_extremes$last} are the
+first and last admissible candidates in ascending beta order, preserving the
+historical Model-V2022 scenario convention. They should not automatically be
+interpreted as minima or maxima of every downstream ecological quantity.
 }
 \examples{
 mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
@@ -58,4 +69,9 @@ terminal_scan <- scan_beta(
 )
 terminal_scan$admissible_summary
 
+}
+\seealso{
+\code{\link[=select_beta]{select_beta()}} for the route with observed survivorship,
+\code{\link[=reconstruct_population]{reconstruct_population()}} for one fixed beta, and
+\code{\link[=derive_demographic_profile]{derive_demographic_profile()}} for derived demographic quantities.
 }

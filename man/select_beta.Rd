@@ -29,9 +29,11 @@ same length as \code{fertility_rates}, start at one, and be non-increasing.}
 \item{lx_tolerance}{Positive tolerance used to validate \code{lx_observed}.}
 }
 \value{
-A list of class \code{"stable_population_selection"} containing the
-selected parameters, the selected profile, the full candidate table, and
-the underlying \code{\link[=scan_beta]{scan_beta()}} result.
+A list of class \code{"stable_population_selection"}. Main
+elements are \code{best_beta}, \code{best_alpha}, \code{best_lx},
+\code{best_R0}, \code{best_MSE}, \code{best_RMSE},
+\code{best_profile} (age-by-age comparison), \code{results} (all
+scanned candidates), and the underlying \code{scan} object.
 }
 \description{
 Generates Weibull survivorship candidates under \eqn{R_0 = 1} and selects
@@ -39,6 +41,20 @@ the candidate with the smallest RMSE against an observed survivorship profile
 \eqn{l_x}. It is not a free two-parameter Weibull fit: \eqn{\alpha} remains
 determined by the fertility schedule and the stability constraint for every
 candidate \eqn{\beta}.
+}
+\details{
+This is the route to use when observed survivorship is available. The
+function scans the supplied beta grid and returns the best grid candidate;
+inspect \code{results} rather than treating the selected value as a
+continuous unconstrained optimum.
+
+Fertility is analysed exactly as supplied. The function never rescales it
+implicitly. When the methodological decision is to express an observed
+fertility schedule relative to the stable condition, call
+\code{\link[=normalize_fertility]{normalize_fertility()}} first and supply
+\code{fertility_rates_normalized}. Using raw fertility and using an
+explicitly normalised schedule are different analyses and should remain
+distinguishable.
 }
 \examples{
 mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
@@ -48,4 +64,9 @@ selection <- select_beta(mx, lx_observed)
 selection$best_beta
 selection$best_profile
 
+}
+\seealso{
+\code{\link[=scan_beta]{scan_beta()}} for the route without observed survivorship,
+\code{\link[=normalize_fertility]{normalize_fertility()}} for explicit fertility rescaling, and
+\code{\link[=fit_weibull_free]{fit_weibull_free()}} for an unconstrained reference fit.
 }

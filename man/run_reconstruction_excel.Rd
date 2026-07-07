@@ -102,6 +102,11 @@ A select or fixed-beta route produces one reconstructed profile. A scan route
 does not choose one arbitrary beta: its result sheet lists the stable
 candidates, or terminal-window-admissible candidates when a terminal window
 is supplied.
+
+The Excel workflow analyses fertility exactly as supplied; it never applies
+implicit fertility normalisation. When a schedule must be rescaled relative
+to a reference survivorship profile, use \code{\link[=normalize_fertility]{normalize_fertility()}} in R first
+and save the resulting fertility values to the workbook.
 }
 \examples{
 \dontrun{

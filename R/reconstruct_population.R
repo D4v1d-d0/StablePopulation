@@ -1,4 +1,4 @@
-#' Reconstruct a stable Weibull survivorship profile
+#' Reconstruct one constrained Weibull survivorship profile
 #'
 #' @description
 #' For a fixed Weibull shape parameter \eqn{\beta} and a fertility schedule
@@ -7,10 +7,11 @@
 #' \eqn{\sum_x l_xm_x = 1}.
 #'
 #' @details
-#' Age classes are generated internally as \code{0, 1, 2, ..., n - 1}. The
-#' function uses the verified internal solver used by the extended workflow; it
-#' therefore stops rather than silently treating a search endpoint as a valid
-#' root.
+#' This is the fixed-beta route. Use it when beta has been selected elsewhere
+#' or when a specific beta value is being examined as a hypothesis. Age classes
+#' are generated internally as \code{0, 1, 2, ..., n - 1}. The function uses
+#' the verified internal solver used by the extended workflow; it stops rather
+#' than silently treating a search endpoint as a valid root.
 #'
 #' @param fertility_rates Numeric vector of age-specific fertility rates.
 #' @param beta Positive Weibull shape parameter.
@@ -18,9 +19,16 @@
 #' @param r0_tolerance Positive tolerance used to assess numerical agreement
 #'   with \eqn{R_0 = 1}.
 #'
-#' @return A list of class \code{"stable_population_reconstruction"} with the
-#'   fitted parameters, the survivorship profile, a result table, and solver
-#'   diagnostics.
+#' @return A list of class \code{"stable_population_reconstruction"}. Main
+#'   elements are \code{alpha}, \code{beta}, \code{lx},
+#'   \code{fertility_rates}, \code{lxmx}, numerical \code{R0},
+#'   \code{residual}, \code{solver} diagnostics, and a row-by-age
+#'   \code{table}. The historical alias \code{population} is retained and
+#'   equals \code{lx}; it is not the normalized stable age structure.
+#'
+#' @seealso [scan_beta()] to generate candidate profiles, [select_beta()] to
+#'   select a candidate using observed survivorship, and
+#'   [derive_demographic_profile()] to calculate `R`, `D`, and `B`.
 #'
 #' @examples
 #' mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)

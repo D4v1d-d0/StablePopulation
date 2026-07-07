@@ -19,6 +19,11 @@ non-increasing.}
 }
 \value{
 A list of class \code{"stable_population_demographic_profile"}.
+Main elements are \code{stable_structure} (also \code{R}),
+\code{mortality_profile} (also \code{D}),
+\code{mortality_profile_relative} (also \code{D_relative}),
+\code{conditional_survival} (also \code{B}), \code{lxmx},
+\code{R0}, \code{checks}, and a row-by-age \code{table}.
 }
 \description{
 Converts a survivorship profile \eqn{l_x} into the quantities used by the
@@ -27,11 +32,16 @@ structure \eqn{R_x}, the exit-by-death profile \eqn{D_x}, its relative
 version, and conditional survival between consecutive classes.
 }
 \details{
-The stable structure is \eqn{R_x = l_x / \sum_x l_x}. The mortality profile
-is \eqn{D_x = R_x - R_{x+1}} for all but the last class, and
-\eqn{D_n = R_n}. Its total is \eqn{R_{x=0}} of the stable structure, not
-necessarily one. The relative profile is \eqn{D_x / \sum_x D_x}; it is
-therefore a distinct quantity that sums to one.
+The stable structure is \eqn{R_x = l_x / \sum_x l_x}. The raw
+exit-by-death profile is \eqn{D_x = R_x - R_{x+1}} for all but the last
+class, and \eqn{D_n = R_n}. Its total equals \eqn{R} in the first class,
+so it is not generally a probability vector. The relative profile is
+\eqn{D_x / \sum_x D_x}; it is a distinct quantity that sums to one.
+
+Conditional survival is \eqn{B_x = l_{x+1}/l_x}. It is returned as
+\code{NA} when the denominator is zero, because the conditional ratio is
+then undefined. If fertility is supplied, the result also contains
+\eqn{l_xm_x}, the resulting \eqn{R_0}, and a numerical stability check.
 }
 \examples{
 mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
@@ -44,4 +54,8 @@ demographic_profile <- derive_demographic_profile(
 
 demographic_profile$table
 
+}
+\seealso{
+\code{\link[=reconstruct_population]{reconstruct_population()}}, \code{\link[=select_beta]{select_beta()}}, and \code{\link[=scan_beta]{scan_beta()}} to
+obtain survivorship profiles before deriving these quantities.
 }

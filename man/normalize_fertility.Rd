@@ -17,8 +17,9 @@ same length as \code{fertility_rates}.}
 }
 \value{
 A list of class \code{"stable_population_normalized_fertility"}
-containing the original fertility schedule, the normalized schedule,
-\code{R0_reference}, the scaling factor, and a numerical check.
+containing the original \code{fertility_rates},
+\code{fertility_rates_normalized}, \code{R0_reference}, the scaling
+\code{factor}, and the numerical \code{check_R0}.
 }
 \description{
 Divides an age-specific fertility schedule by the net replacement calculated
@@ -26,9 +27,14 @@ from a reference survivorship profile. The returned schedule satisfies
 \eqn{\sum_x l_x m_x = 1} for that reference profile.
 }
 \details{
-This helper prepares fertility data before they enter a reconstruction route
-that fixes \eqn{R_0 = 1}. It does not change the package's internal
-demographic rule.
+This helper makes fertility rescaling explicit before data enter a route that
+fixes \eqn{R_0 = 1}. It multiplies every fertility value by the same factor,
+preserving the age pattern while changing the schedule's overall scale.
+
+It does not silently correct observed data or alter the package's internal
+demographic rule. Use it when the scientific analysis is deliberately framed
+at \eqn{R_0 = 1} relative to a known reference survivorship profile. Raw and
+normalized schedules should be treated as distinct analytical inputs.
 }
 \examples{
 mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
@@ -36,4 +42,10 @@ lx <- c(1, 0.90, 0.75, 0.55, 0.30, 0.10)
 normalized <- normalize_fertility(mx, lx)
 normalized$check_R0
 
+}
+\seealso{
+\code{\link[=select_beta]{select_beta()}} for the observed-survivorship route and
+\code{\link[=run_reconstruction_excel]{run_reconstruction_excel()}} for workbook analysis. The Excel workflow
+uses supplied fertility values as-is, so normalized values must be prepared
+before saving them to a workbook.
 }
