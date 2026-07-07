@@ -241,6 +241,7 @@ run_reconstruction_excel <- function(
         overview_alpha = "",
         overview_rmse = "",
         overview_R0 = "",
+        overview_candidate_status = "",
         overview_lx_terminal = "",
         note = prepared$reason,
         stringsAsFactors = FALSE
@@ -292,6 +293,7 @@ run_reconstruction_excel <- function(
     overview_alpha <- ""
     overview_rmse <- ""
     overview_R0 <- ""
+    overview_candidate_status <- ""
     overview_lx_terminal <- ""
 
     if (identical(route, "select") && !is.null(prepared$fixed_beta)) {
@@ -388,7 +390,14 @@ run_reconstruction_excel <- function(
         terminal_window = terminal_window
       )
 
-      scan_note <- if (is.null(terminal_window)) {
+      n_stable <- sum(result$summary$stable)
+      scan_note <- if (n_stable == 0L) {
+        paste(
+          "No numerically stable candidate was obtained for the requested beta range.",
+          "No scenario profile can be reported. Review the fertility schedule",
+          "or adjust beta_values."
+        )
+      } else if (is.null(terminal_window)) {
         paste(
           "No single profile was selected because this sheet has neither",
           "observed survivorship nor a fixed beta. The table lists all stable",
@@ -450,12 +459,7 @@ run_reconstruction_excel <- function(
         format_reconstruction_number(max(beta_values)),
         " (", length(beta_values), " candidates)"
       )
-      overview_R0 <- paste0(sum(result$summary$stable), " stable candidates")
-      if (!is.null(terminal_window)) {
-        overview_lx_terminal <- paste0(
-          sum(result$summary$admissible), " terminal-window admissible"
-        )
-      }
+      overview_candidate_status <- make_reconstruction_scan_candidate_status(result)
       if (is.na(note)) {
         note <- scan_note
       }
@@ -488,6 +492,7 @@ run_reconstruction_excel <- function(
       overview_alpha = overview_alpha,
       overview_rmse = overview_rmse,
       overview_R0 = overview_R0,
+      overview_candidate_status = overview_candidate_status,
       overview_lx_terminal = overview_lx_terminal,
       note = note,
       stringsAsFactors = FALSE

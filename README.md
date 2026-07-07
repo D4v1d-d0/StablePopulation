@@ -220,16 +220,19 @@ Result_<input sheet 2>
 ```
 
 `Overview` is the first worksheet. It records the input sheet, route, beta and
-alpha where a single profile exists, RMSE where applicable, the result-sheet
-name, and any note or skipped-sheet explanation. Every `Result_<...>` worksheet
-is intended for direct use. Selected and fixed-beta results contain age,
-fertility, observed survivorship when available, reconstructed survivorship,
-`R`, `D`, `D_relative`, and `B`.
+alpha where a single profile exists, RMSE where applicable, `R0` for selected
+and fixed profiles, scan candidate status, the result-sheet name, and any note
+or skipped-sheet explanation. Every `Result_<...>` worksheet is intended for
+direct use. Selected and fixed-beta results contain age, fertility, observed
+survivorship when available, reconstructed survivorship, `R`, `D`,
+`D_relative`, and `B`.
 
 A scan result never selects the first beta merely for convenience. Its
 `Result_<...>` worksheet lists the stable candidates, or the candidates
 satisfying a requested terminal window, and explains why no unique profile is
-shown.
+shown. When the requested beta range produces no numerically stable candidate,
+the result sheet gives an explicit status message rather than an unexplained
+empty table.
 
 For audit or method development, request the complete workbook:
 
