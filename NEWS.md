@@ -12,7 +12,9 @@ Development version prepared during the UCM doctoral stage.
   worksheet.
 - Prevents a scan route from presenting an arbitrary first beta as the result.
   Scan results now state that no unique profile was selected and list the stable
-  or terminal-window-admissible scenarios instead.
+  or terminal-window-admissible scenarios instead. The Overview worksheet keeps
+  `R0` separate from scan candidate status and explicitly reports when no
+  numerically stable candidate is available for the requested beta range.
 
 - Clarifies `run_analysis()` as a legacy source-tree workflow. Its historical
   interface and behavior are unchanged; `run_reconstruction_excel()` remains

@@ -389,6 +389,40 @@ make_reconstruction_profile_output <- function(
   output
 }
 
+# Describe the numerical status of a scan without conflating it with R0.
+make_reconstruction_scan_candidate_status <- function(scan_result) {
+  n_stable <- sum(scan_result$summary$stable)
+
+  if (n_stable == 0L) {
+    return("No numerically stable candidate")
+  }
+
+  stable_label <- paste(
+    n_stable,
+    if (n_stable == 1L) "stable candidate" else "stable candidates"
+  )
+
+  if (is.null(scan_result$terminal_window)) {
+    return(stable_label)
+  }
+
+  n_admissible <- nrow(scan_result$admissible_summary)
+  admissible_label <- if (n_admissible == 0L) {
+    "none terminal-window admissible"
+  } else {
+    paste(
+      n_admissible,
+      if (n_admissible == 1L) {
+        "terminal-window admissible candidate"
+      } else {
+        "terminal-window admissible candidates"
+      }
+    )
+  }
+
+  paste(stable_label, admissible_label, sep = "; ")
+}
+
 # Build a compact candidate table for the scan result sheet. It never chooses a
 # single arbitrary beta when empirical lx or a fixed beta is unavailable.
 make_reconstruction_scan_result_output <- function(scan_result) {
@@ -397,6 +431,18 @@ make_reconstruction_scan_result_output <- function(scan_result) {
   if (!is.null(scan_result$terminal_window) &&
       nrow(scan_result$admissible_summary) > 0L) {
     candidates <- scan_result$admissible_summary
+  }
+
+  if (nrow(candidates) == 0L) {
+    return(data.frame(
+      Status = "No numerically stable candidate",
+      Details = paste(
+        "No numerically stable candidate was obtained for the requested beta range.",
+        "Review the fertility schedule or adjust beta_values."
+      ),
+      check.names = FALSE,
+      stringsAsFactors = FALSE
+    ))
   }
 
   data.frame(
@@ -432,6 +478,7 @@ make_reconstruction_overview <- function(metadata) {
     Alpha = as_blank(metadata$overview_alpha),
     RMSE = as_blank(metadata$overview_rmse),
     R0 = as_blank(metadata$overview_R0),
+    `Candidate status` = as_blank(metadata$overview_candidate_status),
     `Terminal survivorship (lx)` = as_blank(metadata$overview_lx_terminal),
     `Result sheet` = as_blank(metadata$result_sheet),
     Notes = as_blank(metadata$note),

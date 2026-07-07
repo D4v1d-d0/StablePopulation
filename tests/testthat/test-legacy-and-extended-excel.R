@@ -38,6 +38,12 @@ test_that("standard Excel output contains Overview and Result sheets only", {
   expect_false(any(grepl("^(Metadata|Candidates|Profiles)_", output_sheets)))
   expect_true(all(result$metadata$result_sheet %in% output_sheets))
 
+  overview <- readxl::read_excel(output_file, sheet = "Overview", skip = 5L)
+  expect_true(all(c("R0", "Candidate status") %in% names(overview)))
+  scan_overview <- overview[overview[["Input sheet"]] == "scan_case", , drop = FALSE]
+  expect_true(is.na(scan_overview$R0) || scan_overview$R0 == "")
+  expect_match(scan_overview[["Candidate status"]], "stable candidate")
+
   scan_sheet <- result$metadata$result_sheet[result$metadata$sheet == "scan_case"]
   scan_output <- readxl::read_excel(output_file, sheet = scan_sheet, skip = 4L)
   expect_true(all(c("Beta", "Alpha", "Status") %in% names(scan_output)))
@@ -207,4 +213,50 @@ test_that("run_reconstruction_excel recognizes decorated legacy headers and fixe
     "Relative mortality proportion (D_relative)",
     "Conditional survival (B)"
   ) %in% names(fixed_output)))
+})
+
+
+test_that("scan output clearly reports when no stable candidate exists", {
+  input_file <- tempfile(fileext = ".xlsx")
+  output_file <- tempfile(fileext = ".xlsx")
+
+  workbook <- openxlsx::createWorkbook()
+  openxlsx::addWorksheet(workbook, "no_stable_scan")
+  openxlsx::writeData(
+    workbook,
+    "no_stable_scan",
+    data.frame(mx = c(1.10, 0.20, 0.10))
+  )
+  openxlsx::saveWorkbook(workbook, input_file, overwrite = TRUE)
+
+  result <- run_reconstruction_excel(
+    input_file = input_file,
+    output_file = output_file,
+    beta_values = c(0.5, 1)
+  )
+
+  processed <- result$metadata[result$metadata$sheet == "no_stable_scan", ]
+  expect_identical(processed$route, "scan")
+  expect_identical(processed$overview_R0, "")
+  expect_identical(
+    processed$overview_candidate_status,
+    "No numerically stable candidate"
+  )
+
+  overview <- readxl::read_excel(output_file, sheet = "Overview", skip = 5L)
+  row <- overview[overview[["Input sheet"]] == "no_stable_scan", , drop = FALSE]
+  expect_true(is.na(row$R0) || row$R0 == "")
+  expect_identical(
+    row[["Candidate status"]],
+    "No numerically stable candidate"
+  )
+
+  result_sheet <- processed$result_sheet
+  output <- readxl::read_excel(output_file, sheet = result_sheet, skip = 4L)
+  expect_identical(names(output), c("Status", "Details"))
+  expect_identical(output$Status, "No numerically stable candidate")
+  expect_match(
+    output$Details,
+    "No numerically stable candidate was obtained"
+  )
 })
