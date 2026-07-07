@@ -1,12 +1,11 @@
-
 #' Reconstruct stable-population profiles from an Excel workbook
 #'
 #' @description
 #' Reads one or more Excel sheets containing a fertility schedule and an
-#' optional observed-survivorship profile. It automatically selects the
-#' appropriate route, preserves user age labels in the output, creates a
-#' results workbook beside the input by default, and records skipped non-data
-#' sheets in metadata.
+#' optional observed-survivorship profile. The default workbook is designed for
+#' direct use: it starts with an overview and then provides one result sheet per
+#' processed input sheet. A full audit workbook can be requested when candidate
+#' and profile diagnostics are needed.
 #'
 #' @param input_file Optional path to an existing Excel workbook. When omitted or
 #'   \code{NULL} in an interactive R session, a file chooser opens. It must be
@@ -15,9 +14,8 @@
 #'   creates \code{<input name>_StablePopulation.xlsx} beside the input file.
 #' @param mode One of \code{"auto"}, \code{"scan"}, \code{"select"}, or
 #'   \code{"fixed"}. With \code{"auto"}, the function uses \code{"select"}
-#'   when an observed-survivorship column is present, \code{"fixed"} when one
-#'   fixed beta value is supplied in a recognized beta column, and
-#'   \code{"scan"} otherwise.
+#'   when observed survivorship is present, \code{"fixed"} when a recognized
+#'   beta column contains one positive value, and \code{"scan"} otherwise.
 #' @param beta_values Positive Weibull shape values to scan.
 #' @param terminal_window Optional terminal-survivorship window for the scan
 #'   route.
@@ -30,15 +28,16 @@
 #' @param fertility_column Optional explicit fertility-column name.
 #' @param survivorship_column Optional explicit observed-survivorship column
 #'   name.
-#' @param beta_column Optional explicit fixed-beta column name. A fixed-beta
-#'   column may contain one positive value and blank cells below it.
+#' @param beta_column Optional explicit fixed-beta column name.
 #' @param tol Positive numerical tolerance for root finding.
 #' @param r0_tolerance Positive numerical tolerance for the \eqn{R_0 = 1}
 #'   check.
-#' @param output_detail One of \code{"standard"} or \code{"full"}. With
-#'   \code{"standard"}, output sheets show only biologically relevant columns
-#'   with descriptive headers and only admissible candidates. With
-#'   \code{"full"}, all diagnostic columns are included.
+#' @param output_detail One of \code{"standard"} or \code{"full"}. The
+#'   default \code{"standard"} output contains only \code{Overview} and one
+#'   \code{Result_<sheet>} worksheet per processed input sheet. The
+#'   \code{"full"} output additionally contains \code{Candidates_<sheet>}
+#'   for select and scan routes, \code{Profiles_<sheet>} for scan routes, and
+#'   a final \code{Metadata} worksheet.
 #'
 #' @details
 #' Headings are matched case-insensitively and may include descriptive text or
@@ -50,7 +49,8 @@
 #' \code{l_x_observed}, \code{survivorship}, \code{survival}, and
 #' \code{supervivencia}. Age aliases include \code{age}, \code{edad},
 #' \code{age_class}, and \code{clase_edad}. Fixed-beta aliases include
-#' \code{beta}, \code{weibull_beta}, \code{shape}, and \code{shape_parameter}.
+#' \code{beta}, \code{weibull_beta}, \code{shape}, and
+#' \code{shape_parameter}.
 #'
 #' A recognized age column is retained as an output label, whereas all
 #' calculations use the internal consecutive class index \code{0, 1, ..., n - 1}.
@@ -58,28 +58,28 @@
 #' data table stop the run with the affected Excel row numbers; they are never
 #' silently removed.
 #'
-#' With a selected or fixed-beta profile, the output includes the derived
-#' demographic quantities \code{R}, \code{D}, \code{D_relative}, and
-#' \code{B}. With a scan route, the output includes all candidate profiles and,
-#' when a terminal window is supplied, the terminal-admissible candidates and
-#' their first and last profiles.
+#' A select or fixed-beta route produces one reconstructed profile. A scan route
+#' does not choose one arbitrary beta: its result sheet lists the stable
+#' candidates, or terminal-window-admissible candidates when a terminal window
+#' is supplied.
 #'
 #' @return Invisibly, a list with \code{output_file}, one result object per
 #'   processed input sheet, and a metadata table that also records skipped
-#'   sheets.
+#'   sheets. Metadata is returned regardless of \code{output_detail}.
 #'
 #' @examples
 #' \dontrun{
-#' # Opens a file chooser in an interactive R session.
+#' # Opens a file chooser in an interactive R session and creates the
+#' # standard output workbook.
 #' if (interactive()) {
 #'   run_reconstruction_excel()
 #' }
 #'
-#' # Creates demography_StablePopulation.xlsx beside demography.xlsx
+#' # Creates demography_StablePopulation.xlsx beside demography.xlsx.
 #' run_reconstruction_excel("demography.xlsx")
 #'
-#' # A sheet with a column named "Beta" and no observed lx uses the fixed route
-#' # automatically.
+#' # Request technical candidate and profile diagnostics.
+#' run_reconstruction_excel("demography.xlsx", output_detail = "full")
 #'
 #' # Use explicit column names when an input workbook has custom headings.
 #' run_reconstruction_excel(
@@ -88,7 +88,8 @@
 #'   sheets = "Ovis_dalli",
 #'   age_column = "Age class",
 #'   fertility_column = "Female fertility",
-#'   survivorship_column = "Observed survivorship"
+#'   survivorship_column = "Observed survivorship",
+#'   beta_column = "Beta"
 #' )
 #' }
 #'
@@ -118,18 +119,12 @@ run_reconstruction_excel <- function(
 
   if (!is.character(input_file) || length(input_file) != 1L ||
       is.na(input_file) || !nzchar(trimws(input_file))) {
-    stop(
-      "'input_file' must identify an existing file.",
-      call. = FALSE
-    )
+    stop("'input_file' must identify an existing file.", call. = FALSE)
   }
   input_file <- trimws(input_file)
 
   if (!file.exists(input_file)) {
-    stop(
-      "'input_file' must identify an existing file.",
-      call. = FALSE
-    )
+    stop("'input_file' must identify an existing file.", call. = FALSE)
   }
 
   if (is.null(output_file)) {
@@ -137,10 +132,7 @@ run_reconstruction_excel <- function(
   }
   if (!is.character(output_file) || length(output_file) != 1L ||
       is.na(output_file) || !nzchar(trimws(output_file))) {
-    stop(
-      "'output_file' must be NULL or one non-empty path.",
-      call. = FALSE
-    )
+    stop("'output_file' must be NULL or one non-empty path.", call. = FALSE)
   }
   output_file <- trimws(output_file)
   if (!grepl("\\.xlsx$", output_file, ignore.case = TRUE)) {
@@ -149,10 +141,7 @@ run_reconstruction_excel <- function(
 
   if (!is.logical(skip_non_data) || length(skip_non_data) != 1L ||
       is.na(skip_non_data)) {
-    stop(
-      "'skip_non_data' must be TRUE or FALSE.",
-      call. = FALSE
-    )
+    stop("'skip_non_data' must be TRUE or FALSE.", call. = FALSE)
   }
 
   age_column <- validate_reconstruction_column_name(age_column, "age_column")
@@ -178,10 +167,7 @@ run_reconstruction_excel <- function(
   }
   if (!is.character(sheets) || length(sheets) == 0L ||
       any(is.na(sheets)) || any(!sheets %in% available_sheets)) {
-    stop(
-      "'sheets' must contain valid workbook sheet names.",
-      call. = FALSE
-    )
+    stop("'sheets' must contain valid workbook sheet names.", call. = FALSE)
   }
   sheets <- unique(sheets)
 
@@ -193,22 +179,12 @@ run_reconstruction_excel <- function(
   input_normalised <- normalizePath(input_file, winslash = "/", mustWork = TRUE)
   output_normalised <- normalizePath(output_file, winslash = "/", mustWork = FALSE)
   if (identical(tolower(input_normalised), tolower(output_normalised))) {
-    stop(
-      "'output_file' cannot overwrite 'input_file'.",
-      call. = FALSE
-    )
+    stop("'output_file' cannot overwrite 'input_file'.", call. = FALSE)
   }
 
   workbook <- openxlsx::createWorkbook()
-  used_names <- "README"
-  write_reconstruction_readme(
-    workbook = workbook,
-    input_file = input_file,
-    output_file = output_file,
-    mode = mode,
-    beta_values = beta_values,
-    terminal_window = terminal_window
-  )
+  initialize_reconstruction_overview(workbook, output_detail = output_detail)
+  used_names <- "Overview"
 
   results <- list()
   metadata_rows <- list()
@@ -250,16 +226,27 @@ run_reconstruction_excel <- function(
         survivorship_column = NA_character_,
         beta_column = NA_character_,
         fixed_beta = NA_real_,
+        result_sheet = NA_character_,
+        candidates_sheet = NA_character_,
+        profiles_sheet = NA_character_,
         summary_sheet = NA_character_,
         profile_sheet = NA_character_,
         scenario_sheet = NA_character_,
+        selected_beta = NA_real_,
+        selected_alpha = NA_real_,
+        selected_RMSE = NA_real_,
+        selected_R0 = NA_real_,
+        selected_lx_terminal = NA_real_,
+        overview_beta = "",
+        overview_alpha = "",
+        overview_rmse = "",
+        overview_R0 = "",
+        overview_lx_terminal = "",
         note = prepared$reason,
         stringsAsFactors = FALSE
       )
 
-      message(
-        "Skipped sheet '", sheet, "': ", prepared$reason
-      )
+      message("Skipped sheet '", sheet, "': ", prepared$reason)
       next
     }
 
@@ -291,185 +278,76 @@ run_reconstruction_excel <- function(
       )
     }
 
-    summary_sheet <- make_reconstruction_sheet_name("summary", sheet, used_names)
-    used_names <- c(used_names, summary_sheet)
-    profile_sheet <- NA_character_
-    scenario_sheet <- NA_character_
+    result_sheet <- make_reconstruction_sheet_name("Result", sheet, used_names)
+    used_names <- c(used_names, result_sheet)
+    candidates_sheet <- NA_character_
+    profiles_sheet <- NA_character_
     note <- NA_character_
+    selected_beta <- NA_real_
+    selected_alpha <- NA_real_
+    selected_RMSE <- NA_real_
+    selected_R0 <- NA_real_
+    selected_lx_terminal <- NA_real_
+    overview_beta <- ""
+    overview_alpha <- ""
+    overview_rmse <- ""
+    overview_R0 <- ""
+    overview_lx_terminal <- ""
 
     if (identical(route, "select") && !is.null(prepared$fixed_beta)) {
       note <- "Observed survivorship was available, so the fixed beta input was not used."
     }
-
     if (identical(route, "scan") && !is.null(prepared$fixed_beta)) {
       note <- "A fixed beta input was detected but was not used because mode = 'scan'."
     }
-
     if (identical(route, "fixed") && !is.null(terminal_window)) {
       note <- "terminal_window is not used for a fixed-beta reconstruction."
     }
 
-    if (identical(route, "scan")) {
-      result <- scan_beta(
+    if (identical(route, "select")) {
+      result <- select_beta(
         fertility_rates = prepared$fertility_rates,
+        lx_observed = prepared$lx_observed,
         beta_values = beta_values,
         tol = tol,
-        r0_tolerance = r0_tolerance,
-        terminal_window = terminal_window
+        r0_tolerance = r0_tolerance
       )
 
-      if (identical(output_detail, "standard")) {
-        # --- STANDARD: vertical format, admissible only ---
-        # Filter to admissible betas
-        adm_idx <- which(result$summary$admissible)
-        if (length(adm_idx) == 0L) adm_idx <- which(result$summary$stable)
-        if (length(adm_idx) == 0L) adm_idx <- seq_len(nrow(result$summary))
+      demographic_profile <- derive_demographic_profile(
+        lx = result$best_lx,
+        fertility_rates = prepared$fertility_rates,
+        tolerance = r0_tolerance
+      )
+      result_output <- make_reconstruction_profile_output(
+        age_labels = prepared$age_labels,
+        fertility_rates = prepared$fertility_rates,
+        lx_reconstructed = result$best_lx,
+        demographic_profile = demographic_profile,
+        lx_observed = prepared$lx_observed
+      )
+      write_reconstruction_table(workbook, result_sheet, result_output)
 
-        adm_betas <- result$summary$beta[adm_idx]
-        adm_alphas <- result$summary$alpha[adm_idx]
-        adm_profiles <- result$profiles[, adm_idx, drop = FALSE]
-        n_adm <- length(adm_idx)
-        n_ages <- length(prepared$age_labels)
-
-        # Build summary sheet: beta, alpha, lx in vertical blocks
-        empty_row <- rep(NA, n_adm)
-        summary_rows <- rbind(
-          setNames(data.frame(t(c("beta", rep(NA, n_adm - 1L))), stringsAsFactors = FALSE), paste0("V", seq_len(n_adm))),
-          setNames(data.frame(t(adm_betas), stringsAsFactors = FALSE), paste0("V", seq_len(n_adm))),
-          setNames(data.frame(t(c("alpha", rep(NA, n_adm - 1L))), stringsAsFactors = FALSE), paste0("V", seq_len(n_adm))),
-          setNames(data.frame(t(adm_alphas), stringsAsFactors = FALSE), paste0("V", seq_len(n_adm))),
-          setNames(data.frame(t(c("lx", rep(NA, n_adm - 1L))), stringsAsFactors = FALSE), paste0("V", seq_len(n_adm)))
+      if (identical(output_detail, "full")) {
+        candidates_sheet <- make_reconstruction_sheet_name(
+          "Candidates",
+          sheet,
+          used_names
         )
-        lx_block <- as.data.frame(adm_profiles)
-        names(lx_block) <- paste0("V", seq_len(n_adm))
-        summary_rows <- rbind(summary_rows, lx_block)
-
-        summary_sheet_name <- make_reconstruction_sheet_name("summary", sheet, used_names)
-        used_names <- c(used_names, summary_sheet_name)
-        summary_sheet <- summary_sheet_name
-        profile_sheet <- summary_sheet_name
-        openxlsx::addWorksheet(workbook, summary_sheet_name)
-        openxlsx::writeData(workbook, summary_sheet_name, summary_rows,
-                            colNames = FALSE, rowNames = FALSE)
-
-        # Build other_data sheet: R, D, D_relative, B in vertical blocks
-        other_sheet <- make_reconstruction_sheet_name("other_data", sheet, used_names)
-        used_names <- c(used_names, other_sheet)
-
-        other_rows <- data.frame(matrix(nrow = 0, ncol = n_adm), stringsAsFactors = FALSE)
-        names(other_rows) <- paste0("V", seq_len(n_adm))
-
-        for (j in seq_len(n_adm)) {
-          dp <- derive_demographic_profile(
-            lx = adm_profiles[, j],
-            fertility_rates = prepared$fertility_rates,
-            tolerance = r0_tolerance
-          )
-          if (j == 1L) {
-            all_R <- matrix(nrow = n_ages, ncol = n_adm)
-            all_D <- matrix(nrow = n_ages, ncol = n_adm)
-            all_Drel <- matrix(nrow = n_ages, ncol = n_adm)
-            all_B <- matrix(nrow = n_ages, ncol = n_adm)
-          }
-          all_R[, j] <- dp$R
-          all_D[, j] <- dp$D
-          all_Drel[, j] <- dp$D_relative
-          all_B[, j] <- dp$B
-        }
-
-        label_row <- function(label) {
-          setNames(data.frame(t(c(label, rep(NA, n_adm - 1L))), stringsAsFactors = FALSE), paste0("V", seq_len(n_adm)))
-        }
-        block_df <- function(mat) {
-          df <- as.data.frame(mat)
-          names(df) <- paste0("V", seq_len(n_adm))
-          df
-        }
-
-        other_rows <- rbind(
-          label_row("R(population_proportion)"),
-          block_df(all_R),
-          label_row("D(mortality_profile)"),
-          block_df(all_D),
-          label_row("D_relative(mortality_proportion)"),
-          block_df(all_Drel),
-          label_row("B(conditional_survival)"),
-          block_df(all_B)
-        )
-
-        openxlsx::addWorksheet(workbook, other_sheet)
-        openxlsx::writeData(workbook, other_sheet, other_rows,
-                            colNames = FALSE, rowNames = FALSE)
-
-      } else {
-        # --- FULL: original behavior ---
-        profiles_sheet <- make_reconstruction_sheet_name("profiles", sheet, used_names)
-        used_names <- c(used_names, profiles_sheet)
-        profile_sheet <- profiles_sheet
-
-        profiles_output <- data.frame(
-          age_index = prepared$age_index,
-          age = prepared$age_labels,
-          fertility_rates = prepared$fertility_rates,
-          result$profiles,
-          check.names = FALSE,
-          stringsAsFactors = FALSE
-        )
-
-        write_reconstruction_table(workbook, summary_sheet, result$summary)
-        write_reconstruction_table(workbook, profiles_sheet, profiles_output)
-
-        if (!is.null(terminal_window)) {
-          admissible_sheet <- make_reconstruction_sheet_name(
-            "admissible",
-            sheet,
-            used_names
-          )
-          used_names <- c(used_names, admissible_sheet)
-          scenario_sheet <- admissible_sheet
-          write_reconstruction_table(
-            workbook,
-            admissible_sheet,
-            result$admissible_summary
-          )
-
-          if (!is.null(result$terminal_extremes)) {
-            first_candidate <- result$terminal_extremes$first
-            last_candidate <- result$terminal_extremes$last
-            first_name <- paste0(
-              "lx_beta_",
-              formatC(first_candidate$beta, format = "fg", digits = 4)
-            )
-            last_name <- paste0(
-              "lx_beta_",
-              formatC(last_candidate$beta, format = "fg", digits = 4)
-            )
-            scenario_output <- data.frame(
-              age_index = prepared$age_index,
-              age = prepared$age_labels,
-              fertility_rates = prepared$fertility_rates,
-              check.names = FALSE,
-              stringsAsFactors = FALSE
-            )
-            scenario_output[[first_name]] <- first_candidate$lx
-            scenario_output[[last_name]] <- last_candidate$lx
-
-            terminal_sheet <- make_reconstruction_sheet_name(
-              "scenarios",
-              sheet,
-              used_names
-            )
-            used_names <- c(used_names, terminal_sheet)
-            scenario_sheet <- paste(admissible_sheet, terminal_sheet, sep = "; ")
-            write_reconstruction_table(workbook, terminal_sheet, scenario_output)
-          } else {
-            note <- paste0(
-              "No profile satisfied terminal_window = ",
-              paste(terminal_window, collapse = ", "), "."
-            )
-          }
-        }
+        used_names <- c(used_names, candidates_sheet)
+        write_reconstruction_table(workbook, candidates_sheet, result$results)
       }
+
+      selected_beta <- result$best_beta
+      selected_alpha <- result$best_alpha
+      selected_RMSE <- result$best_RMSE
+      selected_R0 <- result$best_R0
+      selected_lx_terminal <- result$best_lx[length(result$best_lx)]
+      overview_beta <- format_reconstruction_number(selected_beta)
+      overview_alpha <- format_reconstruction_number(selected_alpha)
+      overview_rmse <- format_reconstruction_number(selected_RMSE)
+      overview_R0 <- format_reconstruction_number(selected_R0)
+      overview_lx_terminal <- format_reconstruction_number(selected_lx_terminal)
+
     } else if (identical(route, "fixed")) {
       result <- reconstruct_population(
         fertility_rates = prepared$fertility_rates,
@@ -483,135 +361,103 @@ run_reconstruction_excel <- function(
         fertility_rates = prepared$fertility_rates,
         tolerance = r0_tolerance
       )
-
-      if (identical(output_detail, "standard")) {
-        # Standard: single result_ sheet, no summary
-        result_sheet <- make_reconstruction_sheet_name("result", sheet, used_names)
-        used_names <- c(used_names, result_sheet)
-        profile_sheet <- result_sheet
-
-        n_ages <- length(prepared$age_labels)
-        result_output <- data.frame(
-          age = prepared$age_labels,
-          `mx(fertility_rates)` = prepared$fertility_rates,
-          `lx(survivorship)` = result$lx,
-          `R(population_proportion)` = demographic_profile$R,
-          `D(mortality_profile)` = demographic_profile$D,
-          `D_relative(mortality_proportion)` = demographic_profile$D_relative,
-          `B(conditional_survival)` = demographic_profile$B,
-          alpha = c(result$alpha, rep(NA, n_ages - 1L)),
-          beta = c(result$beta, rep(NA, n_ages - 1L)),
-          check.names = FALSE,
-          stringsAsFactors = FALSE
-        )
-
-        write_reconstruction_table(workbook, result_sheet, result_output)
-      } else {
-        # Full: original behavior with summary + fixed sheets
-        fixed_sheet <- make_reconstruction_sheet_name("fixed", sheet, used_names)
-        used_names <- c(used_names, fixed_sheet)
-        profile_sheet <- fixed_sheet
-
-        fixed_output <- data.frame(
-          age_index = prepared$age_index,
-          age = prepared$age_labels,
-          fertility_rates = prepared$fertility_rates,
-          lx_reconstructed = result$lx,
-          lxmx = result$lxmx,
-          R = demographic_profile$R,
-          D = demographic_profile$D,
-          D_relative = demographic_profile$D_relative,
-          B = demographic_profile$B,
-          stringsAsFactors = FALSE
-        )
-
-        if (!is.null(prepared$lx_observed)) {
-          fixed_output$lx_observed <- prepared$lx_observed
-          fixed_output$residual <- result$lx - prepared$lx_observed
-          fixed_output$squared_error <- fixed_output$residual ^ 2
-        }
-
-        fixed_summary <- data.frame(
-          beta = result$beta,
-          alpha = result$alpha,
-          R0 = result$R0,
-          residual = result$residual,
-          lx_terminal = result$lx[length(result$lx)],
-          stable = result$stable,
-          status = "fixed_beta_input",
-          stringsAsFactors = FALSE
-        )
-
-        write_reconstruction_table(workbook, summary_sheet, fixed_summary)
-        write_reconstruction_table(workbook, fixed_sheet, fixed_output)
-      }
-    } else {
-      result <- select_beta(
+      result_output <- make_reconstruction_profile_output(
+        age_labels = prepared$age_labels,
         fertility_rates = prepared$fertility_rates,
-        lx_observed = prepared$lx_observed,
+        lx_reconstructed = result$lx,
+        demographic_profile = demographic_profile,
+        lx_observed = prepared$lx_observed
+      )
+      write_reconstruction_table(workbook, result_sheet, result_output)
+
+      selected_beta <- result$beta
+      selected_alpha <- result$alpha
+      selected_R0 <- result$R0
+      selected_lx_terminal <- result$lx[length(result$lx)]
+      overview_beta <- format_reconstruction_number(selected_beta)
+      overview_alpha <- format_reconstruction_number(selected_alpha)
+      overview_R0 <- format_reconstruction_number(selected_R0)
+      overview_lx_terminal <- format_reconstruction_number(selected_lx_terminal)
+
+    } else {
+      result <- scan_beta(
+        fertility_rates = prepared$fertility_rates,
         beta_values = beta_values,
         tol = tol,
-        r0_tolerance = r0_tolerance
+        r0_tolerance = r0_tolerance,
+        terminal_window = terminal_window
       )
 
-      selected_sheet <- make_reconstruction_sheet_name("selected", sheet, used_names)
-      used_names <- c(used_names, selected_sheet)
-      profile_sheet <- selected_sheet
-
-      demographic_profile <- derive_demographic_profile(
-        lx = result$best_lx,
-        fertility_rates = prepared$fertility_rates,
-        tolerance = r0_tolerance
-      )
-
-      if (identical(output_detail, "standard")) {
-        # Summary: only admissible rows, limited columns
-        admissible_rows <- result$results$stable
-        summary_std <- result$results[admissible_rows, , drop = FALSE]
-        selected_col <- ifelse(summary_std$selected, "minimum", "")
-        summary_out <- data.frame(
-          beta = summary_std$beta,
-          alpha = summary_std$alpha,
-          RMSE = summary_std$RMSE,
-          selected = selected_col,
-          stringsAsFactors = FALSE
+      scan_note <- if (is.null(terminal_window)) {
+        paste(
+          "No single profile was selected because this sheet has neither",
+          "observed survivorship nor a fixed beta. The table lists all stable",
+          "candidate scenarios."
         )
+      } else if (nrow(result$admissible_summary) > 0L) {
+        paste(
+          "No single profile was selected. The table lists candidates whose",
+          "terminal survivorship lies inside the requested terminal window."
+        )
+      } else {
+        paste(
+          "No candidate satisfied the requested terminal window. The table",
+          "lists all numerically stable candidates."
+        )
+      }
+      if (!is.na(note)) {
+        scan_note <- paste(scan_note, note)
+      }
 
-        # Selected: descriptive column names, lx_observed first
-        selected_output <- data.frame(
-          age = prepared$age_labels,
-          `mx(fertility_rates)` = prepared$fertility_rates,
-          `lx_observed(observed_survivorship)` = prepared$lx_observed,
-          `lx_reconstructed(survivorship)` = result$best_lx,
-          `R(population_proportion)` = demographic_profile$R,
-          `D(mortality_profile)` = demographic_profile$D,
-          `D_relative(mortality_proportion)` = demographic_profile$D_relative,
-          `B(conditional_survival)` = demographic_profile$B,
+      result_output <- make_reconstruction_scan_result_output(result)
+      write_reconstruction_table(
+        workbook,
+        result_sheet,
+        result_output,
+        title = "Candidate scenarios",
+        note = scan_note
+      )
+
+      if (identical(output_detail, "full")) {
+        candidates_sheet <- make_reconstruction_sheet_name(
+          "Candidates",
+          sheet,
+          used_names
+        )
+        used_names <- c(used_names, candidates_sheet)
+        write_reconstruction_table(workbook, candidates_sheet, result$summary)
+
+        profiles_sheet <- make_reconstruction_sheet_name(
+          "Profiles",
+          sheet,
+          used_names
+        )
+        used_names <- c(used_names, profiles_sheet)
+        profiles_output <- data.frame(
+          `Age index` = prepared$age_index,
+          Age = prepared$age_labels,
+          `Fertility (mx)` = prepared$fertility_rates,
+          result$profiles,
           check.names = FALSE,
           stringsAsFactors = FALSE
         )
+        write_reconstruction_table(workbook, profiles_sheet, profiles_output)
+      }
 
-        write_reconstruction_table(workbook, summary_sheet, summary_out)
-        write_reconstruction_table(workbook, selected_sheet, selected_output)
-      } else {
-        selected_output <- data.frame(
-          age_index = prepared$age_index,
-          age = prepared$age_labels,
-          fertility_rates = prepared$fertility_rates,
-          lx_observed = prepared$lx_observed,
-          lx_reconstructed = result$best_lx,
-          residual = result$best_lx - prepared$lx_observed,
-          squared_error = (result$best_lx - prepared$lx_observed) ^ 2,
-          lxmx = result$best_lx * prepared$fertility_rates,
-          R = demographic_profile$R,
-          D = demographic_profile$D,
-          D_relative = demographic_profile$D_relative,
-          B = demographic_profile$B,
-          stringsAsFactors = FALSE
+      overview_beta <- paste0(
+        format_reconstruction_number(min(beta_values)),
+        " to ",
+        format_reconstruction_number(max(beta_values)),
+        " (", length(beta_values), " candidates)"
+      )
+      overview_R0 <- paste0(sum(result$summary$stable), " stable candidates")
+      if (!is.null(terminal_window)) {
+        overview_lx_terminal <- paste0(
+          sum(result$summary$admissible), " terminal-window admissible"
         )
-
-        write_reconstruction_table(workbook, summary_sheet, result$results)
-        write_reconstruction_table(workbook, selected_sheet, selected_output)
+      }
+      if (is.na(note)) {
+        note <- scan_note
       }
     }
 
@@ -627,33 +473,51 @@ run_reconstruction_excel <- function(
       survivorship_column = prepared$source_columns$survivorship,
       beta_column = prepared$source_columns$beta,
       fixed_beta = if (is.null(prepared$fixed_beta)) NA_real_ else prepared$fixed_beta,
-      summary_sheet = summary_sheet,
-      profile_sheet = profile_sheet,
-      scenario_sheet = scenario_sheet,
+      result_sheet = result_sheet,
+      candidates_sheet = candidates_sheet,
+      profiles_sheet = profiles_sheet,
+      summary_sheet = candidates_sheet,
+      profile_sheet = result_sheet,
+      scenario_sheet = NA_character_,
+      selected_beta = selected_beta,
+      selected_alpha = selected_alpha,
+      selected_RMSE = selected_RMSE,
+      selected_R0 = selected_R0,
+      selected_lx_terminal = selected_lx_terminal,
+      overview_beta = overview_beta,
+      overview_alpha = overview_alpha,
+      overview_rmse = overview_rmse,
+      overview_R0 = overview_R0,
+      overview_lx_terminal = overview_lx_terminal,
       note = note,
       stringsAsFactors = FALSE
     )
 
-    message(
-      "Processed sheet '", sheet, "' through the ", route, " route."
-    )
+    message("Processed sheet '", sheet, "' through the ", route, " route.")
   }
 
   if (length(results) == 0L) {
     stop(
-      "No sheet with a recognized fertility column was processed. Use a fertility alias such as mx, m_x, fertility, fecundidad, or specify 'fertility_column'.",
+      paste(
+        "No sheet with a recognized fertility column was processed.",
+        "Use a fertility alias such as mx, m_x, fertility, fecundidad,",
+        "or specify 'fertility_column'."
+      ),
       call. = FALSE
     )
   }
 
   metadata <- do.call(rbind, metadata_rows)
-  metadata_sheet <- make_reconstruction_sheet_name("metadata", "run", used_names)
-  write_reconstruction_table(workbook, metadata_sheet, metadata)
+  overview <- make_reconstruction_overview(metadata)
+  write_reconstruction_overview(workbook, overview)
+
+  if (identical(output_detail, "full")) {
+    write_reconstruction_table(workbook, "Metadata", metadata)
+  }
+
   openxlsx::saveWorkbook(workbook, output_file, overwrite = TRUE)
 
-  message(
-    "Reconstruction complete. Output saved to ", output_file, "."
-  )
+  message("Reconstruction complete. Output saved to ", output_file, ".")
 
   invisible(list(
     output_file = output_file,

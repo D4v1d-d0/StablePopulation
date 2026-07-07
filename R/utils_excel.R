@@ -176,13 +176,181 @@ choose_reconstruction_input_file <- function(is_interactive = interactive()) {
   selected_file
 }
 
-# Write an output table with basic spreadsheet usability settings.
-write_reconstruction_table <- function(workbook, sheet_name, data) {
+# Format a number compactly for the user-facing overview worksheet.
+format_reconstruction_number <- function(value, digits = 6L) {
+  if (length(value) == 0L || is.na(value) || !is.finite(value)) {
+    return("")
+  }
+
+  formatC(value, format = "fg", digits = digits)
+}
+
+# Create the first worksheet of every output workbook. The processing summary
+# is written after all input sheets have been evaluated.
+initialize_reconstruction_overview <- function(workbook, output_detail) {
+  openxlsx::addWorksheet(workbook, "Overview")
+
+  title_style <- openxlsx::createStyle(
+    textDecoration = "bold",
+    fontSize = 14
+  )
+  note_style <- openxlsx::createStyle(
+    wrapText = TRUE,
+    valign = "top"
+  )
+
+  openxlsx::writeData(
+    workbook,
+    "Overview",
+    x = "StablePopulation reconstruction output",
+    startRow = 1L,
+    colNames = FALSE,
+    rowNames = FALSE
+  )
+  openxlsx::addStyle(
+    workbook,
+    "Overview",
+    title_style,
+    rows = 1L,
+    cols = 1L,
+    stack = TRUE
+  )
+
+  standard_note <- paste(
+    "Start with the table below, then open each Result_ worksheet.",
+    "A scan route does not select a single profile when neither observed",
+    "survivorship nor a fixed beta is available."
+  )
+  full_note <- paste(
+    standard_note,
+    "The full workbook also contains technical candidate and profile sheets;",
+    "Metadata is the final worksheet."
+  )
+
+  openxlsx::writeData(
+    workbook,
+    "Overview",
+    x = if (identical(output_detail, "full")) full_note else standard_note,
+    startRow = 3L,
+    colNames = FALSE,
+    rowNames = FALSE
+  )
+  openxlsx::addStyle(
+    workbook,
+    "Overview",
+    note_style,
+    rows = 3L,
+    cols = 1L,
+    stack = TRUE
+  )
+  openxlsx::setColWidths(workbook, "Overview", cols = 1L, widths = 70)
+}
+
+# Write the processing summary to the Overview worksheet without changing its
+# first-sheet position.
+write_reconstruction_overview <- function(workbook, overview) {
+  header_style <- openxlsx::createStyle(
+    textDecoration = "bold",
+    wrapText = TRUE,
+    valign = "top"
+  )
+
+  openxlsx::writeData(
+    workbook,
+    "Overview",
+    overview,
+    startRow = 6L,
+    rowNames = FALSE
+  )
+  openxlsx::addStyle(
+    workbook,
+    "Overview",
+    header_style,
+    rows = 6L,
+    cols = seq_len(ncol(overview)),
+    gridExpand = TRUE,
+    stack = TRUE
+  )
+  openxlsx::freezePane(workbook, "Overview", firstActiveRow = 7L)
+  openxlsx::setColWidths(
+    workbook,
+    "Overview",
+    cols = seq_len(ncol(overview)),
+    widths = "auto"
+  )
+}
+
+# Write one worksheet containing a table. Optional title and note are used for
+# scan results, where no single profile is selected.
+write_reconstruction_table <- function(
+  workbook,
+  sheet_name,
+  data,
+  title = NULL,
+  note = NULL
+) {
   openxlsx::addWorksheet(workbook, sheet_name)
-  openxlsx::writeData(workbook, sheet_name, data)
+
+  current_row <- 1L
+  if (!is.null(title)) {
+    title_style <- openxlsx::createStyle(
+      textDecoration = "bold",
+      fontSize = 12
+    )
+    openxlsx::writeData(
+      workbook,
+      sheet_name,
+      x = title,
+      startRow = current_row,
+      colNames = FALSE,
+      rowNames = FALSE
+    )
+    openxlsx::addStyle(
+      workbook,
+      sheet_name,
+      title_style,
+      rows = current_row,
+      cols = 1L,
+      stack = TRUE
+    )
+    current_row <- current_row + 2L
+  }
+
+  if (!is.null(note)) {
+    note_style <- openxlsx::createStyle(wrapText = TRUE, valign = "top")
+    openxlsx::writeData(
+      workbook,
+      sheet_name,
+      x = note,
+      startRow = current_row,
+      colNames = FALSE,
+      rowNames = FALSE
+    )
+    openxlsx::addStyle(
+      workbook,
+      sheet_name,
+      note_style,
+      rows = current_row,
+      cols = 1L,
+      stack = TRUE
+    )
+    current_row <- current_row + 2L
+  }
+
+  openxlsx::writeData(
+    workbook,
+    sheet_name,
+    data,
+    startRow = current_row,
+    rowNames = FALSE
+  )
 
   if (ncol(data) > 0L) {
-    openxlsx::freezePane(workbook, sheet_name, firstRow = TRUE)
+    openxlsx::freezePane(
+      workbook,
+      sheet_name,
+      firstActiveRow = current_row + 1L
+    )
     openxlsx::setColWidths(
       workbook,
       sheet_name,
@@ -192,69 +360,84 @@ write_reconstruction_table <- function(workbook, sheet_name, data) {
   }
 }
 
-# Write a brief guide into the result workbook.
-write_reconstruction_readme <- function(
-  workbook,
-  input_file,
-  output_file,
-  mode,
-  beta_values,
-  terminal_window
+# Build the user-facing profile table shared by selected and fixed-beta routes.
+make_reconstruction_profile_output <- function(
+  age_labels,
+  fertility_rates,
+  lx_reconstructed,
+  demographic_profile,
+  lx_observed = NULL
 ) {
-  run_information <- data.frame(
-    item = c(
-      "input_file",
-      "output_file",
-      "mode_requested",
-      "beta_values",
-      "terminal_window"
-    ),
-    value = c(
-      input_file,
-      output_file,
-      mode,
-      paste(beta_values, collapse = ", "),
-      if (is.null(terminal_window)) {
-        "NULL"
-      } else {
-        paste(terminal_window, collapse = ", ")
-      }
-    ),
+  output <- data.frame(
+    Age = age_labels,
+    `Fertility (mx)` = fertility_rates,
+    check.names = FALSE,
     stringsAsFactors = FALSE
   )
 
-  sheet_guide <- data.frame(
-    sheet_pattern = c(
-      "metadata_run",
-      "summary_<input sheet>",
-      "profiles_<input sheet>",
-      "selected_<input sheet>",
-      "fixed_<input sheet>",
-      "admissible_<input sheet>",
-      "scenarios_<input sheet>"
-    ),
-    contents = c(
-      "Processing record, recognized columns, route and output sheets for every input sheet.",
-      "Candidate beta values and numerical diagnostics.",
-      "All reconstructed survivorship candidates for a scan route.",
-      "Selected profile, observed and reconstructed survivorship, and derived demographic quantities R, D, D_relative and B.",
-      "Profile reconstructed from one fixed beta value supplied in the input sheet.",
-      "Candidates retained by the optional terminal-survivorship window.",
-      "First and last terminal-admissible profiles when a terminal window is used."
-    ),
+  if (!is.null(lx_observed)) {
+    output[["Observed survivorship (lx)"]] <- lx_observed
+  }
+
+  output[["Reconstructed survivorship (lx)"]] <- lx_reconstructed
+  output[["Stable population proportion (R)"]] <- demographic_profile$R
+  output[["Mortality profile (D)"]] <- demographic_profile$D
+  output[["Relative mortality proportion (D_relative)"]] <-
+    demographic_profile$D_relative
+  output[["Conditional survival (B)"]] <- demographic_profile$B
+
+  output
+}
+
+# Build a compact candidate table for the scan result sheet. It never chooses a
+# single arbitrary beta when empirical lx or a fixed beta is unavailable.
+make_reconstruction_scan_result_output <- function(scan_result) {
+  candidates <- scan_result$summary[scan_result$summary$stable, , drop = FALSE]
+
+  if (!is.null(scan_result$terminal_window) &&
+      nrow(scan_result$admissible_summary) > 0L) {
+    candidates <- scan_result$admissible_summary
+  }
+
+  data.frame(
+    Beta = candidates$beta,
+    Alpha = candidates$alpha,
+    R0 = candidates$R0,
+    `R0 residual` = candidates$residual,
+    `Terminal survivorship (lx)` = candidates$lx_terminal,
+    `Terminal-window admissible` = if (is.null(scan_result$terminal_window)) {
+      rep(NA, nrow(candidates))
+    } else {
+      candidates$admissible
+    },
+    Status = candidates$status,
+    check.names = FALSE,
     stringsAsFactors = FALSE
   )
+}
 
-  openxlsx::addWorksheet(workbook, "README")
-  openxlsx::writeData(workbook, "README", run_information, startRow = 1L)
-  openxlsx::writeData(
-    workbook,
-    "README",
-    sheet_guide,
-    startRow = nrow(run_information) + 3L
+# Extract a concise set of fields for the Overview worksheet.
+make_reconstruction_overview <- function(metadata) {
+  as_blank <- function(x) {
+    x <- as.character(x)
+    x[is.na(x)] <- ""
+    x
+  }
+
+  data.frame(
+    `Input sheet` = as_blank(metadata$sheet),
+    Status = ifelse(metadata$status == "processed", "Processed", "Skipped"),
+    Method = as_blank(metadata$route),
+    Beta = as_blank(metadata$overview_beta),
+    Alpha = as_blank(metadata$overview_alpha),
+    RMSE = as_blank(metadata$overview_rmse),
+    R0 = as_blank(metadata$overview_R0),
+    `Terminal survivorship (lx)` = as_blank(metadata$overview_lx_terminal),
+    `Result sheet` = as_blank(metadata$result_sheet),
+    Notes = as_blank(metadata$note),
+    check.names = FALSE,
+    stringsAsFactors = FALSE
   )
-  openxlsx::freezePane(workbook, "README", firstRow = TRUE)
-  openxlsx::setColWidths(workbook, "README", cols = 1:2, widths = "auto")
 }
 
 # Extract an optional fixed beta value from a recognized input column.
