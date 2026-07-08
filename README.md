@@ -37,6 +37,17 @@ The development is linked primarily to the doctoral work of David
 Palacios-Morales at the Universidad Complutense de Madrid (UCM), while retaining
 his University of Burgos (UBU) affiliation.
 
+## Step-by-step vignette
+
+The development version includes an English vignette with a reproducible
+workflow from input fertility and survivorship data to constrained Weibull
+reconstruction, derived demographic profiles, scenario scanning, and the Excel
+interface. After installing the package, open it with:
+
+```r
+vignette("stablepopulation-workflow", package = "StablePopulation")
+```
+
 ## Choose a reconstruction route
 
 The most useful first question is: **what information do you have?**

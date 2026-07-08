@@ -70,6 +70,10 @@ Development version prepared during the UCM doctoral stage.
 - Updates the development citation to identify version 1.1.0.9000 as a GitHub
   development version while retaining the CRAN DOI for the published 1.0.3
   release.
+- Adds an English vignette, `stablepopulation-workflow`, with a complete
+  step-by-step workflow from input fertility and survivorship data to constrained
+  Weibull reconstruction, derived demographic profiles, scenario scanning, and
+  the Excel interface.
 - Does not yet add the inverse alpha-to-beta exploration route (`solve_beta()`
   and `scan_alpha()`); it remains available in historical development material
   until a concrete analytical use case justifies exposing it here.

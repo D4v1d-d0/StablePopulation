@@ -11,3 +11,5 @@
 ^stablepopulations\.Rcheck$
 ^.*\.xlsx$
 ^CITATION\.cff$
+^doc$
+^Meta$
