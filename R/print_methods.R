@@ -51,6 +51,10 @@ print.stable_population_selection <- function(x, ...) {
   cat("  R0:        ", formatC(x$best_R0, format = "fg", digits = 8), "\n")
   cat("  RMSE:      ", formatC(x$best_RMSE, format = "g", digits = 4), "\n")
   cat("  Age classes:", length(x$age), "\n")
+  if (isTRUE(x$beta_at_boundary)) {
+    cat("  Boundary warning: selected beta is at the ",
+        x$beta_boundary_side, " edge of the scanned range\n", sep = "")
+  }
   n_candidates <- sum(x$results$stable)
   cat("  Candidates evaluated:", n_candidates, "\n")
   cat("\nUse $best_profile for the selected profile, $results for all candidates.\n")

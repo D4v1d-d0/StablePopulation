@@ -14,6 +14,25 @@ test_that("select_beta recovers a constrained candidate supplied as observed lx"
   expect_true(selection$results$selected[which(selection$results$beta == 1)])
 })
 
+test_that("select_beta warns when the selected beta is on the scanned boundary", {
+  mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
+  truth <- reconstruct_population(mx, beta = 0.5)
+
+  expect_warning(
+    selection <- select_beta(
+      fertility_rates = mx,
+      lx_observed = truth$lx,
+      beta_values = c(0.5, 1, 1.5)
+    ),
+    "boundary of the scanned beta range"
+  )
+
+  expect_true(selection$beta_at_boundary)
+  expect_identical(selection$beta_boundary_side, "lower")
+  expect_match(selection$beta_boundary_note, "selected beta")
+})
+
+
 test_that("derive_demographic_profile creates R, D, D_relative, and B", {
   lx <- c(1, 0.8, 0.5, 0.2)
   profile <- derive_demographic_profile(lx)

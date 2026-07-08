@@ -5,21 +5,23 @@ test_that("run_analysis retains the StablePopulation 1.0.3 interface", {
 test_that("standard Excel output contains Overview and Result sheets only", {
   input_file <- tempfile(fileext = ".xlsx")
   output_file <- tempfile(fileext = ".xlsx")
+  mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
+  lx_reference <- reconstruct_population(mx, beta = 1)$lx
 
   workbook <- openxlsx::createWorkbook()
   openxlsx::addWorksheet(workbook, "scan_case")
   openxlsx::writeData(
     workbook,
     "scan_case",
-    data.frame(mx = c(0, 0, 0.30, 0.75, 0.60, 0.20))
+    data.frame(mx = mx)
   )
   openxlsx::addWorksheet(workbook, "select_case")
   openxlsx::writeData(
     workbook,
     "select_case",
     data.frame(
-      mx = c(0, 0, 0.30, 0.75, 0.60, 0.20),
-      lx_observed = c(1, 0.93, 0.82, 0.67, 0.41, 0.15)
+      mx = mx,
+      lx_observed = lx_reference
     )
   )
   openxlsx::saveWorkbook(workbook, input_file, overwrite = TRUE)
@@ -27,7 +29,7 @@ test_that("standard Excel output contains Overview and Result sheets only", {
   result <- run_reconstruction_excel(
     input_file = input_file,
     output_file = output_file,
-    beta_values = c(0.5, 1)
+    beta_values = c(0.5, 1, 1.5)
   )
 
   expect_true(file.exists(output_file))
@@ -62,21 +64,23 @@ test_that("standard Excel output contains Overview and Result sheets only", {
 test_that("full Excel output includes diagnostics and ends with Metadata", {
   input_file <- tempfile(fileext = ".xlsx")
   output_file <- tempfile(fileext = ".xlsx")
+  mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
+  lx_reference <- reconstruct_population(mx, beta = 1)$lx
 
   workbook <- openxlsx::createWorkbook()
   openxlsx::addWorksheet(workbook, "scan_case")
   openxlsx::writeData(
     workbook,
     "scan_case",
-    data.frame(mx = c(0, 0, 0.30, 0.75, 0.60, 0.20))
+    data.frame(mx = mx)
   )
   openxlsx::addWorksheet(workbook, "select_case")
   openxlsx::writeData(
     workbook,
     "select_case",
     data.frame(
-      mx = c(0, 0, 0.30, 0.75, 0.60, 0.20),
-      lx_observed = c(1, 0.93, 0.82, 0.67, 0.41, 0.15)
+      mx = mx,
+      lx_observed = lx_reference
     )
   )
   openxlsx::saveWorkbook(workbook, input_file, overwrite = TRUE)
@@ -84,7 +88,7 @@ test_that("full Excel output includes diagnostics and ends with Metadata", {
   result <- run_reconstruction_excel(
     input_file = input_file,
     output_file = output_file,
-    beta_values = c(0.5, 1),
+    beta_values = c(0.5, 1, 1.5),
     output_detail = "full"
   )
 
@@ -102,6 +106,8 @@ test_that("full Excel output includes diagnostics and ends with Metadata", {
 
 test_that("run_reconstruction_excel recognizes aliases, preserves age labels, and skips non-data sheets", {
   input_file <- tempfile(fileext = ".xlsx")
+  mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
+  lx_reference <- reconstruct_population(mx, beta = 1)$lx
   expected_output <- file.path(
     dirname(input_file),
     paste0(tools::file_path_sans_ext(basename(input_file)), "_StablePopulation.xlsx")
@@ -114,8 +120,8 @@ test_that("run_reconstruction_excel recognizes aliases, preserves age labels, an
     "Spanish_aliases",
     data.frame(
       edad = c("0-1", "1-2", "2-3", "3-4", "4-5", "5-6"),
-      fecundidad = c(0, 0, 0.30, 0.75, 0.60, 0.20),
-      supervivencia = c(1, 0.93, 0.82, 0.67, 0.41, 0.15)
+      fecundidad = mx,
+      supervivencia = lx_reference
     )
   )
   openxlsx::addWorksheet(workbook, "Notes")
@@ -124,7 +130,7 @@ test_that("run_reconstruction_excel recognizes aliases, preserves age labels, an
 
   result <- run_reconstruction_excel(
     input_file = input_file,
-    beta_values = c(0.5, 1)
+    beta_values = c(0.5, 1, 1.5)
   )
 
   expect_identical(result$output_file, expected_output)
@@ -152,6 +158,8 @@ test_that("the interactive input helper fails clearly outside an interactive ses
 test_that("run_reconstruction_excel recognizes decorated legacy headers and fixed beta input", {
   input_file <- tempfile(fileext = ".xlsx")
   output_file <- tempfile(fileext = ".xlsx")
+  mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
+  lx_reference <- reconstruct_population(mx, beta = 1)$lx
 
   workbook <- openxlsx::createWorkbook()
 
@@ -161,8 +169,8 @@ test_that("run_reconstruction_excel recognizes decorated legacy headers and fixe
     "legacy_select",
     data.frame(
       "Age (years)" = 0:5,
-      "mx (Fertility Rate)" = c(0, 0, 0.30, 0.75, 0.60, 0.20),
-      "lx (Survivorship)" = c(1, 0.93, 0.82, 0.67, 0.41, 0.15),
+      "mx (Fertility Rate)" = mx,
+      "lx (Survivorship)" = lx_reference,
       "Beta" = c(0.70, rep(NA_real_, 5L)),
       check.names = FALSE
     )
@@ -174,7 +182,7 @@ test_that("run_reconstruction_excel recognizes decorated legacy headers and fixe
     "legacy_fixed",
     data.frame(
       "Age (years)" = 0:5,
-      "mx (Fertility Rate)" = c(0, 0, 0.30, 0.75, 0.60, 0.20),
+      "mx (Fertility Rate)" = mx,
       "Beta" = c(0.70, rep(NA_real_, 5L)),
       check.names = FALSE
     )
@@ -185,7 +193,7 @@ test_that("run_reconstruction_excel recognizes decorated legacy headers and fixe
   result <- run_reconstruction_excel(
     input_file = input_file,
     output_file = output_file,
-    beta_values = c(0.5, 1)
+    beta_values = c(0.5, 1, 1.5)
   )
 
   selected <- result$metadata[result$metadata$sheet == "legacy_select", ]

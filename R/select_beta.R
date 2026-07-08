@@ -11,7 +11,10 @@
 #' This is the route to use when observed survivorship is available. The
 #' function scans the supplied beta grid and returns the best grid candidate;
 #' inspect \code{results} rather than treating the selected value as a
-#' continuous unconstrained optimum.
+#' continuous unconstrained optimum. If the selected candidate lies at the
+#' lower or upper edge of the scanned beta grid, the function issues a warning
+#' and records a boundary note in the returned object, because the best value
+#' may lie outside the supplied range.
 #'
 #' Fertility is analysed exactly as supplied. The function never rescales it
 #' implicitly. When the methodological decision is to express an observed
@@ -34,7 +37,9 @@
 #'   elements are \code{best_beta}, \code{best_alpha}, \code{best_lx},
 #'   \code{best_R0}, \code{best_MSE}, \code{best_RMSE},
 #'   \code{best_profile} (age-by-age comparison), \code{results} (all
-#'   scanned candidates), and the underlying \code{scan} object.
+#'   scanned candidates), \code{beta_at_boundary},
+#'   \code{beta_boundary_side}, \code{beta_boundary_note}, and the
+#'   underlying \code{scan} object.
 #'
 #' @seealso [scan_beta()] for the route without observed survivorship,
 #'   [normalize_fertility()] for explicit fertility rescaling, and
@@ -42,7 +47,7 @@
 #'
 #' @examples
 #' mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
-#' lx_observed <- c(1, 0.93, 0.82, 0.67, 0.41, 0.15)
+#' lx_observed <- c(1, 0.8302461, 0.6893086, 0.5722958, 0.4751464, 0.3944885)
 #'
 #' selection <- select_beta(mx, lx_observed)
 #' selection$best_beta
@@ -99,6 +104,37 @@ select_beta <- function(
   best_index <- stable_index[which.min(results$RMSE[stable_index])]
   results$selected[best_index] <- TRUE
 
+  beta_range <- range(scan$beta_values)
+  best_beta <- results$beta[best_index]
+  beta_boundary_side <- NA_character_
+  beta_boundary_note <- NA_character_
+
+  if (length(scan$beta_values) > 1L && identical(best_beta, beta_range[1L])) {
+    beta_boundary_side <- "lower"
+  }
+  if (length(scan$beta_values) > 1L && identical(best_beta, beta_range[2L])) {
+    beta_boundary_side <- if (is.na(beta_boundary_side)) {
+      "upper"
+    } else {
+      "lower and upper"
+    }
+  }
+
+  beta_at_boundary <- !is.na(beta_boundary_side)
+  if (beta_at_boundary) {
+    beta_boundary_note <- paste0(
+      "The selected beta (",
+      formatC(best_beta, format = "fg", digits = 6),
+      ") is at the ", beta_boundary_side,
+      " boundary of the scanned beta range [",
+      formatC(beta_range[1L], format = "fg", digits = 6),
+      ", ",
+      formatC(beta_range[2L], format = "fg", digits = 6),
+      "]. Consider extending 'beta_values' and rerunning the selection."
+    )
+    warning(beta_boundary_note, call. = FALSE)
+  }
+
   best_lx <- as.numeric(scan$profiles[, best_index])
   best_residual <- best_lx - lx_observed
   age <- scan$age
@@ -121,7 +157,7 @@ select_beta <- function(
       age = age,
       fertility_rates = fertility_rates,
       lx_observed = lx_observed,
-      best_beta = results$beta[best_index],
+      best_beta = best_beta,
       best_alpha = results$alpha[best_index],
       best_lx = best_lx,
       best_R0 = results$R0[best_index],
@@ -129,6 +165,9 @@ select_beta <- function(
       best_RMSE = results$RMSE[best_index],
       best_profile = best_profile,
       results = results,
+      beta_at_boundary = beta_at_boundary,
+      beta_boundary_side = beta_boundary_side,
+      beta_boundary_note = beta_boundary_note,
       scan = scan,
       input = list(
         age = age,

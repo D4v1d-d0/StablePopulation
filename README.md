@@ -60,7 +60,7 @@ profile have the same number of consecutive classes.
 
 ```r
 mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
-lx_observed <- c(1, 0.93, 0.82, 0.67, 0.41, 0.15)
+lx_observed <- c(1, 0.8302461, 0.6893086, 0.5722958, 0.4751464, 0.3944885)
 
 selection <- select_beta(
   fertility_rates = mx,
@@ -77,6 +77,9 @@ For every candidate `beta`, the package solves the corresponding `alpha` under
 `R0 = 1`, reconstructs `lx`, and calculates RMSE against the observed profile.
 `select_beta()` then returns the smallest-RMSE candidate. This is a
 **constrained one-parameter selection**, not a free two-parameter Weibull fit.
+If the selected `beta` is the first or last value of the scanned grid, the
+function warns and stores a boundary note in the result so the range can be
+extended deliberately.
 
 ### Explicit fertility normalisation
 

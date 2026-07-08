@@ -320,6 +320,15 @@ run_reconstruction_excel <- function(
         r0_tolerance = r0_tolerance
       )
 
+      result_note <- if (is.na(note)) NULL else note
+      if (isTRUE(result$beta_at_boundary)) {
+        result_note <- paste(
+          c(result_note, result$beta_boundary_note),
+          collapse = " "
+        )
+        note <- result_note
+      }
+
       demographic_profile <- derive_demographic_profile(
         lx = result$best_lx,
         fertility_rates = prepared$fertility_rates,
@@ -332,7 +341,12 @@ run_reconstruction_excel <- function(
         demographic_profile = demographic_profile,
         lx_observed = prepared$lx_observed
       )
-      write_reconstruction_table(workbook, result_sheet, result_output)
+      write_reconstruction_table(
+        workbook,
+        result_sheet,
+        result_output,
+        note = result_note
+      )
 
       if (identical(output_detail, "full")) {
         candidates_sheet <- make_reconstruction_sheet_name(

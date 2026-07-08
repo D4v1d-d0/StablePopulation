@@ -33,7 +33,9 @@ A list of class \code{"stable_population_selection"}. Main
 elements are \code{best_beta}, \code{best_alpha}, \code{best_lx},
 \code{best_R0}, \code{best_MSE}, \code{best_RMSE},
 \code{best_profile} (age-by-age comparison), \code{results} (all
-scanned candidates), and the underlying \code{scan} object.
+scanned candidates), \code{beta_at_boundary},
+\code{beta_boundary_side}, \code{beta_boundary_note}, and the
+underlying \code{scan} object.
 }
 \description{
 Generates Weibull survivorship candidates under \eqn{R_0 = 1} and selects
@@ -46,7 +48,10 @@ candidate \eqn{\beta}.
 This is the route to use when observed survivorship is available. The
 function scans the supplied beta grid and returns the best grid candidate;
 inspect \code{results} rather than treating the selected value as a
-continuous unconstrained optimum.
+continuous unconstrained optimum. If the selected candidate lies at the
+lower or upper edge of the scanned beta grid, the function issues a warning
+and records a boundary note in the returned object, because the best value
+may lie outside the supplied range.
 
 Fertility is analysed exactly as supplied. The function never rescales it
 implicitly. When the methodological decision is to express an observed
@@ -58,7 +63,7 @@ distinguishable.
 }
 \examples{
 mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
-lx_observed <- c(1, 0.93, 0.82, 0.67, 0.41, 0.15)
+lx_observed <- c(1, 0.8302461, 0.6893086, 0.5722958, 0.4751464, 0.3944885)
 
 selection <- select_beta(mx, lx_observed)
 selection$best_beta

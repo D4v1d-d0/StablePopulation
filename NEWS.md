@@ -12,7 +12,8 @@ Development version prepared during the UCM doctoral stage.
   terminal-survivorship window is supplied, retain explicitly defined scenario
   profiles rather than select an arbitrary result.
 - Adds `select_beta()` to select the constrained candidate with the smallest
-  RMSE against observed survivorship.
+  RMSE against observed survivorship, including an explicit warning and stored
+  note when the selected beta lies on the boundary of the scanned range.
 - Adds `derive_demographic_profile()` to derive the stable structure `R`, raw
   exit-by-death profile `D`, separately normalised `D_relative`, and
   conditional survival `B`.
