@@ -1,0 +1,40 @@
+
+R version 4.5.3 (2026-03-11 ucrt) -- "Reassured Reassurer"
+Copyright (C) 2026 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(testthat)
+> library(StablePopulation)
+> 
+> test_check("StablePopulation")
+Processed sheet 'scan_case' through the scan route.
+Processed sheet 'select_case' through the select route.
+Reconstruction complete. Output saved to C:\Users\DAVIDP~1\AppData\Local\Temp\RtmpAtLqyp/working_dir\Rtmp2b53P8\file49f01b92c9.xlsx.
+Processed sheet 'scan_case' through the scan route.
+Processed sheet 'select_case' through the select route.
+Reconstruction complete. Output saved to C:\Users\DAVIDP~1\AppData\Local\Temp\RtmpAtLqyp/working_dir\Rtmp2b53P8\file49f0168747d1.xlsx.
+Processed sheet 'Spanish_aliases' through the select route.
+Skipped sheet 'Notes': No recognized fertility column. Accepted aliases include: mx, m_x, fertility_rates, fertility_rate, fertility, female_fertility, female_fertility_rate, fecundity, fecundity_rate, fecundity_rates, female_fecundity, female_fecundity_rate, fecundidad, tasa_fecundidad, tasa_de_fecundidad.
+Reconstruction complete. Output saved to C:/Users/DAVIDP~1/AppData/Local/Temp/RtmpAtLqyp/working_dir/Rtmp2b53P8/file49f058fd5f87_StablePopulation.xlsx.
+Processed sheet 'legacy_select' through the select route.
+Processed sheet 'legacy_fixed' through the fixed route.
+Reconstruction complete. Output saved to C:\Users\DAVIDP~1\AppData\Local\Temp\RtmpAtLqyp/working_dir\Rtmp2b53P8\file49f02dc15823.xlsx.
+Processed sheet 'no_stable_scan' through the scan route.
+Reconstruction complete. Output saved to C:\Users\DAVIDP~1\AppData\Local\Temp\RtmpAtLqyp/working_dir\Rtmp2b53P8\file49f0252f5e9c.xlsx.
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 116 ]
+> 
+> proc.time()
+   user  system elapsed 
+   2.98    1.29   17.29 

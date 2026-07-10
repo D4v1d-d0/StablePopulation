@@ -1,0 +1,326 @@
+---
+title: "From fertility data to a stable survivorship profile"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{From fertility data to a stable survivorship profile}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4.5
+)
+```
+
+```{r setup}
+library(StablePopulation)
+```
+
+## Purpose of this workflow
+
+`StablePopulation` reconstructs age-specific survivorship profiles under a
+stable and stationary population assumption. The central demographic condition
+is
+
+\[
+R_0 = \sum_x l_x m_x = 1,
+\]
+
+where \(l_x\) is survivorship to age class \(x\) and \(m_x\) is age-specific
+fertility. The package uses consecutive internal class indices
+`0, 1, 2, ..., n - 1`. An external age column can be kept as a label in Excel
+workflows, but it does not redefine the internal time scale.
+
+This vignette gives a complete minimal workflow:
+
+1. start from a fertility schedule and an observed survivorship profile;
+2. calculate the reference net replacement value;
+3. select a constrained Weibull candidate using `select_beta()`;
+4. derive the demographic quantities `R`, `D`, `D_relative`, and `B`;
+5. compare the constrained route with a free Weibull reference fit;
+6. show the scenario route used when observed survivorship is unavailable;
+7. indicate how the same logic is used in an Excel workbook.
+
+The data below are deliberately small and artificial. They are intended for
+reproducibility and for understanding the workflow, not as a biological case
+study.
+
+## Input data
+
+A minimal analysis needs an age-specific fertility schedule. If observed
+survivorship is available, it can be used to select the best constrained
+candidate among a grid of Weibull shape values.
+
+```{r input-data}
+age <- 0:5
+
+mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
+
+lx_observed <- c(
+  1.0000000,
+  0.8480619,
+  0.7023945,
+  0.5759026,
+  0.4689639,
+  0.3798816
+)
+
+input_data <- data.frame(
+  age = age,
+  mx = mx,
+  lx_observed = lx_observed
+)
+
+knitr::kable(input_data, digits = 4)
+```
+
+The observed net replacement value for these data is:
+
+```{r observed-r0}
+R0_observed <- sum(lx_observed * mx)
+R0_observed
+```
+
+In this toy example, the observed schedule is already very close to the stable
+and stationary condition. In empirical applications, the observed value may
+be different from one. `StablePopulation` never rescales fertility silently; if
+normalisation is a methodological decision, it should be done explicitly with
+`normalize_fertility()` before the reconstruction.
+
+```{r explicit-normalisation}
+normalised <- normalize_fertility(
+  fertility_rates = mx,
+  lx_reference = lx_observed
+)
+
+normalised$R0_reference
+normalised$check_R0
+```
+
+The normalised fertility vector is then available as
+`normalised$fertility_rates_normalized`. In the rest of this vignette we keep
+the original `mx`, because the toy data already satisfy the reference condition.
+
+## Route with observed survivorship: `select_beta()`
+
+When both fertility and observed survivorship are available, use
+`select_beta()`. For each candidate `beta`, the package solves the corresponding
+Weibull scale parameter `alpha` under \(R_0 = 1\), reconstructs \(l_x\), and
+calculates the RMSE against the observed profile.
+
+```{r select-beta}
+selection <- select_beta(
+  fertility_rates = mx,
+  lx_observed = lx_observed,
+  beta_values = seq(0.50, 1.80, by = 0.05)
+)
+
+selection
+```
+
+The selected constrained candidate is stored in the main elements of the result:
+
+```{r selected-values}
+selection$best_beta
+selection$best_alpha
+selection$best_RMSE
+```
+
+The age-by-age comparison between the observed and reconstructed profiles is in
+`best_profile`.
+
+```{r selected-profile}
+knitr::kable(selection$best_profile, digits = 4)
+```
+
+The complete grid is retained in `results`, so the selected value can be
+checked against the neighbouring candidates.
+
+```{r candidate-grid}
+selected_neighbourhood <- selection$results[
+  selection$results$beta >= selection$best_beta - 0.10 &
+    selection$results$beta <= selection$best_beta + 0.10,
+  c("beta", "alpha", "R0", "RMSE", "selected")
+]
+
+knitr::kable(selected_neighbourhood, digits = 6)
+```
+
+If the selected `beta` is the first or last value in the scanned range,
+`select_beta()` issues a warning and records a boundary note in the returned
+object. This is a diagnostic cue: it does not mean that the result is invalid,
+but it does mean that the scanned range should be extended deliberately before
+interpreting the selected value as an internal optimum.
+
+```{r boundary-fields}
+selection$beta_at_boundary
+selection$beta_boundary_note
+```
+
+## Derived demographic profile
+
+The reconstructed survivorship profile can be converted into the demographic
+quantities used by downstream population and ecological interpretation.
+
+```{r derived-profile}
+demographic_profile <- derive_demographic_profile(
+  lx = selection$best_lx,
+  fertility_rates = mx
+)
+
+demographic_profile
+```
+
+The resulting table contains:
+
+- `lx`: survivorship;
+- `stable_structure`: the normalised stable age structure \(R_x\);
+- `mortality_profile`: the raw exit-by-death profile \(D_x\);
+- `mortality_profile_relative`: the separately normalised version of `D`;
+- `conditional_survival`: survival between consecutive classes \(B_x\);
+- `lxmx`: the contribution of each class to \(R_0\).
+
+```{r derived-table}
+knitr::kable(demographic_profile$table, digits = 4)
+```
+
+These checks are useful when explaining the output:
+
+```{r derived-checks}
+demographic_profile$checks
+```
+
+`stable_structure` sums to one. `mortality_profile_relative` also sums to one,
+because it is explicitly normalised. The raw `mortality_profile` is different:
+its total equals the first value of the stable age structure.
+
+## Free Weibull reference fit
+
+`fit_weibull_free()` provides a descriptive two-parameter Weibull fit to the
+observed survivorship profile. It does not impose \(R_0 = 1\). If fertility is
+supplied, the implied \(R_0\) is reported after fitting.
+
+```{r free-fit}
+free_fit <- fit_weibull_free(
+  lx_observed = lx_observed,
+  fertility_rates = mx
+)
+
+free_fit
+```
+
+The comparison is useful, but it answers a different question. `select_beta()`
+selects among constrained candidates compatible with the stable-population
+condition; `fit_weibull_free()` estimates both Weibull parameters freely and
+only then reports the demographic consequence.
+
+```{r free-fit-profile}
+knitr::kable(free_fit$profile, digits = 4)
+```
+
+## Route without observed survivorship: `scan_beta()`
+
+When observed survivorship is unavailable, the package should not pretend that a
+single empirical optimum has been selected. In that case, use `scan_beta()` to
+build a family of constrained candidate profiles. A terminal-survivorship window
+can be used to retain scenarios whose final class remains within a stated
+interval.
+
+```{r scan-beta}
+scan <- scan_beta(
+  fertility_rates = mx,
+  beta_values = seq(0.50, 1.80, by = 0.05),
+  terminal_window = c(0.35, 0.39)
+)
+
+scan
+```
+
+The retained candidates are stored in `admissible_summary`.
+
+```{r scan-summary}
+knitr::kable(scan$admissible_summary, digits = 6)
+```
+
+When a terminal window is active, `terminal_extremes$first` and
+`terminal_extremes$last` are the first and last admissible candidates in
+ascending beta order. They are scenario endpoints, not automatically minima or
+maxima of all downstream quantities.
+
+```{r terminal-extremes}
+scan$terminal_extremes$first$beta
+scan$terminal_extremes$last$beta
+```
+
+## Fixed-beta reconstruction
+
+If a value of `beta` has already been justified externally, the direct route is
+`reconstruct_population()`.
+
+```{r fixed-beta}
+fixed <- reconstruct_population(
+  fertility_rates = mx,
+  beta = 1.10
+)
+
+fixed
+knitr::kable(fixed$table, digits = 4)
+```
+
+This route solves `alpha` under \(R_0 = 1\) for the chosen `beta`. It is useful
+for sensitivity analysis, for reproducing a predefined scenario, or for using a
+shape value selected outside the current dataset.
+
+## Excel workflow
+
+The same reconstruction logic can be applied to external workbooks with
+`run_reconstruction_excel()`. A typical input sheet contains columns such as:
+
+```{r excel-columns, echo = FALSE}
+excel_template <- data.frame(
+  Age = age,
+  mx = mx,
+  lx = lx_observed,
+  Beta = c(1.10, rep(NA, length(age) - 1L))
+)
+knitr::kable(excel_template, digits = 4)
+```
+
+The function can then be called as:
+
+```{r excel-call, eval = FALSE}
+run_reconstruction_excel(
+  input_file = "demography.xlsx",
+  output_file = "demography_results.xlsx",
+  mode = "auto",
+  beta_values = seq(0.05, 3.00, by = 0.05),
+  terminal_window = c(0.0001, 0.05),
+  output_detail = "standard"
+)
+```
+
+In `mode = "auto"`, the route is inferred from the available columns. For
+example, observed survivorship supports the selection route, while a single
+fixed value in a `Beta` column supports the fixed-beta route when observed
+survivorship is absent. The Excel workflow uses the fertility values supplied in
+the workbook; explicit normalisation should therefore be done before saving the
+input if the analysis is intended to use a rescaled fertility schedule.
+
+## Summary
+
+The package separates three analytical situations:
+
+| Situation | Function | Interpretation |
+|---|---|---|
+| Fertility plus observed survivorship | `select_beta()` | Selects the constrained candidate with the smallest RMSE. |
+| Fertility without observed survivorship | `scan_beta()` | Retains a family of constrained scenarios. |
+| A fixed beta is already justified | `reconstruct_population()` | Reconstructs one constrained profile for that beta. |
+
+`fit_weibull_free()` is useful as a descriptive reference, but it is not the
+same model as the constrained StablePopulation reconstruction. The distinction
+is important when reporting methods, comparing results, or linking the package
+to downstream ecological analyses.

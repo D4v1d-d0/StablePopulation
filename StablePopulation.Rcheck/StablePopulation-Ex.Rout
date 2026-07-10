@@ -1,0 +1,394 @@
+
+R version 4.5.3 (2026-03-11 ucrt) -- "Reassured Reassurer"
+Copyright (C) 2026 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "StablePopulation"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> options(pager = "console")
+> base::assign(".ExTimings", "StablePopulation-Ex.timings", pos = 'CheckExEnv')
+> base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
+> base::assign(".format_ptime",
++ function(x) {
++   if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
++   if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
++   options(OutDec = '.')
++   format(x[1L:3L], digits = 7L)
++ },
++ pos = 'CheckExEnv')
+> 
+> ### * </HEADER>
+> library('StablePopulation')
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("alpha_objective")
+> ### * alpha_objective
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: alpha_objective
+> ### Title: Objective Function for 'uniroot': Finds the Difference Between
+> ###   Births and 1
+> ### Aliases: alpha_objective
+> 
+> ### ** Examples
+> 
+> # Basic usage
+> alpha_objective(0.5, 1.2, c(0.2, 0.3, 0.5, 0.4))
+[1] -0.767218
+> 
+> # Example with uniroot:
+> fertility_rates <- c(0.2, 0.3, 0.5, 0.4)
+> beta <- 1.2
+> res <- uniroot(
++   alpha_objective,
++   interval = c(0.000001, 100),
++   beta = beta,
++   fertility_rates = fertility_rates
++ )
+> res$root
+[1] 4.339062
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("alpha_objective", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("calculate_population")
+> ### * calculate_population
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: calculate_population
+> ### Title: Calculates the population for each age group
+> ### Aliases: calculate_population
+> 
+> ### ** Examples
+> 
+> calculate_population(0.5, 1.2, c(0.2, 0.3, 0.5, 0.4))
+$population
+[1] 1.000000000 0.100520187 0.005102464 0.000186736
+
+$births
+[1] 0.232782
+
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("calculate_population", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("derive_demographic_profile")
+> ### * derive_demographic_profile
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: derive_demographic_profile
+> ### Title: Derive stable-structure and mortality profiles from survivorship
+> ### Aliases: derive_demographic_profile
+> 
+> ### ** Examples
+> 
+> mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
+> reconstruction <- reconstruct_population(mx, beta = 1.10)
+> 
+> demographic_profile <- derive_demographic_profile(
++   lx = reconstruction$lx,
++   fertility_rates = mx
++ )
+> 
+> demographic_profile$table
+  age fertility_rates        lx stable_structure mortality_profile
+1   0            0.00 1.0000000       0.25155938        0.03822145
+2   1            0.00 0.8480619       0.21333793        0.03664400
+3   2            0.30 0.7023945       0.17669393        0.03182023
+4   3            0.75 0.5759026       0.14487370        0.02690142
+5   4            0.60 0.4689639       0.11797227        0.02240949
+6   5            0.20 0.3798816       0.09556279        0.09556279
+  mortality_profile_relative conditional_survival       lxmx
+1                 0.15193808            0.8480619 0.00000000
+2                 0.14566738            0.8282350 0.00000000
+3                 0.12649194            0.8199133 0.21071836
+4                 0.10693866            0.8143112 0.43192695
+5                 0.08908229            0.8100445 0.28137836
+6                 0.37988164                   NA 0.07597633
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("derive_demographic_profile", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("find_alphas")
+> ### * find_alphas
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: find_alphas
+> ### Title: Function to find the value of alpha
+> ### Aliases: find_alphas
+> 
+> ### ** Examples
+> 
+> find_alphas(1.2, c(0.2, 0.3, 0.5, 0.4))
+[1] 4.339064
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("find_alphas", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("fit_weibull_free")
+> ### * fit_weibull_free
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: fit_weibull_free
+> ### Title: Fit a free two-parameter Weibull survivorship model
+> ### Aliases: fit_weibull_free
+> 
+> ### ** Examples
+> 
+> lx_observed <- c(1, 0.92, 0.78, 0.57, 0.33, 0.12)
+> free_fit <- fit_weibull_free(lx_observed)
+> free_fit$alpha
+[1] 3.762469
+> free_fit$beta
+[1] 2.290562
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("fit_weibull_free", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("normalize_fertility")
+> ### * normalize_fertility
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: normalize_fertility
+> ### Title: Normalize fertility using a reference survivorship profile
+> ### Aliases: normalize_fertility
+> 
+> ### ** Examples
+> 
+> mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
+> lx <- c(1, 0.90, 0.75, 0.55, 0.30, 0.10)
+> normalized <- normalize_fertility(mx, lx)
+> normalized$check_R0
+[1] 1
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("normalize_fertility", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("reconstruct_population")
+> ### * reconstruct_population
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: reconstruct_population
+> ### Title: Reconstruct one constrained Weibull survivorship profile
+> ### Aliases: reconstruct_population
+> 
+> ### ** Examples
+> 
+> mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
+> reconstruction <- reconstruct_population(mx, beta = 1.10)
+> reconstruction$alpha
+[1] 5.150545
+> reconstruction$table
+  age fertility_rates        lx       lxmx
+1   0            0.00 1.0000000 0.00000000
+2   1            0.00 0.8480619 0.00000000
+3   2            0.30 0.7023945 0.21071836
+4   3            0.75 0.5759026 0.43192695
+5   4            0.60 0.4689639 0.28137836
+6   5            0.20 0.3798816 0.07597633
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("reconstruct_population", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("run_reconstruction_excel")
+> ### * run_reconstruction_excel
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: run_reconstruction_excel
+> ### Title: Reconstruct stable-population profiles from an Excel workbook
+> ### Aliases: run_reconstruction_excel
+> 
+> ### ** Examples
+> 
+> ## Not run: 
+> ##D # Opens a file chooser in an interactive R session and creates the
+> ##D # standard output workbook.
+> ##D if (interactive()) {
+> ##D   run_reconstruction_excel()
+> ##D }
+> ##D 
+> ##D # Creates demography_StablePopulation.xlsx beside demography.xlsx.
+> ##D run_reconstruction_excel("demography.xlsx")
+> ##D 
+> ##D # Request technical candidate and profile diagnostics.
+> ##D run_reconstruction_excel("demography.xlsx", output_detail = "full")
+> ##D 
+> ##D # Use explicit column names when an input workbook has custom headings.
+> ##D run_reconstruction_excel(
+> ##D   input_file = "demography.xlsx",
+> ##D   output_file = "results.xlsx",
+> ##D   sheets = "Ovis_dalli",
+> ##D   age_column = "Age class",
+> ##D   fertility_column = "Female fertility",
+> ##D   survivorship_column = "Observed survivorship",
+> ##D   beta_column = "Beta"
+> ##D )
+> ## End(Not run)
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("run_reconstruction_excel", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("scan_beta")
+> ### * scan_beta
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: scan_beta
+> ### Title: Scan Weibull beta values under the stable-population constraint
+> ### Aliases: scan_beta
+> 
+> ### ** Examples
+> 
+> mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
+> 
+> # All stable candidate profiles
+> scan <- scan_beta(mx, beta_values = seq(0.05, 1.50, by = 0.05))
+> 
+> # Scenario route without observed lx
+> terminal_scan <- scan_beta(
++   mx,
++   beta_values = seq(0.05, 1.50, by = 0.05),
++   terminal_window = c(1e-4, 0.05)
++ )
+Warning: No stable profile satisfies the terminal window; revise the age range, beta range, or terminal criterion.
+> terminal_scan$admissible_summary
+[1] beta                alpha               R0                 
+[4] residual            lx_terminal         stable             
+[7] terminal_admissible admissible          status             
+<0 rows> (or 0-length row.names)
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("scan_beta", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("select_beta")
+> ### * select_beta
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: select_beta
+> ### Title: Select a constrained Weibull beta using observed survivorship
+> ### Aliases: select_beta
+> 
+> ### ** Examples
+> 
+> mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
+> lx_observed <- c(1, 0.8302461, 0.6893086, 0.5722958, 0.4751464, 0.3944885)
+> 
+> selection <- select_beta(mx, lx_observed)
+> selection$best_beta
+[1] 1
+> selection$best_profile
+  age fertility_rates lx_observed lx_reconstructed      residual squared_error
+1   0            0.00   1.0000000        1.0000000  0.000000e+00  0.000000e+00
+2   1            0.00   0.8302461        0.8302461  3.237366e-08  1.048054e-15
+3   2            0.30   0.6893086        0.6893086  4.032143e-08  1.625817e-15
+4   3            0.75   0.5722958        0.5722958  3.263861e-08  1.065279e-15
+5   4            0.60   0.4751464        0.4751464  1.621774e-09  2.630150e-18
+6   5            0.20   0.3944885        0.3944885 -3.774226e-08  1.424478e-15
+        lxmx
+1 0.00000000
+2 0.00000000
+3 0.20679259
+4 0.42922187
+5 0.28508784
+6 0.07889769
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("select_beta", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("weibull_survival")
+> ### * weibull_survival
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: weibull_survival
+> ### Title: Weibull function for the survival rate
+> ### Aliases: weibull_survival
+> 
+> ### ** Examples
+> 
+> weibull_survival(1.5, 0.8, 10)
+[1] 0.01044426
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("weibull_survival", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> ### * <FOOTER>
+> ###
+> cleanEx()
+> options(digits = 7L)
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  0.93 0.08 1.47 NA NA 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')

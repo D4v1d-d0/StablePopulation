@@ -1,0 +1,291 @@
+Hmm ... looks like a package
+Converting parsed Rd's to LaTeX ..
+Creating pdf output from LaTeX ...
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Rd2.tex
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-06-18>
+
+(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2025/01/22 v1.4n Standard LaTeX document class
+(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/bk10.clo)) (c:/Program Files/R/R-4.5.3/share/texmf/tex/latex/Rd.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/ifthen.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/iftex/iftex.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/tools/longtable.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/tools/bm.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/alltt.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/tools/verbatim.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/url/url.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/textcomp.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amstext.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsgen.sty)) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsbsy.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsopn.sty)) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/amsfonts.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/amssymb.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/eucal.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/fontenc.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/psnfss/times.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/inconsolata/zi4.sty `inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/xkeyval/xkeyval.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/xkeyval/xkeyval.tex (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/xkeyval/xkvutils.tex (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/xkeyval/keyval.tex))))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics/color.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics/mathcolor.ltx)) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/pdfescape/pdfescape.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/infwarerr/infwarerr.sty))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hycolor/hycolor.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/kvoptions/kvoptions.sty))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/etoolbox/etoolbox.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/stringenc/stringenc.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/puenc.def) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/bitset/bitset.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/makeidx.sty)
+Writing index file Rd2.idx
+(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/psnfss/t1ptm.fd) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def)
+No file Rd2.aux.
+(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/inconsolata/t1zi4.fd) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd)
+No file Rd2.toc.
+[1{c:/ProgramData/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}] [2] [3]
+Overfull \hbox (14.56847pt too wide) in paragraph at lines 186--192
+[]\T1/ptm/m/n/10 A list of class []\T1/zi4/m/n/10 "stable_population_demographic_profile"[]\T1/ptm/m/n/10 . Main el-e-ments are []\T1/zi4/m/n/10 stable_structure
+
+Overfull \hbox (70.90999pt too wide) in paragraph at lines 186--192
+[]\T1/ptm/m/n/10 (also []\T1/zi4/m/n/10 R[]\T1/ptm/m/n/10 ), []\T1/zi4/m/n/10 mortality_profile []\T1/ptm/m/n/10 (also []\T1/zi4/m/n/10 D[]\T1/ptm/m/n/10 ), []\T1/zi4/m/n/10 mortality_profile_relative []\T1/ptm/m/n/10 (also []\T1/zi4/m/n/10 D_relative[]\T1/ptm/m/n/10 ), []\T1/zi4/m/n/10 conditional_survival
+[4] [5]
+Overfull \hbox (12.2683pt too wide) in paragraph at lines 321--326
+[]\T1/ptm/m/n/10 A list of class []\T1/zi4/m/n/10 "stable_population_free_fit"[]\T1/ptm/m/n/10 . Main el-e-ments are free []\T1/zi4/m/n/10 alpha []\T1/ptm/m/n/10 and []\T1/zi4/m/n/10 beta[]\T1/ptm/m/n/10 , []\T1/zi4/m/n/10 lx_fitted[]\T1/ptm/m/n/10 ,
+[6]
+Overfull \hbox (41.97815pt too wide) in paragraph at lines 359--361
+[]\T1/ptm/m/n/10 Numeric ref-er-ence sur-vivor-ship pro-file. It must have the same length as []\T1/zi4/m/n/10 fertility_rates[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (30.2485pt too wide) in paragraph at lines 379--383
+[]\T1/ptm/m/n/10 A list of class []\T1/zi4/m/n/10 "stable_population_normalized_fertility" []\T1/ptm/m/n/10 con-tain-ing the orig-i-nal []\T1/zi4/m/n/10 fertility_rates[]\T1/ptm/m/n/10 ,
+[7] (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [8{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}] [9] [10] [11] (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+Overfull \hbox (1.58714pt too wide) in paragraph at lines 666--671
+[]\T1/ptm/m/n/10 Reads one or more Ex-cel sheets con-tain-ing a fer-til-ity sched-ule and an op-tional observed-survivorship
+[12]
+Overfull \hbox (97.62852pt too wide) in paragraph at lines 700--702
+[]\T1/ptm/m/n/10 Optional path for the re-sults work-book. When omit-ted, cre-ates []\T1/zi4/m/n/10 <input name>_StablePopulation.xlsx
+[13] [14]
+Overfull \hbox (36.73756pt too wide) in paragraph at lines 852--860
+\T1/ptm/m/n/10 check; it does not es-ti-mate beta. When at least one can-di-date passes the win-dow, []\T1/zi4/m/n/10 terminal_extremes$first
+[15]
+Overfull \hbox (40.7384pt too wide) in paragraph at lines 923--925
+[]\T1/ptm/m/n/10 Numeric ob-served sur-vivor-ship pro-file. It must have the same length as []\T1/zi4/m/n/10 fertility_rates[]\T1/ptm/m/n/10 ,
+[16] [17]
+Overfull \hbox (39.89859pt too wide) in paragraph at lines 1020--1026
+\T1/ptm/m/n/10 equals one. Nor-mal-i-sa-tion is never per-formed silently by [][][]\T1/zi4/m/n/10 select_beta()[][][] []\T1/ptm/m/n/10 or [][][]\T1/zi4/m/n/10 run_reconstruction_excel()[][][][]\T1/ptm/m/n/10 .
+
+Overfull \hbox (11.1196pt too wide) in paragraph at lines 1040--1046
+[][][]\T1/zi4/m/n/10 run_reconstruction_excel()[][][] []\T1/ptm/m/n/10 is the rec-om-mended external-workbook work-flow. In []\T1/zi4/m/n/10 mode = "auto"[]\T1/ptm/m/n/10 ,
+[18] [19]
+No file Rd2.ind.
+[20] (./Rd2.aux)
+
+Package rerunfilecheck Warning: File `Rd2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
+(see the transcript file for additional information)
+pdfTeX warning (dest): name{Rfn.saveWorkbook} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.writeData} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.addWorksheet} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.createWorkbook} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.read.Rul.excel} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.excel.Rul.sheets} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.stats::optim\(\)} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.uniroot} has been referenced but does not exist, replaced by a fixed one
+
+<c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (20 pages, 176415 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.18 [TeX Live 2026] (kpathsea + Thai support).
+Scanning input file Rd2.idx....done (64 entries accepted, 0 rejected).
+Sorting entries....done (423 comparisons).
+Generating output file Rd2.ind....done (105 lines written, 0 warnings).
+Output written in Rd2.ind.
+Transcript written in Rd2.ilg.
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Rd2.tex
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-06-18>
+
+(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2025/01/22 v1.4n Standard LaTeX document class
+(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/bk10.clo)) (c:/Program Files/R/R-4.5.3/share/texmf/tex/latex/Rd.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/ifthen.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/iftex/iftex.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/tools/longtable.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/tools/bm.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/alltt.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/tools/verbatim.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/url/url.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/textcomp.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amstext.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsgen.sty)) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsbsy.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsopn.sty)) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/amsfonts.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/amssymb.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/eucal.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/fontenc.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/psnfss/times.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/inconsolata/zi4.sty `inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/xkeyval/xkeyval.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/xkeyval/xkeyval.tex (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/xkeyval/xkvutils.tex (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/xkeyval/keyval.tex))))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics/color.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics/mathcolor.ltx)) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/pdfescape/pdfescape.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/infwarerr/infwarerr.sty))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hycolor/hycolor.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/kvoptions/kvoptions.sty))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/etoolbox/etoolbox.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/stringenc/stringenc.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/puenc.def) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/bitset/bitset.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/makeidx.sty)
+Writing index file Rd2.idx
+(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/psnfss/t1ptm.fd) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def) (./Rd2.aux) (./Rd2.out) (./Rd2.out) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/inconsolata/t1zi4.fd) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd) (./Rd2.toc [1{c:/ProgramData/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}]) [2] [3]
+Overfull \hbox (14.56847pt too wide) in paragraph at lines 186--192
+[]\T1/ptm/m/n/10 A list of class []\T1/zi4/m/n/10 "stable_population_demographic_profile"[]\T1/ptm/m/n/10 . Main el-e-ments are []\T1/zi4/m/n/10 stable_structure
+
+Overfull \hbox (70.90999pt too wide) in paragraph at lines 186--192
+[]\T1/ptm/m/n/10 (also []\T1/zi4/m/n/10 R[]\T1/ptm/m/n/10 ), []\T1/zi4/m/n/10 mortality_profile []\T1/ptm/m/n/10 (also []\T1/zi4/m/n/10 D[]\T1/ptm/m/n/10 ), []\T1/zi4/m/n/10 mortality_profile_relative []\T1/ptm/m/n/10 (also []\T1/zi4/m/n/10 D_relative[]\T1/ptm/m/n/10 ), []\T1/zi4/m/n/10 conditional_survival
+[4] [5]
+Overfull \hbox (12.2683pt too wide) in paragraph at lines 321--326
+[]\T1/ptm/m/n/10 A list of class []\T1/zi4/m/n/10 "stable_population_free_fit"[]\T1/ptm/m/n/10 . Main el-e-ments are free []\T1/zi4/m/n/10 alpha []\T1/ptm/m/n/10 and []\T1/zi4/m/n/10 beta[]\T1/ptm/m/n/10 , []\T1/zi4/m/n/10 lx_fitted[]\T1/ptm/m/n/10 ,
+[6]
+Overfull \hbox (41.97815pt too wide) in paragraph at lines 359--361
+[]\T1/ptm/m/n/10 Numeric ref-er-ence sur-vivor-ship pro-file. It must have the same length as []\T1/zi4/m/n/10 fertility_rates[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (30.2485pt too wide) in paragraph at lines 379--383
+[]\T1/ptm/m/n/10 A list of class []\T1/zi4/m/n/10 "stable_population_normalized_fertility" []\T1/ptm/m/n/10 con-tain-ing the orig-i-nal []\T1/zi4/m/n/10 fertility_rates[]\T1/ptm/m/n/10 ,
+[7] (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [8{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}] [9] [10] [11] (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+Overfull \hbox (1.58714pt too wide) in paragraph at lines 666--671
+[]\T1/ptm/m/n/10 Reads one or more Ex-cel sheets con-tain-ing a fer-til-ity sched-ule and an op-tional observed-survivorship
+[12]
+Overfull \hbox (97.62852pt too wide) in paragraph at lines 700--702
+[]\T1/ptm/m/n/10 Optional path for the re-sults work-book. When omit-ted, cre-ates []\T1/zi4/m/n/10 <input name>_StablePopulation.xlsx
+[13] [14]
+Overfull \hbox (36.73756pt too wide) in paragraph at lines 852--860
+\T1/ptm/m/n/10 check; it does not es-ti-mate beta. When at least one can-di-date passes the win-dow, []\T1/zi4/m/n/10 terminal_extremes$first
+[15]
+Overfull \hbox (40.7384pt too wide) in paragraph at lines 923--925
+[]\T1/ptm/m/n/10 Numeric ob-served sur-vivor-ship pro-file. It must have the same length as []\T1/zi4/m/n/10 fertility_rates[]\T1/ptm/m/n/10 ,
+[16] [17]
+Overfull \hbox (39.89859pt too wide) in paragraph at lines 1020--1026
+\T1/ptm/m/n/10 equals one. Nor-mal-i-sa-tion is never per-formed silently by [][][]\T1/zi4/m/n/10 select_beta()[][][] []\T1/ptm/m/n/10 or [][][]\T1/zi4/m/n/10 run_reconstruction_excel()[][][][]\T1/ptm/m/n/10 .
+
+Overfull \hbox (11.1196pt too wide) in paragraph at lines 1040--1046
+[][][]\T1/zi4/m/n/10 run_reconstruction_excel()[][][] []\T1/ptm/m/n/10 is the rec-om-mended external-workbook work-flow. In []\T1/zi4/m/n/10 mode = "auto"[]\T1/ptm/m/n/10 ,
+[18] [19] (./Rd2.ind [20]
+Overfull \hbox (28.3567pt too wide) in paragraph at lines 48--50
+[]\T1/zi4/m/n/10 print.stable_population_demographic_profile\T1/ptm/m/n/10 , 
+
+Overfull \hbox (33.3567pt too wide) in paragraph at lines 51--53
+[]\T1/zi4/m/n/10 print.stable_population_normalized_fertility\T1/ptm/m/n/10 , 
+
+Overfull \hbox (3.3567pt too wide) in paragraph at lines 53--55
+[]\T1/zi4/m/n/10 print.stable_population_reconstruction\T1/ptm/m/n/10 , 
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 87.
+
+[21]) (./Rd2.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+
+Package rerunfilecheck Warning: File `Rd2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
+(see the transcript file for additional information)
+pdfTeX warning (dest): name{Rfn.saveWorkbook} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.writeData} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.addWorksheet} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.createWorkbook} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.read.Rul.excel} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.excel.Rul.sheets} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.stats::optim\(\)} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.uniroot} has been referenced but does not exist, replaced by a fixed one
+
+<c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (21 pages, 183146 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.18 [TeX Live 2026] (kpathsea + Thai support).
+Scanning input file Rd2.idx....done (64 entries accepted, 0 rejected).
+Sorting entries....done (421 comparisons).
+Generating output file Rd2.ind....done (105 lines written, 0 warnings).
+Output written in Rd2.ind.
+Transcript written in Rd2.ilg.
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Rd2.tex
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-06-18>
+
+(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2025/01/22 v1.4n Standard LaTeX document class
+(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/bk10.clo)) (c:/Program Files/R/R-4.5.3/share/texmf/tex/latex/Rd.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/ifthen.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/iftex/iftex.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/tools/longtable.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/tools/bm.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/alltt.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/tools/verbatim.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/url/url.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/textcomp.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amstext.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsgen.sty)) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsbsy.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsmath/amsopn.sty)) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/amsfonts.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/amssymb.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/eucal.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/fontenc.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/psnfss/times.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/inconsolata/zi4.sty `inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/xkeyval/xkeyval.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/xkeyval/xkeyval.tex (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/xkeyval/xkvutils.tex (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/xkeyval/keyval.tex))))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics/color.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/graphics/mathcolor.ltx)) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/pdfescape/pdfescape.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/infwarerr/infwarerr.sty))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hycolor/hycolor.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/kvoptions/kvoptions.sty))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/etoolbox/etoolbox.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/stringenc/stringenc.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/puenc.def) (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/bitset/bitset.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty (c:/ProgramData/TinyTeX/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/base/makeidx.sty)
+Writing index file Rd2.idx
+(c:/ProgramData/TinyTeX/texmf-dist/tex/latex/psnfss/t1ptm.fd) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def) (./Rd2.aux) (./Rd2.out) (./Rd2.out) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/inconsolata/t1zi4.fd) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd) (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd) (./Rd2.toc [1{c:/ProgramData/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}]) [2] [3]
+Overfull \hbox (14.56847pt too wide) in paragraph at lines 186--192
+[]\T1/ptm/m/n/10 A list of class []\T1/zi4/m/n/10 "stable_population_demographic_profile"[]\T1/ptm/m/n/10 . Main el-e-ments are []\T1/zi4/m/n/10 stable_structure
+
+Overfull \hbox (70.90999pt too wide) in paragraph at lines 186--192
+[]\T1/ptm/m/n/10 (also []\T1/zi4/m/n/10 R[]\T1/ptm/m/n/10 ), []\T1/zi4/m/n/10 mortality_profile []\T1/ptm/m/n/10 (also []\T1/zi4/m/n/10 D[]\T1/ptm/m/n/10 ), []\T1/zi4/m/n/10 mortality_profile_relative []\T1/ptm/m/n/10 (also []\T1/zi4/m/n/10 D_relative[]\T1/ptm/m/n/10 ), []\T1/zi4/m/n/10 conditional_survival
+[4] [5]
+Overfull \hbox (12.2683pt too wide) in paragraph at lines 321--326
+[]\T1/ptm/m/n/10 A list of class []\T1/zi4/m/n/10 "stable_population_free_fit"[]\T1/ptm/m/n/10 . Main el-e-ments are free []\T1/zi4/m/n/10 alpha []\T1/ptm/m/n/10 and []\T1/zi4/m/n/10 beta[]\T1/ptm/m/n/10 , []\T1/zi4/m/n/10 lx_fitted[]\T1/ptm/m/n/10 ,
+[6]
+Overfull \hbox (41.97815pt too wide) in paragraph at lines 359--361
+[]\T1/ptm/m/n/10 Numeric ref-er-ence sur-vivor-ship pro-file. It must have the same length as []\T1/zi4/m/n/10 fertility_rates[]\T1/ptm/m/n/10 . 
+
+Overfull \hbox (30.2485pt too wide) in paragraph at lines 379--383
+[]\T1/ptm/m/n/10 A list of class []\T1/zi4/m/n/10 "stable_population_normalized_fertility" []\T1/ptm/m/n/10 con-tain-ing the orig-i-nal []\T1/zi4/m/n/10 fertility_rates[]\T1/ptm/m/n/10 ,
+[7] (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [8{c:/ProgramData/TinyTeX/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}] [9] [10] [11] (c:/ProgramData/TinyTeX/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+Overfull \hbox (1.58714pt too wide) in paragraph at lines 666--671
+[]\T1/ptm/m/n/10 Reads one or more Ex-cel sheets con-tain-ing a fer-til-ity sched-ule and an op-tional observed-survivorship
+[12]
+Overfull \hbox (97.62852pt too wide) in paragraph at lines 700--702
+[]\T1/ptm/m/n/10 Optional path for the re-sults work-book. When omit-ted, cre-ates []\T1/zi4/m/n/10 <input name>_StablePopulation.xlsx
+[13] [14]
+Overfull \hbox (36.73756pt too wide) in paragraph at lines 852--860
+\T1/ptm/m/n/10 check; it does not es-ti-mate beta. When at least one can-di-date passes the win-dow, []\T1/zi4/m/n/10 terminal_extremes$first
+[15]
+Overfull \hbox (40.7384pt too wide) in paragraph at lines 923--925
+[]\T1/ptm/m/n/10 Numeric ob-served sur-vivor-ship pro-file. It must have the same length as []\T1/zi4/m/n/10 fertility_rates[]\T1/ptm/m/n/10 ,
+[16] [17]
+Overfull \hbox (39.89859pt too wide) in paragraph at lines 1020--1026
+\T1/ptm/m/n/10 equals one. Nor-mal-i-sa-tion is never per-formed silently by [][][]\T1/zi4/m/n/10 select_beta()[][][] []\T1/ptm/m/n/10 or [][][]\T1/zi4/m/n/10 run_reconstruction_excel()[][][][]\T1/ptm/m/n/10 .
+
+Overfull \hbox (11.1196pt too wide) in paragraph at lines 1040--1046
+[][][]\T1/zi4/m/n/10 run_reconstruction_excel()[][][] []\T1/ptm/m/n/10 is the rec-om-mended external-workbook work-flow. In []\T1/zi4/m/n/10 mode = "auto"[]\T1/ptm/m/n/10 ,
+[18] [19] (./Rd2.ind [20]
+Overfull \hbox (28.3567pt too wide) in paragraph at lines 48--50
+[]\T1/zi4/m/n/10 print.stable_population_demographic_profile\T1/ptm/m/n/10 , 
+
+Overfull \hbox (33.3567pt too wide) in paragraph at lines 51--53
+[]\T1/zi4/m/n/10 print.stable_population_normalized_fertility\T1/ptm/m/n/10 , 
+
+Overfull \hbox (3.3567pt too wide) in paragraph at lines 53--55
+[]\T1/zi4/m/n/10 print.stable_population_reconstruction\T1/ptm/m/n/10 , 
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 87.
+
+[21]) (./Rd2.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+ )
+(see the transcript file for additional information)
+pdfTeX warning (dest): name{Rfn.saveWorkbook} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.writeData} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.addWorksheet} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.createWorkbook} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.read.Rul.excel} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.excel.Rul.sheets} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.stats::optim\(\)} has been referenced but does not exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{Rfn.uniroot} has been referenced but does not exist, replaced by a fixed one
+
+<c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/ProgramData/TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (21 pages, 183809 bytes).
+Transcript written on Rd2.log.
+Saving output to 'StablePopulation-manual.pdf' ...
+Done
+You may want to clean up by 'rm -Rf C:/Users/DAVIDP~1/AppData/Local/Temp/RtmpAtLqyp/Rd2pdf4be88583419'

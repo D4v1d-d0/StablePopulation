@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>From fertility data to a stable survivorship profile</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">From fertility data to a stable
+survivorship profile</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(StablePopulation)</span></code></pre></div>
+<div id="purpose-of-this-workflow" class="section level2">
+<h2>Purpose of this workflow</h2>
+<p><code>StablePopulation</code> reconstructs age-specific survivorship
+profiles under a stable and stationary population assumption. The
+central demographic condition is</p>
+<p><span class="math display">\[
+R_0 = \sum_x l_x m_x = 1,
+\]</span></p>
+<p>where <span class="math inline">\(l_x\)</span> is survivorship to age
+class <span class="math inline">\(x\)</span> and <span class="math inline">\(m_x\)</span> is age-specific fertility. The
+package uses consecutive internal class indices
+<code>0, 1, 2, ..., n - 1</code>. An external age column can be kept as
+a label in Excel workflows, but it does not redefine the internal time
+scale.</p>
+<p>This vignette gives a complete minimal workflow:</p>
+<ol style="list-style-type: decimal">
+<li>start from a fertility schedule and an observed survivorship
+profile;</li>
+<li>calculate the reference net replacement value;</li>
+<li>select a constrained Weibull candidate using
+<code>select_beta()</code>;</li>
+<li>derive the demographic quantities <code>R</code>, <code>D</code>,
+<code>D_relative</code>, and <code>B</code>;</li>
+<li>compare the constrained route with a free Weibull reference
+fit;</li>
+<li>show the scenario route used when observed survivorship is
+unavailable;</li>
+<li>indicate how the same logic is used in an Excel workbook.</li>
+</ol>
+<p>The data below are deliberately small and artificial. They are
+intended for reproducibility and for understanding the workflow, not as
+a biological case study.</p>
+</div>
+<div id="input-data" class="section level2">
+<h2>Input data</h2>
+<p>A minimal analysis needs an age-specific fertility schedule. If
+observed survivorship is available, it can be used to select the best
+constrained candidate among a grid of Weibull shape values.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>age <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">5</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>mx <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.30</span>, <span class="fl">0.75</span>, <span class="fl">0.60</span>, <span class="fl">0.20</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>lx_observed <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="fl">1.0000000</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="fl">0.8480619</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="fl">0.7023945</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>  <span class="fl">0.5759026</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>  <span class="fl">0.4689639</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>  <span class="fl">0.3798816</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>)</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>input_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a>  <span class="at">age =</span> age,</span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>  <span class="at">mx =</span> mx,</span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>  <span class="at">lx_observed =</span> lx_observed</span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a>)</span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(input_data, <span class="at">digits =</span> <span class="dv">4</span>)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">age</th>
+<th align="right">mx</th>
+<th align="right">lx_observed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">0.00</td>
+<td align="right">1.0000</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0.00</td>
+<td align="right">0.8481</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0.30</td>
+<td align="right">0.7024</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">0.75</td>
+<td align="right">0.5759</td>
+</tr>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">0.60</td>
+<td align="right">0.4690</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">0.20</td>
+<td align="right">0.3799</td>
+</tr>
+</tbody>
+</table>
+<p>The observed net replacement value for these data is:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>R0_observed <span class="ot">&lt;-</span> <span class="fu">sum</span>(lx_observed <span class="sc">*</span> mx)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>R0_observed</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span></code></pre></div>
+<p>In this toy example, the observed schedule is already very close to
+the stable and stationary condition. In empirical applications, the
+observed value may be different from one. <code>StablePopulation</code>
+never rescales fertility silently; if normalisation is a methodological
+decision, it should be done explicitly with
+<code>normalize_fertility()</code> before the reconstruction.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>normalised <span class="ot">&lt;-</span> <span class="fu">normalize_fertility</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="at">fertility_rates =</span> mx,</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">lx_reference =</span> lx_observed</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>)</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>normalised<span class="sc">$</span>R0_reference</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>normalised<span class="sc">$</span>check_R0</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span></code></pre></div>
+<p>The normalised fertility vector is then available as
+<code>normalised$fertility_rates_normalized</code>. In the rest of this
+vignette we keep the original <code>mx</code>, because the toy data
+already satisfy the reference condition.</p>
+</div>
+<div id="route-with-observed-survivorship-select_beta" class="section level2">
+<h2>Route with observed survivorship: <code>select_beta()</code></h2>
+<p>When both fertility and observed survivorship are available, use
+<code>select_beta()</code>. For each candidate <code>beta</code>, the
+package solves the corresponding Weibull scale parameter
+<code>alpha</code> under <span class="math inline">\(R_0 = 1\)</span>,
+reconstructs <span class="math inline">\(l_x\)</span>, and calculates
+the RMSE against the observed profile.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>selection <span class="ot">&lt;-</span> <span class="fu">select_beta</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="at">fertility_rates =</span> mx,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">lx_observed =</span> lx_observed,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="at">beta_values =</span> <span class="fu">seq</span>(<span class="fl">0.50</span>, <span class="fl">1.80</span>, <span class="at">by =</span> <span class="fl">0.05</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>selection</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; Stable Population Selection (Weibull, R0 = 1, best RMSE)</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt; ---------------------------------------------------------</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt;   Best beta:      1.1 </span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt;   Best alpha: 5.15055 </span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt;   R0:                 1 </span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt;   RMSE:       2.902e-08 </span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt;   Age classes: 6 </span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt;   Candidates evaluated: 27 </span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt; Use $best_profile for the selected profile, $results for all candidates.</span></span></code></pre></div>
+<p>The selected constrained candidate is stored in the main elements of
+the result:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>selection<span class="sc">$</span>best_beta</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; [1] 1.1</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>selection<span class="sc">$</span>best_alpha</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; [1] 5.150545</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>selection<span class="sc">$</span>best_RMSE</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; [1] 2.901736e-08</span></span></code></pre></div>
+<p>The age-by-age comparison between the observed and reconstructed
+profiles is in <code>best_profile</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(selection<span class="sc">$</span>best_profile, <span class="at">digits =</span> <span class="dv">4</span>)</span></code></pre></div>
+<table style="width:100%;">
+<colgroup>
+<col width="5%" />
+<col width="20%" />
+<col width="15%" />
+<col width="21%" />
+<col width="11%" />
+<col width="17%" />
+<col width="8%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">age</th>
+<th align="right">fertility_rates</th>
+<th align="right">lx_observed</th>
+<th align="right">lx_reconstructed</th>
+<th align="right">residual</th>
+<th align="right">squared_error</th>
+<th align="right">lxmx</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">0.00</td>
+<td align="right">1.0000</td>
+<td align="right">1.0000</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0000</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0.00</td>
+<td align="right">0.8481</td>
+<td align="right">0.8481</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0000</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0.30</td>
+<td align="right">0.7024</td>
+<td align="right">0.7024</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.2107</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">0.75</td>
+<td align="right">0.5759</td>
+<td align="right">0.5759</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.4319</td>
+</tr>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">0.60</td>
+<td align="right">0.4690</td>
+<td align="right">0.4690</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.2814</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">0.20</td>
+<td align="right">0.3799</td>
+<td align="right">0.3799</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.0760</td>
+</tr>
+</tbody>
+</table>
+<p>The complete grid is retained in <code>results</code>, so the
+selected value can be checked against the neighbouring candidates.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>selected_neighbourhood <span class="ot">&lt;-</span> selection<span class="sc">$</span>results[</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  selection<span class="sc">$</span>results<span class="sc">$</span>beta <span class="sc">&gt;=</span> selection<span class="sc">$</span>best_beta <span class="sc">-</span> <span class="fl">0.10</span> <span class="sc">&amp;</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    selection<span class="sc">$</span>results<span class="sc">$</span>beta <span class="sc">&lt;=</span> selection<span class="sc">$</span>best_beta <span class="sc">+</span> <span class="fl">0.10</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">&quot;beta&quot;</span>, <span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;R0&quot;</span>, <span class="st">&quot;RMSE&quot;</span>, <span class="st">&quot;selected&quot;</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>]</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(selected_neighbourhood, <span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">beta</th>
+<th align="right">alpha</th>
+<th align="right">R0</th>
+<th align="right">RMSE</th>
+<th align="left">selected</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">11</td>
+<td align="right">1.00</td>
+<td align="right">5.375388</td>
+<td align="right">1</td>
+<td align="right">0.011204</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="left">12</td>
+<td align="right">1.05</td>
+<td align="right">5.256243</td>
+<td align="right">1</td>
+<td align="right">0.005534</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">13</td>
+<td align="right">1.10</td>
+<td align="right">5.150545</td>
+<td align="right">1</td>
+<td align="right">0.000000</td>
+<td align="left">TRUE</td>
+</tr>
+<tr class="even">
+<td align="left">14</td>
+<td align="right">1.15</td>
+<td align="right">5.056195</td>
+<td align="right">1</td>
+<td align="right">0.005402</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="left">15</td>
+<td align="right">1.20</td>
+<td align="right">4.971506</td>
+<td align="right">1</td>
+<td align="right">0.010677</td>
+<td align="left">FALSE</td>
+</tr>
+</tbody>
+</table>
+<p>If the selected <code>beta</code> is the first or last value in the
+scanned range, <code>select_beta()</code> issues a warning and records a
+boundary note in the returned object. This is a diagnostic cue: it does
+not mean that the result is invalid, but it does mean that the scanned
+range should be extended deliberately before interpreting the selected
+value as an internal optimum.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>selection<span class="sc">$</span>beta_at_boundary</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt; [1] FALSE</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>selection<span class="sc">$</span>beta_boundary_note</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span></code></pre></div>
+</div>
+<div id="derived-demographic-profile" class="section level2">
+<h2>Derived demographic profile</h2>
+<p>The reconstructed survivorship profile can be converted into the
+demographic quantities used by downstream population and ecological
+interpretation.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>demographic_profile <span class="ot">&lt;-</span> <span class="fu">derive_demographic_profile</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="at">lx =</span> selection<span class="sc">$</span>best_lx,</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="at">fertility_rates =</span> mx</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>)</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>demographic_profile</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; Stable Population Demographic Profile</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; --------------------------------------</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt;   Age classes: 6 </span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt;   R0:         1 </span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co">#&gt;   Stable R0: TRUE </span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co">#&gt;   sum(R):         1 </span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#&gt;   sum(D): 0.25155938  (expected: 0.25155938 )</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt;   sum(D_relative):         1 </span></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="co">#&gt; Use $table for the full profile with R, D, D_relative and B.</span></span></code></pre></div>
+<p>The resulting table contains:</p>
+<ul>
+<li><code>lx</code>: survivorship;</li>
+<li><code>stable_structure</code>: the normalised stable age structure
+<span class="math inline">\(R_x\)</span>;</li>
+<li><code>mortality_profile</code>: the raw exit-by-death profile <span class="math inline">\(D_x\)</span>;</li>
+<li><code>mortality_profile_relative</code>: the separately normalised
+version of <code>D</code>;</li>
+<li><code>conditional_survival</code>: survival between consecutive
+classes <span class="math inline">\(B_x\)</span>;</li>
+<li><code>lxmx</code>: the contribution of each class to <span class="math inline">\(R_0\)</span>.</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(demographic_profile<span class="sc">$</span>table, <span class="at">digits =</span> <span class="dv">4</span>)</span></code></pre></div>
+<table>
+<colgroup>
+<col width="3%" />
+<col width="13%" />
+<col width="5%" />
+<col width="14%" />
+<col width="15%" />
+<col width="23%" />
+<col width="17%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">age</th>
+<th align="right">fertility_rates</th>
+<th align="right">lx</th>
+<th align="right">stable_structure</th>
+<th align="right">mortality_profile</th>
+<th align="right">mortality_profile_relative</th>
+<th align="right">conditional_survival</th>
+<th align="right">lxmx</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">0.00</td>
+<td align="right">1.0000</td>
+<td align="right">0.2516</td>
+<td align="right">0.0382</td>
+<td align="right">0.1519</td>
+<td align="right">0.8481</td>
+<td align="right">0.0000</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0.00</td>
+<td align="right">0.8481</td>
+<td align="right">0.2133</td>
+<td align="right">0.0366</td>
+<td align="right">0.1457</td>
+<td align="right">0.8282</td>
+<td align="right">0.0000</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0.30</td>
+<td align="right">0.7024</td>
+<td align="right">0.1767</td>
+<td align="right">0.0318</td>
+<td align="right">0.1265</td>
+<td align="right">0.8199</td>
+<td align="right">0.2107</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">0.75</td>
+<td align="right">0.5759</td>
+<td align="right">0.1449</td>
+<td align="right">0.0269</td>
+<td align="right">0.1069</td>
+<td align="right">0.8143</td>
+<td align="right">0.4319</td>
+</tr>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">0.60</td>
+<td align="right">0.4690</td>
+<td align="right">0.1180</td>
+<td align="right">0.0224</td>
+<td align="right">0.0891</td>
+<td align="right">0.8100</td>
+<td align="right">0.2814</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">0.20</td>
+<td align="right">0.3799</td>
+<td align="right">0.0956</td>
+<td align="right">0.0956</td>
+<td align="right">0.3799</td>
+<td align="right">NA</td>
+<td align="right">0.0760</td>
+</tr>
+</tbody>
+</table>
+<p>These checks are useful when explaining the output:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>demographic_profile<span class="sc">$</span>checks</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="co">#&gt; $stable_structure_sum</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co">#&gt; $mortality_profile_sum</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co">#&gt; [1] 0.2515594</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="co">#&gt; $expected_mortality_profile_sum</span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co">#&gt; [1] 0.2515594</span></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="co">#&gt; $mortality_profile_relative_sum</span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span></code></pre></div>
+<p><code>stable_structure</code> sums to one.
+<code>mortality_profile_relative</code> also sums to one, because it is
+explicitly normalised. The raw <code>mortality_profile</code> is
+different: its total equals the first value of the stable age
+structure.</p>
+</div>
+<div id="free-weibull-reference-fit" class="section level2">
+<h2>Free Weibull reference fit</h2>
+<p><code>fit_weibull_free()</code> provides a descriptive two-parameter
+Weibull fit to the observed survivorship profile. It does not impose
+<span class="math inline">\(R_0 = 1\)</span>. If fertility is supplied,
+the implied <span class="math inline">\(R_0\)</span> is reported after
+fitting.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>free_fit <span class="ot">&lt;-</span> <span class="fu">fit_weibull_free</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="at">lx_observed =</span> lx_observed,</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="at">fertility_rates =</span> mx</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>)</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>free_fit</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co">#&gt; Free Weibull Fit (unconstrained, descriptive reference)</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co">#&gt; -------------------------------------------------------</span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co">#&gt;   alpha:     5.15055 </span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="co">#&gt;   beta:          1.1 </span></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co">#&gt;   RMSE:      8.666e-08 </span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a><span class="co">#&gt;   Converged: TRUE </span></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co">#&gt;   R0 (implied):       1 </span></span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a><span class="co">#&gt;   Optimization starts: 12 ( 12 converged )</span></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a><span class="co">#&gt; Use $profile for the fitted profile, $attempts for all starts.</span></span></code></pre></div>
+<p>The comparison is useful, but it answers a different question.
+<code>select_beta()</code> selects among constrained candidates
+compatible with the stable-population condition;
+<code>fit_weibull_free()</code> estimates both Weibull parameters freely
+and only then reports the demographic consequence.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(free_fit<span class="sc">$</span>profile, <span class="at">digits =</span> <span class="dv">4</span>)</span></code></pre></div>
+<table>
+<colgroup>
+<col width="5%" />
+<col width="16%" />
+<col width="13%" />
+<col width="12%" />
+<col width="19%" />
+<col width="22%" />
+<col width="9%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">age</th>
+<th align="right">lx_observed</th>
+<th align="right">lx_fitted</th>
+<th align="right">residual</th>
+<th align="right">squared_error</th>
+<th align="right">fertility_rates</th>
+<th align="right">lxmx</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">1.0000</td>
+<td align="right">1.0000</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.00</td>
+<td align="right">0.0000</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0.8481</td>
+<td align="right">0.8481</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.00</td>
+<td align="right">0.0000</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0.7024</td>
+<td align="right">0.7024</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.30</td>
+<td align="right">0.2107</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">0.5759</td>
+<td align="right">0.5759</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.75</td>
+<td align="right">0.4319</td>
+</tr>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">0.4690</td>
+<td align="right">0.4690</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.60</td>
+<td align="right">0.2814</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">0.3799</td>
+<td align="right">0.3799</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.20</td>
+<td align="right">0.0760</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="route-without-observed-survivorship-scan_beta" class="section level2">
+<h2>Route without observed survivorship: <code>scan_beta()</code></h2>
+<p>When observed survivorship is unavailable, the package should not
+pretend that a single empirical optimum has been selected. In that case,
+use <code>scan_beta()</code> to build a family of constrained candidate
+profiles. A terminal-survivorship window can be used to retain scenarios
+whose final class remains within a stated interval.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>scan <span class="ot">&lt;-</span> <span class="fu">scan_beta</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="at">fertility_rates =</span> mx,</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="at">beta_values =</span> <span class="fu">seq</span>(<span class="fl">0.50</span>, <span class="fl">1.80</span>, <span class="at">by =</span> <span class="fl">0.05</span>),</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  <span class="at">terminal_window =</span> <span class="fu">c</span>(<span class="fl">0.35</span>, <span class="fl">0.39</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>)</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>scan</span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt; Stable Population Scan (Weibull, R0 = 1)</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt; -----------------------------------------</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co">#&gt;   Beta values scanned: 27 </span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co">#&gt;   Numerically stable:  27 </span></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="co">#&gt;   Admissible:          6 </span></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co">#&gt;   Terminal window:     [0.35, 0.39]</span></span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co">#&gt;   Age classes: 6 </span></span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="co">#&gt; Use $summary for all candidates, $admissible_summary for retained ones.</span></span></code></pre></div>
+<p>The retained candidates are stored in
+<code>admissible_summary</code>.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(scan<span class="sc">$</span>admissible_summary, <span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div>
+<table>
+<colgroup>
+<col width="3%" />
+<col width="5%" />
+<col width="10%" />
+<col width="3%" />
+<col width="10%" />
+<col width="13%" />
+<col width="7%" />
+<col width="22%" />
+<col width="12%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">beta</th>
+<th align="right">alpha</th>
+<th align="right">R0</th>
+<th align="right">residual</th>
+<th align="right">lx_terminal</th>
+<th align="left">stable</th>
+<th align="left">terminal_admissible</th>
+<th align="left">admissible</th>
+<th align="left">status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">12</td>
+<td align="right">1.05</td>
+<td align="right">5.256243</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0.387176</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">converged</td>
+</tr>
+<tr class="even">
+<td align="left">13</td>
+<td align="right">1.10</td>
+<td align="right">5.150545</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0.379882</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">converged</td>
+</tr>
+<tr class="odd">
+<td align="left">14</td>
+<td align="right">1.15</td>
+<td align="right">5.056195</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0.372608</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">converged</td>
+</tr>
+<tr class="even">
+<td align="left">15</td>
+<td align="right">1.20</td>
+<td align="right">4.971506</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0.365357</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">converged</td>
+</tr>
+<tr class="odd">
+<td align="left">16</td>
+<td align="right">1.25</td>
+<td align="right">4.895107</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0.358131</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">converged</td>
+</tr>
+<tr class="even">
+<td align="left">17</td>
+<td align="right">1.30</td>
+<td align="right">4.825871</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0.350933</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="left">converged</td>
+</tr>
+</tbody>
+</table>
+<p>When a terminal window is active,
+<code>terminal_extremes$first</code> and
+<code>terminal_extremes$last</code> are the first and last admissible
+candidates in ascending beta order. They are scenario endpoints, not
+automatically minima or maxima of all downstream quantities.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>scan<span class="sc">$</span>terminal_extremes<span class="sc">$</span>first<span class="sc">$</span>beta</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="co">#&gt; [1] 1.05</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>scan<span class="sc">$</span>terminal_extremes<span class="sc">$</span>last<span class="sc">$</span>beta</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="co">#&gt; [1] 1.3</span></span></code></pre></div>
+</div>
+<div id="fixed-beta-reconstruction" class="section level2">
+<h2>Fixed-beta reconstruction</h2>
+<p>If a value of <code>beta</code> has already been justified
+externally, the direct route is
+<code>reconstruct_population()</code>.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>fixed <span class="ot">&lt;-</span> <span class="fu">reconstruct_population</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  <span class="at">fertility_rates =</span> mx,</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>  <span class="at">beta =</span> <span class="fl">1.10</span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>)</span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>fixed</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co">#&gt; Stable Population Reconstruction (Weibull, R0 = 1)</span></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="co">#&gt; ---------------------------------------------------</span></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="co">#&gt;   alpha: 5.15055 </span></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a><span class="co">#&gt;   beta:      1.1 </span></span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a><span class="co">#&gt;   R0:            1 </span></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a><span class="co">#&gt;   Stable: TRUE </span></span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a><span class="co">#&gt;   Age classes: 6 </span></span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a><span class="co">#&gt; Use $table for the full age-specific profile.</span></span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(fixed<span class="sc">$</span>table, <span class="at">digits =</span> <span class="dv">4</span>)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">age</th>
+<th align="right">fertility_rates</th>
+<th align="right">lx</th>
+<th align="right">lxmx</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">0.00</td>
+<td align="right">1.0000</td>
+<td align="right">0.0000</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0.00</td>
+<td align="right">0.8481</td>
+<td align="right">0.0000</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0.30</td>
+<td align="right">0.7024</td>
+<td align="right">0.2107</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">0.75</td>
+<td align="right">0.5759</td>
+<td align="right">0.4319</td>
+</tr>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">0.60</td>
+<td align="right">0.4690</td>
+<td align="right">0.2814</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">0.20</td>
+<td align="right">0.3799</td>
+<td align="right">0.0760</td>
+</tr>
+</tbody>
+</table>
+<p>This route solves <code>alpha</code> under <span class="math inline">\(R_0 = 1\)</span> for the chosen <code>beta</code>.
+It is useful for sensitivity analysis, for reproducing a predefined
+scenario, or for using a shape value selected outside the current
+dataset.</p>
+</div>
+<div id="excel-workflow" class="section level2">
+<h2>Excel workflow</h2>
+<p>The same reconstruction logic can be applied to external workbooks
+with <code>run_reconstruction_excel()</code>. A typical input sheet
+contains columns such as:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">Age</th>
+<th align="right">mx</th>
+<th align="right">lx</th>
+<th align="right">Beta</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">0.00</td>
+<td align="right">1.0000</td>
+<td align="right">1.1</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0.00</td>
+<td align="right">0.8481</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0.30</td>
+<td align="right">0.7024</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">0.75</td>
+<td align="right">0.5759</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">0.60</td>
+<td align="right">0.4690</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">0.20</td>
+<td align="right">0.3799</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+<p>The function can then be called as:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">run_reconstruction_excel</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>  <span class="at">input_file =</span> <span class="st">&quot;demography.xlsx&quot;</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>  <span class="at">output_file =</span> <span class="st">&quot;demography_results.xlsx&quot;</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;auto&quot;</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>  <span class="at">beta_values =</span> <span class="fu">seq</span>(<span class="fl">0.05</span>, <span class="fl">3.00</span>, <span class="at">by =</span> <span class="fl">0.05</span>),</span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>  <span class="at">terminal_window =</span> <span class="fu">c</span>(<span class="fl">0.0001</span>, <span class="fl">0.05</span>),</span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>  <span class="at">output_detail =</span> <span class="st">&quot;standard&quot;</span></span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a>)</span></code></pre></div>
+<p>In <code>mode = &quot;auto&quot;</code>, the route is inferred from the
+available columns. For example, observed survivorship supports the
+selection route, while a single fixed value in a <code>Beta</code>
+column supports the fixed-beta route when observed survivorship is
+absent. The Excel workflow uses the fertility values supplied in the
+workbook; explicit normalisation should therefore be done before saving
+the input if the analysis is intended to use a rescaled fertility
+schedule.</p>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>The package separates three analytical situations:</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Situation</th>
+<th>Function</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Fertility plus observed survivorship</td>
+<td><code>select_beta()</code></td>
+<td>Selects the constrained candidate with the smallest RMSE.</td>
+</tr>
+<tr class="even">
+<td>Fertility without observed survivorship</td>
+<td><code>scan_beta()</code></td>
+<td>Retains a family of constrained scenarios.</td>
+</tr>
+<tr class="odd">
+<td>A fixed beta is already justified</td>
+<td><code>reconstruct_population()</code></td>
+<td>Reconstructs one constrained profile for that beta.</td>
+</tr>
+</tbody>
+</table>
+<p><code>fit_weibull_free()</code> is useful as a descriptive reference,
+but it is not the same model as the constrained StablePopulation
+reconstruction. The distinction is important when reporting methods,
+comparing results, or linking the package to downstream ecological
+analyses.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
