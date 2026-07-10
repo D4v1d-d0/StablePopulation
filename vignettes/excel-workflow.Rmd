@@ -1,0 +1,244 @@
+---
+title: "Excel workbook workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Excel workbook workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4.5
+)
+```
+
+```{r setup}
+library(StablePopulation)
+```
+
+## Purpose
+
+This vignette explains how to organise an Excel workbook for
+`run_reconstruction_excel()`. It is aimed at users who prepare demographic data
+outside R but want the same constrained Weibull reconstruction routes used by
+the R functions.
+
+The Excel interface does not change the underlying model. The central condition
+is still
+
+\[
+R_0 = \sum_x l_x m_x = 1.
+\]
+
+The function analyses fertility exactly as supplied. It never normalises
+fertility silently.
+
+## Minimal input table
+
+Each data sheet must contain one fertility column. An age column is optional and
+is kept as a label in the output. The internal calculations always use
+consecutive class indices `0, 1, 2, ..., n - 1`.
+
+A minimal sheet with observed survivorship can look like this:
+
+```{r select-sheet-example}
+select_sheet <- data.frame(
+  `Age (years)` = 0:5,
+  `mx (Fertility Rate)` = c(0, 0, 0.30, 0.75, 0.60, 0.20),
+  `lx (Survivorship)` = c(1.0000000, 0.8480619, 0.7023945, 0.5759026, 0.4689639, 0.3798816),
+  check.names = FALSE
+)
+
+knitr::kable(select_sheet, digits = 4)
+```
+
+A sheet with one fixed beta value and no observed survivorship can look like
+this:
+
+```{r fixed-sheet-example}
+fixed_sheet <- data.frame(
+  Age = 0:5,
+  mx = c(0, 0, 0.30, 0.75, 0.60, 0.20),
+  Beta = c(1.20, rep(NA, 5)),
+  check.names = FALSE
+)
+
+knitr::kable(fixed_sheet, digits = 4)
+```
+
+A sheet with fertility only is treated as a beta-scan scenario route:
+
+```{r scan-sheet-example}
+scan_sheet <- data.frame(
+  Age = 0:5,
+  mx = c(0, 0, 0.30, 0.75, 0.60, 0.20),
+  check.names = FALSE
+)
+
+knitr::kable(scan_sheet, digits = 4)
+```
+
+## Recognised column names
+
+Column names are matched case-insensitively and can contain units or descriptive
+text. These headings are recognised automatically:
+
+| Role | Examples |
+|---|---|
+| Age labels | `Age`, `Age (years)`, `edad`, `age_class`, `clase_edad` |
+| Fertility | `mx`, `m_x`, `fertility`, `fertility_rates`, `fecundity`, `fecundidad` |
+| Observed survivorship | `lx`, `l_x`, `lx_observed`, `survivorship`, `survival`, `supervivencia` |
+| Fixed beta | `beta`, `weibull_beta`, `shape`, `shape_parameter` |
+
+When a workbook uses unusual headings, supply them explicitly:
+
+```{r explicit-columns, eval = FALSE}
+run_reconstruction_excel(
+  input_file = "demography.xlsx",
+  output_file = "results.xlsx",
+  sheets = "Ovis_dalli",
+  age_column = "Age class",
+  fertility_column = "Female fertility",
+  survivorship_column = "Observed survivorship",
+  beta_column = "Beta"
+)
+```
+
+## Automatic route selection
+
+The default `mode = "auto"` chooses a route separately for each sheet.
+
+| Sheet contents | Automatic route | Meaning |
+|---|---|---|
+| Fertility and observed survivorship | `select` | Selects the constrained candidate with smallest RMSE. |
+| Fertility and one fixed beta value | `fixed` | Reconstructs one constrained profile for that beta. |
+| Fertility only | `scan` | Returns candidate scenarios and does not choose one profile. |
+
+This design avoids a common ambiguity: a scan without observed survivorship is
+not a statistical selection of beta. It is a scenario generator.
+
+## Running the workbook
+
+The simplest interactive call opens the operating-system file chooser:
+
+```{r interactive-call, eval = FALSE}
+run_reconstruction_excel()
+```
+
+A reproducible script should pass file paths explicitly:
+
+```{r explicit-call, eval = FALSE}
+result <- run_reconstruction_excel(
+  input_file = "demography.xlsx",
+  output_file = "demography_StablePopulation.xlsx"
+)
+```
+
+The function returns an invisible object, so assign it when metadata or internal
+result objects are needed:
+
+```{r assigned-call, eval = FALSE}
+result <- run_reconstruction_excel("demography.xlsx")
+
+result$output_file
+result$metadata
+```
+
+## Standard and full outputs
+
+The default `output_detail = "standard"` produces a compact workbook:
+
+```text
+Overview
+Result_<sheet 1>
+Result_<sheet 2>
+...
+```
+
+The `Overview` sheet records the route used for each input sheet, selected
+parameters when applicable, RMSE for the selection route, `R0` checks, scan
+status, and notes.
+
+For method development or auditing, request the full output:
+
+```{r full-output, eval = FALSE}
+run_reconstruction_excel(
+  input_file = "demography.xlsx",
+  output_file = "demography_full_StablePopulation.xlsx",
+  output_detail = "full"
+)
+```
+
+The full workbook additionally contains candidate tables, scan profiles, and
+metadata.
+
+## Terminal-window scenarios
+
+When observed survivorship is absent, a terminal window can be supplied to the
+scan route:
+
+```{r terminal-window, eval = FALSE}
+run_reconstruction_excel(
+  input_file = "demography.xlsx",
+  output_file = "terminal_scenarios.xlsx",
+  mode = "scan",
+  beta_values = seq(0.05, 3.00, by = 0.05),
+  terminal_window = c(0.0001, 0.05)
+)
+```
+
+The terminal condition is:
+
+```text
+lower <= final lx <= upper
+```
+
+It filters candidate scenarios. It does not estimate beta, and it does not
+identify a unique central profile.
+
+## Fertility normalisation before Excel analysis
+
+The Excel workflow analyses fertility exactly as it appears in the sheet. If the
+scientific decision is to normalise fertility relative to a reference
+survivorship schedule, do it explicitly in R and then save the normalised values
+into the workbook.
+
+```{r normalise-before-excel, eval = FALSE}
+normalised <- normalize_fertility(
+  fertility_rates = mx,
+  lx_reference = lx_observed
+)
+
+mx_normalised <- normalised$fertility_rates_normalized
+```
+
+Then use `mx_normalised` as the fertility column in the Excel sheet. This keeps
+raw and normalised analyses visibly separate.
+
+## Common data problems
+
+The function is deliberately strict about data tables.
+
+| Problem | Behaviour |
+|---|---|
+| Blank rows | Fully blank rows are ignored. |
+| Missing fertility values inside a table | The run stops with the affected Excel row numbers. |
+| Non-numeric fertility values | The run stops rather than guessing. |
+| Multiple possible fertility columns | The run stops unless the column is supplied explicitly. |
+| Output path equals input path | The run stops to avoid overwriting the input workbook. |
+| Non-data sheets | Skipped by default when all sheets are inspected. |
+
+This strictness is useful for reproducibility. It is better for the workflow to
+fail early than to silently analyse the wrong column or remove biologically
+meaningful classes.
+
+## Legacy workflow
+
+`run_analysis()` is retained for compatibility with the historical
+StablePopulation 1.0.3 source-tree workflow. It expects the old workbook layout
+inside `inst/extdata/Input_Data.xlsx`, fertility in column B, and one fixed beta
+value in cell C2. New analyses should normally use `run_reconstruction_excel()`.

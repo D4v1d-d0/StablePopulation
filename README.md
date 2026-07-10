@@ -37,15 +37,31 @@ The development is linked primarily to the doctoral work of David
 Palacios-Morales at the Universidad Complutense de Madrid (UCM), while retaining
 his University of Burgos (UBU) affiliation.
 
-## Step-by-step vignette
+## Documentation vignettes
 
-The development version includes an English vignette with a reproducible
-workflow from input fertility and survivorship data to constrained Weibull
-reconstruction, derived demographic profiles, scenario scanning, and the Excel
-interface. After installing the package, open it with:
+The development version includes several English vignettes. They are intended
+as reproducible tutorials rather than terse function help pages.
+
+| Vignette | Purpose |
+|---|---|
+| `stablepopulation-workflow` | Complete workflow from input fertility and survivorship data to constrained reconstruction and derived profiles. |
+| `function-guide` | Function-by-function guide with the demographic question answered by each function. |
+| `excel-workflow` | How to prepare Excel workbooks and interpret the output of `run_reconstruction_excel()`. |
+| `demographic-interpretation` | Biological interpretation of `lx`, `R`, `D`, `D_relative`, `B`, and `lxmx`. |
+
+After installing the package, open the list of vignettes with:
+
+```r
+browseVignettes("StablePopulation")
+```
+
+Or open one directly:
 
 ```r
 vignette("stablepopulation-workflow", package = "StablePopulation")
+vignette("function-guide", package = "StablePopulation")
+vignette("excel-workflow", package = "StablePopulation")
+vignette("demographic-interpretation", package = "StablePopulation")
 ```
 
 ## Choose a reconstruction route

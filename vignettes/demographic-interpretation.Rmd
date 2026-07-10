@@ -1,0 +1,239 @@
+---
+title: "Demographic interpretation of reconstructed profiles"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Demographic interpretation of reconstructed profiles}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4.5
+)
+```
+
+```{r setup}
+library(StablePopulation)
+```
+
+## Purpose
+
+This vignette explains how to interpret the demographic quantities produced by
+`StablePopulation`. The package reconstructs survivorship profiles at the
+species level and derives quantities that can later be connected to ecological
+or paleobiological questions such as age structure, mortality structure, and
+potential biomass flow.
+
+The package does not itself calculate ecosystem biomass or predator resources.
+It provides the demographic layer needed before those later steps.
+
+## From fertility to constrained survivorship
+
+The constrained reconstruction starts from a fertility schedule `mx`. For a
+given Weibull shape parameter `beta`, the corresponding scale parameter `alpha`
+is solved so that
+
+\[
+\sum_x l_x m_x = 1.
+\]
+
+```{r example-reconstruction}
+mx <- c(0, 0, 0.30, 0.75, 0.60, 0.20)
+
+reconstruction <- reconstruct_population(
+  fertility_rates = mx,
+  beta = 1.20
+)
+
+knitr::kable(reconstruction$table, digits = 4)
+```
+
+The reconstructed `lx` is cumulative survivorship to each class. It starts at
+one and declines with age.
+
+## Stable structure `R`
+
+The stable structure is the normalised age distribution implied by the
+survivorship profile:
+
+\[
+R_x = \frac{l_x}{\sum_x l_x}.
+\]
+
+```{r profile}
+profile <- derive_demographic_profile(
+  lx = reconstruction$lx,
+  fertility_rates = mx
+)
+
+knitr::kable(
+  profile$table[, c("age", "lx", "stable_structure")],
+  digits = 4
+)
+```
+
+`R` sums to one and can be read as the expected proportion of individuals in
+each class under the reconstructed stationary structure.
+
+```{r r-check}
+sum(profile$stable_structure)
+```
+
+Biologically, classes with high `R` are classes expected to be abundant in the
+standing population, not necessarily classes producing the most deaths or the
+most births.
+
+## Mortality profile `D`
+
+The raw mortality profile is derived from the stable structure:
+
+\[
+D_x = R_x - R_{x+1},
+\]
+
+with the final class closed by setting `D_last = R_last`.
+
+```{r mortality-profile}
+knitr::kable(
+  profile$table[, c("age", "stable_structure", "mortality_profile")],
+  digits = 4
+)
+```
+
+`D` describes the exit-by-death profile from the stable structure. It is not
+simply `1 - lx`, and it is not the same as the relative death distribution.
+Its sum equals the first value of `R`.
+
+```{r d-check}
+sum(profile$mortality_profile)
+profile$stable_structure[1]
+```
+
+This distinction matters when moving from demographic reconstruction to
+resource-flow questions. The raw `D` keeps the scale implied by the stable
+structure.
+
+## Relative mortality profile `D_relative`
+
+The relative mortality profile is a separately normalised version of `D`:
+
+\[
+D^{rel}_x = \frac{D_x}{\sum_x D_x}.
+\]
+
+```{r relative-mortality-profile}
+knitr::kable(
+  profile$table[, c("age", "mortality_profile", "mortality_profile_relative")],
+  digits = 4
+)
+```
+
+`D_relative` sums to one.
+
+```{r d-relative-check}
+sum(profile$mortality_profile_relative)
+```
+
+It is useful when the question concerns the relative age distribution of deaths,
+independently of the scale of the stable age structure.
+
+## Conditional survival `B`
+
+Conditional survival between consecutive classes is
+
+\[
+B_x = \frac{l_{x+1}}{l_x}.
+\]
+
+```{r conditional-survival}
+knitr::kable(
+  profile$table[, c("age", "lx", "conditional_survival")],
+  digits = 4
+)
+```
+
+`B` is returned as `NA` where the ratio is undefined. It should be interpreted
+as survival from one class to the next, not as cumulative survival from birth.
+Cumulative survival is `lx`.
+
+## Fertility contribution `lxmx`
+
+When fertility is supplied, the table also contains `lxmx`, the contribution of
+each class to net replacement.
+
+```{r lxmx}
+knitr::kable(
+  profile$table[, c("age", "fertility_rates", "lx", "lxmx")],
+  digits = 4
+)
+
+profile$R0
+```
+
+In the constrained reconstruction, the total of `lxmx` is numerically one. This
+is the stationary-population condition imposed by the reconstruction.
+
+## Observed survivorship and model selection
+
+When observed survivorship is available, `select_beta()` chooses the constrained
+candidate closest to it.
+
+```{r observed-selection}
+lx_observed <- c(1.0000000, 0.8480619, 0.7023945, 0.5759026, 0.4689639, 0.3798816)
+
+selection <- select_beta(
+  fertility_rates = mx,
+  lx_observed = lx_observed,
+  beta_values = seq(0.50, 1.80, by = 0.05)
+)
+
+selection$best_beta
+selection$best_RMSE
+knitr::kable(selection$best_profile, digits = 4)
+```
+
+The selected profile is constrained by `R0 = 1`. It is the best grid candidate
+among the supplied beta values, not a free two-parameter optimum.
+
+## Scenario interpretation without observed survivorship
+
+When observed `lx` is unavailable, `scan_beta()` should be interpreted as a
+scenario generator.
+
+```{r scenario-scan}
+scan <- scan_beta(
+  fertility_rates = mx,
+  beta_values = seq(0.50, 1.80, by = 0.10),
+  terminal_window = c(0.10, 0.40)
+)
+
+knitr::kable(scan$admissible_summary, digits = 4)
+```
+
+A terminal window defines an admissible set of scenarios. It does not provide a
+single fitted curve. Downstream ecological interpretations should therefore
+preserve the scenario logic rather than reporting one arbitrary beta as if it
+had been estimated from observed survival data.
+
+## Reading the output biologically
+
+The main columns answer different biological questions.
+
+| Quantity | Biological reading |
+|---|---|
+| `lx` | Cumulative survivorship to each class. |
+| `R` / `stable_structure` | Expected standing age structure under the reconstructed stationary profile. |
+| `D` / `mortality_profile` | Raw age-specific exits by death from that structure. |
+| `D_relative` | Relative distribution of deaths across age classes. |
+| `B` / `conditional_survival` | Survival from one class to the next. |
+| `lxmx` | Class contribution to net replacement. |
+
+For paleobiological applications, the most important point is that the package
+separates the reconstruction of a survivorship profile from its demographic
+interpretation. The Weibull model supplies a smooth survivorship structure; the
+derived quantities translate that structure into age distribution, death
+profile, and fertility contribution.

@@ -74,6 +74,10 @@ Development version prepared during the UCM doctoral stage.
   step-by-step workflow from input fertility and survivorship data to constrained
   Weibull reconstruction, derived demographic profiles, scenario scanning, and
   the Excel interface.
+- Adds three additional English vignettes: `function-guide` for explaining the
+  purpose and demographic meaning of the main functions, `excel-workflow` for
+  preparing external workbooks, and `demographic-interpretation` for reading
+  `lx`, `R`, `D`, `D_relative`, `B`, and `lxmx` biologically.
 - Does not yet add the inverse alpha-to-beta exploration route (`solve_beta()`
   and `scan_alpha()`); it remains available in historical development material
   until a concrete analytical use case justifies exposing it here.
