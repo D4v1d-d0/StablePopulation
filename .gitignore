@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-.Rcheck/
+*.Rcheck/
 /doc/
 /Meta/
+backup_*/
