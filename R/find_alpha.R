@@ -1,85 +1,90 @@
-#' Objective Function for \code{uniroot}: Finds the Difference Between Births and 1
+#' Evaluate the Stable-Stationary Constraint for Alpha
 #'
-#' This function calculates the difference between the number of births, as calculated with the given values
-#' of \code{alpha}, \code{beta}, and \code{fertility_rates}, and the target value of 1.
+#' Computes the difference between the reproductive output associated with a
+#' candidate \eqn{\alpha} value and the stable-stationary target \eqn{R_0 = 1},
+#' for a fixed \eqn{\beta} and fertility schedule.
 #'
-#' Typically used as the objective function in root-finding algorithms such as [uniroot][stats::uniroot], to determine
-#' the value of alpha that results in exactly one birth.
+#' @param alpha A positive numeric value. Candidate Weibull scale parameter.
+#' @param beta A positive numeric value. Weibull shape parameter.
+#' @param fertility_rates A numeric vector of age-specific fertility values
+#'   \eqn{m_x}.
 #'
-#' This function depends on [calculate_population], which must be available in your package namespace.
+#' @return A numeric value equal to \eqn{\sum_x l_x(\alpha, \beta)m_x - 1}.
 #'
-#' @param alpha A numeric value representing the alpha parameter.
-#' @param beta A numeric value representing the beta parameter.
-#' @param fertility_rates A numeric vector containing the fertility rates.
-#'
-#' @return A numeric value giving the difference between the number of births (as calculated) and 1.
-#'
-#' @seealso \code{\link[stats]{uniroot}}
+#' @seealso \code{\link[stats]{uniroot}}, \code{\link{find_alphas}}
 #'
 #' @importFrom stats uniroot
 #' @export
 #'
 #' @examples
-#' # Basic usage
-#' alpha_objective(0.5, 1.2, c(0.2, 0.3, 0.5, 0.4))
-#'
-#' # Example with uniroot:
-#' fertility_rates <- c(0.2, 0.3, 0.5, 0.4)
-#' beta <- 1.2
-#' res <- uniroot(
-#'   alpha_objective,
-#'   interval = c(0.000001, 100),
-#'   beta = beta,
-#'   fertility_rates = fertility_rates
+#' alpha_objective(
+#'   alpha = 5,
+#'   beta = 1.2,
+#'   fertility_rates = c(0, 0, 0.3, 0.7, 0.5)
 #' )
-#' res$root
 alpha_objective <- function(alpha, beta, fertility_rates) {
   result <- calculate_population(alpha, beta, fertility_rates)
-  result$births - 1  # The difference from the target of 1
+  result$births - 1
 }
 
 
-#' Function to find the value of alpha
+#' Find Alpha for a Fixed Beta Under R0 = 1
 #'
-#' This function finds the value of alpha using the \code{uniroot} method for a given beta and a vector
-#' of fertility rates. If the function values at the interval ends do not have opposite signs,
-#' it returns the closest value to 0.
+#' Finds the Weibull scale parameter \eqn{\alpha} associated with a fixed shape
+#' parameter \eqn{\beta}, using the stable-stationary constraint
+#' \eqn{\sum_x l_x m_x = 1}.
 #'
-#' @param beta A numeric value representing the beta parameter of Weibull distribution.
-#' @param fertility_rates A numeric vector containing the fertility rates.
-#' @param tol A numeric value representing the tolerance for the \code{uniroot} method. Default is \code{1e-22}.
-#' @return A numeric value giving the estimated value of alpha, either found by \code{uniroot} or selected as the endpoint closest to zero if the root is not bracketed.
+#' @param beta A positive numeric value. Weibull shape parameter.
+#' @param fertility_rates A numeric vector of age-specific fertility values
+#'   \eqn{m_x}.
+#' @param tol A positive numeric value. Numerical tolerance passed to
+#'   \code{\link[stats]{uniroot}}. Default is \code{1e-22}.
+#'
+#' @return A numeric value giving the \eqn{\alpha} value associated with the
+#'   supplied \eqn{\beta} and fertility schedule under the stable-stationary
+#'   constraint.
+#'
 #' @export
+#'
 #' @examples
-#' find_alphas(1.2, c(0.2, 0.3, 0.5, 0.4))
+#' find_alphas(
+#'   beta = 1.2,
+#'   fertility_rates = c(0, 0, 0.3, 0.7, 0.5)
+#' )
 find_alphas <- function(beta, fertility_rates, tol = 1e-22) {
-  # Define the range to search for alpha
+  # Search interval for the Weibull scale parameter alpha.
   lower <- 1e-25
   upper <- 100000
 
-  # Evaluate the function at the interval endpoints
+  # Evaluate the stable-stationary constraint at both interval endpoints.
   f_lower <- alpha_objective(lower, beta, fertility_rates)
   f_upper <- alpha_objective(upper, beta, fertility_rates)
 
-  # Check if the signs are opposite
+  # Use root finding when the interval brackets the stable-stationary target.
   if (f_lower * f_upper < 0) {
-    # If the signs are opposite, use uniroot
-    root_result <- uniroot(alpha_objective, interval = c(lower, upper), beta = beta,
-                       fertility_rates = fertility_rates, tol = tol)
-    return(root_result$root)  # Return the alpha value found
-  } else {
-    # If the signs are the same, return the value closest to 0
-    warning(
-      "No exact root was found: the objective function does not change sign ",
-      "over the search interval. The returned alpha is the interval endpoint ",
-      "closest to satisfying R0 = 1 and may not be a valid solution. ",
-      "Consider using reconstruct_population() for stricter diagnostics.",
-      call. = FALSE
+    root_result <- uniroot(
+      alpha_objective,
+      interval = c(lower, upper),
+      beta = beta,
+      fertility_rates = fertility_rates,
+      tol = tol
     )
-    if (abs(f_lower) < abs(f_upper)) {
-      return(lower)  # f(lower) is closer to 0
-    } else {
-      return(upper)  # f(upper) is closer to 0
-    }
+    return(root_result$root)
+  }
+
+  # Select the endpoint giving the closest value to the target within the
+  # historical search interval.
+  warning(
+    "The objective function keeps the same sign over the search interval. ",
+    "The returned alpha is the interval endpoint closest to the ",
+    "stable-stationary target R0 = 1 within that interval. ",
+    "Use reconstruct_population() for stricter reconstruction diagnostics.",
+    call. = FALSE
+  )
+
+  if (abs(f_lower) < abs(f_upper)) {
+    lower
+  } else {
+    upper
   }
 }

@@ -18,7 +18,7 @@ Development version prepared during the UCM doctoral stage.
   exit-by-death profile `D`, separately normalised `D_relative`, and
   conditional survival `B`.
 - Adds `fit_weibull_free()` as a descriptive free two-parameter Weibull
-  reference fit; it does not replace the constrained reconstruction route.
+  reference fit that complements the constrained reconstruction route.
 - Adds `normalize_fertility()` for the explicit rescaling of a fertility
   schedule relative to a reference survivorship profile before an analysis that
   is deliberately expressed at `R0 = 1`.
@@ -43,9 +43,9 @@ Development version prepared during the UCM doctoral stage.
   `mode = "auto"`, a one-value `Beta` column is used for a fixed-beta route
   when observed survivorship is absent.
 - Restores and preserves `run_analysis()` exactly as the historical
-  StablePopulation 1.0.3 source-tree Excel workflow: no function arguments,
-  fertility in column B, one fixed beta in cell C2, and one output workbook per
-  worksheet/species.
+  StablePopulation 1.0.3 source-tree Excel workflow: the original interactive
+  interface, fertility in column B, one fixed beta in cell C2, and one output
+  workbook per worksheet/species.
 
 ### Reliability and verification
 
@@ -62,6 +62,9 @@ Development version prepared during the UCM doctoral stage.
 
 - Standardises source comments, user-facing messages, and package
   documentation in English.
+- Clarifies the documentation of the historical demographic helper functions
+  `weibull_survival()`, `calculate_population()`, `alpha_objective()`, and
+  `find_alphas()` using an input-output-interpretation structure.
 - Clarifies the distinction between the route with observed survivorship
   (`select_beta()`) and the scenario route without it (`scan_beta()`), including
   the role of explicit fertility normalisation and the terminal window.
@@ -78,9 +81,9 @@ Development version prepared during the UCM doctoral stage.
   purpose and demographic meaning of the main functions, `excel-workflow` for
   preparing external workbooks, and `demographic-interpretation` for reading
   `lx`, `R`, `D`, `D_relative`, `B`, and `lxmx` biologically.
-- Does not yet add the inverse alpha-to-beta exploration route (`solve_beta()`
-  and `scan_alpha()`); it remains available in historical development material
-  until a concrete analytical use case justifies exposing it here.
+- Keeps the inverse alpha-to-beta exploration route (`solve_beta()` and
+  `scan_alpha()`) in historical development material until a concrete
+  analytical use case justifies exposing it here.
 
 ## 1.0.3 - 2025-07-24
 

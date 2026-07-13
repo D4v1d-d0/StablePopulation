@@ -2,23 +2,28 @@
 % Please edit documentation in R/population.R
 \name{weibull_survival}
 \alias{weibull_survival}
-\title{Weibull function for the survival rate}
+\title{Compute a Weibull Survivorship Profile}
 \usage{
 weibull_survival(alpha, beta, age)
 }
 \arguments{
-\item{alpha}{A numeric value representing the scale parameter of the Weibull distribution.}
+\item{alpha}{A positive numeric value. Weibull scale parameter controlling
+the horizontal position of the survivorship curve.}
 
-\item{beta}{A numeric value representing the shape parameter of the Weibull distribution.}
+\item{beta}{A positive numeric value. Weibull shape parameter controlling
+the curvature of the survivorship profile.}
 
-\item{age}{A numeric value representing the age.}
+\item{age}{A numeric vector of ages or age-class indices.}
 }
 \value{
-A numeric value giving the survival rate (probability) for reaching the given age.
+A numeric vector with the same length as \code{age}, giving the
+survivorship values \eqn{l_x}.
 }
 \description{
-This function calculates the survival rate to reach a specific age using the Weibull function.
+Computes the survivorship profile \eqn{l_x} for one or more ages using the
+Weibull survival function defined by the scale parameter \eqn{\alpha} and
+the shape parameter \eqn{\beta}.
 }
 \examples{
-weibull_survival(1.5, 0.8, 10)
+weibull_survival(alpha = 5, beta = 1.2, age = 0:10)
 }

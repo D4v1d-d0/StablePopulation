@@ -1,46 +1,72 @@
-#' Weibull function for the survival rate
+#' Compute a Weibull Survivorship Profile
 #'
-#' This function calculates the survival rate to reach a specific age using the Weibull function.
+#' Computes the survivorship profile \eqn{l_x} for one or more ages using the
+#' Weibull survival function defined by the scale parameter \eqn{\alpha} and
+#' the shape parameter \eqn{\beta}.
 #'
-#' @param alpha A numeric value representing the scale parameter of the Weibull distribution.
-#' @param beta A numeric value representing the shape parameter of the Weibull distribution.
-#' @param age A numeric value representing the age.
-#' @return A numeric value giving the survival rate (probability) for reaching the given age.
+#' @param alpha A positive numeric value. Weibull scale parameter controlling
+#'   the horizontal position of the survivorship curve.
+#' @param beta A positive numeric value. Weibull shape parameter controlling
+#'   the curvature of the survivorship profile.
+#' @param age A numeric vector of ages or age-class indices.
+#'
+#' @return A numeric vector with the same length as \code{age}, giving the
+#'   survivorship values \eqn{l_x}.
+#'
 #' @export
+#'
 #' @examples
-#' weibull_survival(1.5, 0.8, 10)
+#' weibull_survival(alpha = 5, beta = 1.2, age = 0:10)
 weibull_survival <- function(alpha, beta, age) {
   exp(-((age / alpha)^beta))
 }
 
-#' Calculates the population for each age group
+#' Calculate a Normalized Survivorship Profile and Reproductive Output
 #'
-#' This function calculates the population for each age group and the number of births.
+#' Computes the normalized survivorship profile associated with a Weibull curve
+#' and combines it with an age-specific fertility schedule to obtain total
+#' reproductive output.
 #'
-#' @param alpha A numeric value representing the scale parameter (\eqn{\alpha}) of the Weibull distribution. Note: In this context, alpha controls the horizontal scaling of the survival curve.
-#' @param beta A numeric value representing the shape parameter (\eqn{\beta}) of the Weibull distribution. Note: Beta controls the shape of the survival curve (e.g., aging or failure rate).
-#' @param fertility_rates A vector of fertility rates for each age group.
+#' @param alpha A positive numeric value. Weibull scale parameter controlling
+#'   the horizontal position of the survivorship curve.
+#' @param beta A positive numeric value. Weibull shape parameter controlling
+#'   the curvature of the survivorship profile.
+#' @param fertility_rates A numeric vector of age-specific fertility values
+#'   \eqn{m_x}. Its length defines the number of age classes.
+#'
 #' @return A list with the following elements:
 #'   \describe{
-#'     \item{population}{A numeric vector giving the population size for each age group.}
-#'     \item{births}{A numeric value giving the total number of births.}
+#'     \item{population}{A numeric vector representing the normalized
+#'       survivorship profile by age class. The first value is set to 1.}
+#'     \item{births}{A numeric value equal to \eqn{\sum_x l_x m_x}, the
+#'       reproductive output associated with the survivorship profile and
+#'       fertility schedule.}
 #'   }
+#'
 #' @export
+#'
 #' @examples
-#' calculate_population(0.5, 1.2, c(0.2, 0.3, 0.5, 0.4))
+#' calculate_population(
+#'   alpha = 5,
+#'   beta = 1.2,
+#'   fertility_rates = c(0, 0, 0.3, 0.7, 0.5)
+#' )
 calculate_population <- function(alpha, beta, fertility_rates) {
-  periods <- length(fertility_rates)  # The number of periods is adjusted to the length of the fertility vector
-  population <- numeric(periods)      # Initialize the population vector for each period
-  population[1] <- 1                  # Initial population is considered 100% (normalized value)
+  # The fertility vector defines the number of age classes in the profile.
+  periods <- length(fertility_rates)
 
-  # Calculate survival and population for each age
+  # The historical name "population" represents the normalized survivorship
+  # profile used by the original StablePopulation workflow.
+  population <- numeric(periods)
+  population[1] <- 1
+
+  # Fill the survivorship profile from age 1 to the final age class.
   for (i in 2:periods) {
-    population[i] <- weibull_survival(alpha, beta, i-1)  # Cumulative survival to that age
+    population[i] <- weibull_survival(alpha, beta, i - 1)
   }
 
-  # Calculate births
+  # Combine survivorship and fertility to obtain reproductive output.
   births <- sum(population * fertility_rates)
 
-  # Return both population and births
   list(population = population, births = births)
 }

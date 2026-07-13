@@ -2,27 +2,39 @@
 % Please edit documentation in R/population.R
 \name{calculate_population}
 \alias{calculate_population}
-\title{Calculates the population for each age group}
+\title{Calculate a Normalized Survivorship Profile and Reproductive Output}
 \usage{
 calculate_population(alpha, beta, fertility_rates)
 }
 \arguments{
-\item{alpha}{A numeric value representing the scale parameter (\eqn{\alpha}) of the Weibull distribution. Note: In this context, alpha controls the horizontal scaling of the survival curve.}
+\item{alpha}{A positive numeric value. Weibull scale parameter controlling
+the horizontal position of the survivorship curve.}
 
-\item{beta}{A numeric value representing the shape parameter (\eqn{\beta}) of the Weibull distribution. Note: Beta controls the shape of the survival curve (e.g., aging or failure rate).}
+\item{beta}{A positive numeric value. Weibull shape parameter controlling
+the curvature of the survivorship profile.}
 
-\item{fertility_rates}{A vector of fertility rates for each age group.}
+\item{fertility_rates}{A numeric vector of age-specific fertility values
+\eqn{m_x}. Its length defines the number of age classes.}
 }
 \value{
 A list with the following elements:
 \describe{
-\item{population}{A numeric vector giving the population size for each age group.}
-\item{births}{A numeric value giving the total number of births.}
+\item{population}{A numeric vector representing the normalized
+survivorship profile by age class. The first value is set to 1.}
+\item{births}{A numeric value equal to \eqn{\sum_x l_x m_x}, the
+reproductive output associated with the survivorship profile and
+fertility schedule.}
 }
 }
 \description{
-This function calculates the population for each age group and the number of births.
+Computes the normalized survivorship profile associated with a Weibull curve
+and combines it with an age-specific fertility schedule to obtain total
+reproductive output.
 }
 \examples{
-calculate_population(0.5, 1.2, c(0.2, 0.3, 0.5, 0.4))
+calculate_population(
+  alpha = 5,
+  beta = 1.2,
+  fertility_rates = c(0, 0, 0.3, 0.7, 0.5)
+)
 }

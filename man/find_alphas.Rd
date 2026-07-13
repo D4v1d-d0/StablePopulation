@@ -2,25 +2,32 @@
 % Please edit documentation in R/find_alpha.R
 \name{find_alphas}
 \alias{find_alphas}
-\title{Function to find the value of alpha}
+\title{Find Alpha for a Fixed Beta Under R0 = 1}
 \usage{
 find_alphas(beta, fertility_rates, tol = 1e-22)
 }
 \arguments{
-\item{beta}{A numeric value representing the beta parameter of Weibull distribution.}
+\item{beta}{A positive numeric value. Weibull shape parameter.}
 
-\item{fertility_rates}{A numeric vector containing the fertility rates.}
+\item{fertility_rates}{A numeric vector of age-specific fertility values
+\eqn{m_x}.}
 
-\item{tol}{A numeric value representing the tolerance for the \code{uniroot} method. Default is \code{1e-22}.}
+\item{tol}{A positive numeric value. Numerical tolerance passed to
+\code{\link[stats]{uniroot}}. Default is \code{1e-22}.}
 }
 \value{
-A numeric value giving the estimated value of alpha, either found by \code{uniroot} or selected as the endpoint closest to zero if the root is not bracketed.
+A numeric value giving the \eqn{\alpha} value associated with the
+supplied \eqn{\beta} and fertility schedule under the stable-stationary
+constraint.
 }
 \description{
-This function finds the value of alpha using the \code{uniroot} method for a given beta and a vector
-of fertility rates. If the function values at the interval ends do not have opposite signs,
-it returns the closest value to 0.
+Finds the Weibull scale parameter \eqn{\alpha} associated with a fixed shape
+parameter \eqn{\beta}, using the stable-stationary constraint
+\eqn{\sum_x l_x m_x = 1}.
 }
 \examples{
-find_alphas(1.2, c(0.2, 0.3, 0.5, 0.4))
+find_alphas(
+  beta = 1.2,
+  fertility_rates = c(0, 0, 0.3, 0.7, 0.5)
+)
 }
